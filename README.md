@@ -1,2 +1,18 @@
 # veikt.com
-Will see soon...
+
+  1. **step1.download** 
+
+ The code downloads job postings from around the internet and saves them into separate files of web server. This is the cron job.
+ 
+ At the moment the project downloads info from: 
+ - www.cvbankas.lt
+ - more?
+
+
+  2. **step2.normalize** 
+  
+  This code walks throw files (results) of step1 and analyzes them semanticaly, unites between languages, translates, and does much more. After step2 is finished, we have files (results) of step1 put into different tables and columns of the project database (currently MySQL).
+ 
+  3. **step3.output** 
+  
+  This is the website that outputs the results of step1 and step2 to public. Content filters and much more is comming to be developed soon.
