@@ -20,7 +20,7 @@
 
 ```
 For those who wish to contribute there is a dev box. This have to make you involved in minutes:
-https://github.com/sugalvojau/dev.veikt.com
+https://github.com/sugalvojau/veikt.dev
 ```
 
 ```
