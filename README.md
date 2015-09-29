@@ -16,3 +16,13 @@
   3. **step3.output** 
   
   This is the website that outputs the results of step1 and step2 to public. Content filters and much more is comming to be developed soon.
+
+
+```
+For those who wish to contribute there is a dev box. This have to make you involved in minutes:
+https://github.com/sugalvojau/dev.veikt.com
+```
+
+```
+Feel free to contact if any questions arise.
+```
