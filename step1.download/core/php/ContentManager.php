@@ -51,7 +51,12 @@ class ContentManager
         );
         $context = stream_context_create($options);
 
-        @$doc->loadHTML(mb_convert_encoding(file_get_contents(trim($url), false, $context), 'HTML-ENTITIES', 'UTF-8'));
+        // @todo: is there something better than the following line?
+        // The reason of the following line is:
+        //     "Warning: DOMDocument::loadHTML(): Unexpected end tag : iframe in Entity, line: ... in ... on line ..."
+        libxml_use_internal_errors(true);
+
+        $doc->loadHTML(mb_convert_encoding(file_get_contents(trim($url), false, $context), 'HTML-ENTITIES', 'UTF-8'));
 
         //@$doc->loadHTMLFile($url);
         return $doc;//->saveHTML();
