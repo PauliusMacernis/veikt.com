@@ -6,7 +6,7 @@
 	<meta name="description" content="">
 	<meta name="author"      content="Sergey Pozhilov (GetTemplate.com)">
 	
-	<title>- VEIKT.COM -</title>
+	<title>VEIKT.COM</title>
 
 	<link rel="shortcut icon" href="assets/images/gt_favicon.png">
 	
