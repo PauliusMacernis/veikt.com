@@ -1,3 +1,8 @@
+# Switch to higher PHP version (basicaly, production hosting stuff...)
+<IfModule mod_suphp.c>
+  AddHandler application/x-httpd-php-5.5.13 .php
+</IfModule>
+
 # Use the front controller as index file. It serves as a fallback solution when
 # every other rewrite/redirect fails (e.g. in an aliased environment without
 # mod_rewrite). Additionally, this reduces the matching process for the
