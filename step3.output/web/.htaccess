@@ -1,6 +1,6 @@
 # Switch to higher PHP version (basicaly, production hosting stuff...)
 <IfModule mod_suphp.c>
-  AddHandler application/x-httpd-php-5.5.13.php
+  AddHandler application/x-httpd-php-5.5.0. php
 </IfModule>
 
 # Use the front controller as index file. It serves as a fallback solution when
