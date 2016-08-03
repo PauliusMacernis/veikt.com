@@ -21,7 +21,7 @@ class JobController extends Controller
     {
         $templating = $this->container->get('templating');
         $html = $templating->render('job/show.html.twig', [
-            'name' => $jobId
+            'jobId' => $jobId
         ]);
         return new Response($html);
     }
