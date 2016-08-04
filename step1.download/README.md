@@ -17,6 +17,8 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - 01.net
 - Accounting.com
 - AccountWorld.com
+- Albertajobs.com
+- allstarjobs.ca
 - American Economic Association
 - American Finance Association
 - American Securitization Forum
@@ -26,26 +28,42 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Association of Corporate Counsel
 - Association of Investment Management
 - Association of Real Estate Women
+- BCTechnology.com
+- bestjobs4grads.com
+- Bing
 - Black Data Processing Associates
 - Bloomberg
 - Brokerhunter.com
+- ca.jobdiagnosis.com
 - Cadremploi
 - Cadresonline
+- CallCareers.com
+- CallCentreJob.ca
+- CanJobs.com
+- CanadaIT.com
 - Capital Markets Credit Analysts
 - Career Builder
+- CareerEdge
 - Careerjournal.com
 - CareerTimes
+- Carrefour jeunesse-emploi Rimouski-
 - CFAI
 - Challenger, Gray, &amp; Christmas
 - CityJobs
 - CJOL
+- Community Centre Job Bank
+- ConnectMoms
 - Corriere Dellasera
 - Craigslist
 - creditjob.com
 - CREW.org
 - DBM Jobscout
+- Developpeur.ca
 - Dice
 - Econ Jobs
+- Eluta.ca
+- Emploi Québec
+- Emploi informatique
 - eFinancial Careers
 - FAZ
 - FIASI
@@ -55,15 +73,27 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Frankfurter Allgemeine Zeitun
 - GAAPJobs.com
 - Global Association Risk Professionals
+- Google
+- Government of Canada - Job Bank
+- HigherBracket.ca
+- hired.ca
+- Hire Ground
+- HireCanadianMilitary.com
 - HotJobs
 - Indeed
+- InfoPresseJob
+- ISARTA
 - Japan Times
 - Japan Times Job
 - Job Finance
+- jobbank.gc.ca
+- Jobboom
 - Jobpilot.de
 - jobscentral.com.sg
 - jobscout24.de
 - Jobsdb
+- JobShark
+- JobShop.ca
 - Jobserve
 - jobstreet.com
 - Journal of Finance
