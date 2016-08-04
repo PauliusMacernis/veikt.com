@@ -14,15 +14,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JobController extends Controller
 {
+
     /**
      * @Route("/job/{jobId}")
      */
     public function showAction($jobId)
     {
-        $templating = $this->container->get('templating');
-        $html = $templating->render('job/show.html.twig', [
+//        $templating = $this->container->get('templating');
+//        $html = $templating->render('job/show.html.twig', [
+//            'jobId' => $jobId
+//        ]);
+//        return new Response($html);
+
+        return $this->render('job/show.html.twig', [
             'jobId' => $jobId
         ]);
-        return new Response($html);
+
     }
 }
