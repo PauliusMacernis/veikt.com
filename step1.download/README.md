@@ -15,14 +15,15 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 
 # Projects needs to be added: #
 - 01.net
+- 6 Figure Jobs
 - Accounting.com
 - AccountWorld.com
 - Albertajobs.com
 - allstarjobs.ca
+- America's Job Bank
 - American Economic Association
 - American Finance Association
 - American Securitization Forum
-- America's Job Bank
 - Association for Financial Professionals
 - Association of Business Economists
 - Association of Corporate Counsel
@@ -39,8 +40,8 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Cadresonline
 - CallCareers.com
 - CallCentreJob.ca
-- CanJobs.com
 - CanadaIT.com
+- CanJobs.com
 - Capital Markets Credit Analysts
 - Career Builder
 - CareerEdge
@@ -48,7 +49,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - CareerTimes
 - Carrefour jeunesse-emploi Rimouski-
 - CFAI
-- Challenger, Gray, &amp; Christmas
+- Challenger, Gray, & Christmas
 - CityJobs
 - CJOL
 - Community Centre Job Bank
@@ -61,10 +62,10 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Developpeur.ca
 - Dice
 - Econ Jobs
-- Eluta.ca
-- Emploi Québec
-- Emploi informatique
 - eFinancial Careers
+- Eluta.ca
+- Emploi informatique
+- Emploi Québec
 - FAZ
 - FIASI
 - Financial Times
@@ -76,70 +77,86 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Google
 - Government of Canada - Job Bank
 - HigherBracket.ca
+- HireCanadianMilitary.com
 - hired.ca
 - Hire Ground
-- HireCanadianMilitary.com
-- HotJobs
+- HotJobs (HotJobs.com)
 - Indeed
 - InfoPresseJob
 - ISARTA
 - Japan Times
 - Japan Times Job
-- Job Finance
 - jobbank.gc.ca
 - Jobboom
+- Job Finance
+- Jobillico
 - Jobpilot.de
+- Jobrapido
 - jobscentral.com.sg
 - jobscout24.de
 - Jobsdb
+- Jobserve
 - JobShark
 - JobShop.ca
-- Jobserve
 - jobstreet.com
 - Journal of Finance
 - Keljob
-- La Stampa
+- Kijiji
 - Ladder.com
+- La Stampa
 - Latinos in Information Science
-- Le Monde
 - Lee Hecht Harrison
+- Le Monde
+- LesPACS
 - LinkedIn
 - magny.org
 - Maths-fi
 - MBA Focus
 - Meetingjobs.com
-- Monster
+- Monster (monster.ca, etc.)
 - MonsterTrak
 - Moody's Alumni Network
-- Moodys Alumni Website
 - Moodys.com
+- Moodys Alumni Website
 - Moscow Times
 - Nacelink
+- Neuvoo
 - New York Society of Security
 - New York Times
+- NiceJobs
 - Nikkei Net
 - Nikkei News
 - NY State Bar Association
+- OfficeJobs.com
 - One Wire
+- Peter's New Jobs (PNJ)
 - Proactive Approach
 - Quan Finance.com
+- REALpac.ca
 - Recu-Nabi
+- Right Management
 - S1jobs
+- SalesJobsCanada.com
 - San Francisco Chronicle
 - seek.com.au
 - SelectLeader.com
 - Selectleaders
+- Simply Hired
 - Society for Human Resources Managers
 - South China Morning Post (SCMP)
 - Star Newspaper
 - stellenanzeigen.de
 - stepstone.de
 - Straits Times
+- T-Net
+- Tactics for Success
+- TalentOyster
 - TaxTalent
 - The Australia Financial Review
 - The Australian
 - The Ayers Group
 - The Guardian
+- TheLadders
 - The Professional Risk Manager
 - The Sydney Morning Herald
 - Twitter
@@ -147,14 +164,20 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Vedemosti
 - Wall Street Journal
 - Wallstreetoasis.com
+- WeHire.ca
 - Women in Information Technology
+- Working.com
+- WorkingCalgaryJobs.com
+- workopolis.com
+- WorldatWork
 - www.51job.com
 - www.chinahr.com
 - www.cjol.com
 - www.headhunter.ru
 - www.newsmth.net
+- www.waterlootechjobs.com
 - www.yingjiesheng.com
 - XING
 - Ying Jiesheng
 - Zhaopin.com
-...and more
+- ...and more
