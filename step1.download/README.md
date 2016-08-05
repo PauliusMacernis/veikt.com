@@ -111,6 +111,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - LinkedIn
 - magny.org
 - Maths-fi
+- maxhire.net
 - MBA Focus
 - Meetingjobs.com
 - Monster (monster.ca, etc.)
@@ -141,6 +142,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - seek.com.au
 - SelectLeader.com
 - Selectleaders
+- silkroad.com
 - Simply Hired
 - Society for Human Resources Managers
 - South China Morning Post (SCMP)
