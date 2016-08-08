@@ -51,6 +51,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - CFAI
 - Challenger, Gray, & Christmas
 - CityJobs
+- City of Toronto (http://www.toronto.ca/employment/)
 - CJOL
 - Community Centre Job Bank
 - ConnectMoms
@@ -58,14 +59,17 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Craigslist
 - creditjob.com
 - CREW.org
+- Cultural Careers Council Ontario (workinculture.ca)
 - DBM Jobscout
 - Developpeur.ca
 - Dice
 - Econ Jobs
 - eFinancial Careers
 - Eluta.ca
+- Eluta.ca
 - Emploi informatique
 - Emploi Québec
+- Facebook
 - FAZ
 - FIASI
 - Financial Times
@@ -74,6 +78,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Frankfurter Allgemeine Zeitun
 - GAAPJobs.com
 - Global Association Risk Professionals
+- GoodWork Canada (http://www.goodworkcanada.ca/)
 - Google
 - Government of Canada - Job Bank
 - HigherBracket.ca
@@ -86,6 +91,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - ISARTA
 - Japan Times
 - Japan Times Job
+- Jeff Gaulin (jeffgaulin.com)
 - jobbank.gc.ca
 - Jobboom
 - Job Finance
@@ -110,9 +116,11 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - LesPACS
 - LinkedIn
 - magny.org
+- Masthead (http://www.mastheadonline.com/jobs/)
 - Maths-fi
 - maxhire.net
 - MBA Focus
+- Media Job Search (http://www.mediajobsearchcanada.com/)
 - Meetingjobs.com
 - Monster (monster.ca, etc.)
 - MonsterTrak
@@ -142,6 +150,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - seek.com.au
 - SelectLeader.com
 - Selectleaders
+- Service Canada Job Bank (www.jobbank.gc.ca)
 - silkroad.com
 - Simply Hired
 - Society for Human Resources Managers
@@ -161,6 +170,8 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - TheLadders
 - The Professional Risk Manager
 - The Sydney Morning Herald
+- TorontoJobCentre.com
+- TorontoJobs.ca
 - Twitter
 - Vault.com
 - Vedemosti
