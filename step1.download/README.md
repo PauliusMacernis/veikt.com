@@ -69,6 +69,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Eluta.ca
 - Emploi informatique
 - Emploi Québec
+- Experisjobs.us
 - Facebook
 - FAZ
 - FIASI
@@ -168,6 +169,7 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - The Ayers Group
 - The Guardian
 - TheLadders
+- The Muse (https://www.themuse.com/jobs)
 - The Professional Risk Manager
 - The Sydney Morning Herald
 - TorontoJobCentre.com
