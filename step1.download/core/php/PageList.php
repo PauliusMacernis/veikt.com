@@ -3,7 +3,8 @@
 class PageList
 {
 
-    const firstPageListUrl = 'http://www.cvbankas.lt/darbo-skelbimai?page=1';
+    // const firstPageListUrl = 'http://www.cvbankas.lt/darbo-skelbimai?page=1';
+    const firstPageListUrl = 'http://www.cvbankas.lt/?page=1';
 
     private $contentManager = null;
     private $jobs = array();
