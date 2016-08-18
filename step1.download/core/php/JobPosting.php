@@ -1,7 +1,8 @@
 <?php
 
 abstract class JobPosting
-{                 // aka. http://schema.org/JobPosting
+{
+    // aka. http://schema.org/JobPosting
     private $baseSalary = null;             // Number  or PriceSpecification 	The base salary of the job or of an employee in an EmployeeRole.
     private $benefits = null;               // Text 	Description of benefits associated with the job.
     private $datePosted = null;             // Date 	Publication date for the job posting.

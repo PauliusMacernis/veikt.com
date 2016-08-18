@@ -1,33 +1,20 @@
 <?php
 
-class Job extends JobPosting
+class Job extends JobPostingStep1Download
 {
-
-    public $id = null;
-    public $html = null;
-    public $statistics = null;
-
 
     public function __construct($url, ContentManager $ContentManager)
     {
         $this->set('url', trim($url));
         $idArray = explode('/', (string)$this->get('url'));
-        $this->set('id', end($idArray));
+        $this->set('idInSourceSystem', end($idArray));
 
         $this->getUrlContent($ContentManager);
         $this->saveToFile($ContentManager);
 
     }
 
-    public function set($property, $value)
-    {
-        $this->$property = $value;
-    }
 
-    public function get($property)
-    {
-        return $this->$property;
-    }
 
     protected function getUrlContent(ContentManager $ContentManager)
     {
@@ -44,7 +31,7 @@ class Job extends JobPosting
     protected function saveToFile(ContentManager $ContentManager)
     {
 
-        $ContentManager->saveToFile($this->get('id'), get_object_vars($this));
+        $ContentManager->saveToFile($this->get('idInSourceSystem'), get_object_vars($this));
 
     }
 
