@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <table clas="table table-striped">
+        <thead>
+            <tr>
+                <th>Step1.Id</th>
+                <th>Step1.Html</th>
+                <th>Step1.Statistics</th>
+                <th>Step1.Project</th>
+                <th>Step1.Url</th>
+                <th>Last Updated<br />(not true)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td>
+                        <a href="{{ path('job_show', {
+                            'id' : job.id
+                        }) }}">
+                            {{ job.id }}
+                        </a>
+                    </td>
+                    <td><div style="overflow: auto; width: 250px; height: 150px;">{{ job.step1_html }}</div></td>
+                    <td><div style="overflow: auto; width: 250px; height: 150px;">{{ job.step1_statistics|raw }}</div></td>
+                    <td>{{ job.step1_project }}</td>
+                    <td><a href="{{ job.step1_url }}" target="_blank"> {{ job.step1_url }} </a></td>
+                    <td>
+                        {{ job.step1UpdatedAt|date('Y-m-d') }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

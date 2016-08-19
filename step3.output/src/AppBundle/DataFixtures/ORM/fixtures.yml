@@ -1,0 +1,8 @@
+AppBundle\Entity\Job:
+    job_{1..10}:
+        step1_id: <name()>
+        step1_html: <step1_html()>
+        step1_statistics: <text(200)>
+        step1_project: <text(18)>
+        step1_url: <url()>
+        isPublished: <boolean(75)>

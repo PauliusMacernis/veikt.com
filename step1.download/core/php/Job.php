@@ -3,13 +3,24 @@
 class Job extends JobPostingStep1Download
 {
 
-    public function __construct($url, ContentManager $ContentManager)
+    /**
+     * Job constructor.
+     * @param string $url
+     * @param ContentManager $ContentManager
+     * @param string $project
+     */
+    public function __construct($url, ContentManager $ContentManager, $project)
     {
+        $this->set('project', $project);
+
         $this->set('url', trim($url));
         $idArray = explode('/', (string)$this->get('url'));
-        $this->set('idInSourceSystem', end($idArray));
+        $this->set('id', end($idArray));
 
+        // Also sets $this->html and $this->statistics properties
         $this->getUrlContent($ContentManager);
+
+        // Save object ($this) vars to file. Each property as separate file.
         $this->saveToFile($ContentManager);
 
     }
@@ -31,7 +42,7 @@ class Job extends JobPostingStep1Download
     protected function saveToFile(ContentManager $ContentManager)
     {
 
-        $ContentManager->saveToFile($this->get('idInSourceSystem'), get_object_vars($this));
+        $ContentManager->saveToFile($this->get('id'), get_object_vars($this));
 
     }
 

@@ -6,21 +6,22 @@ class PageList
     // const firstPageListUrl = 'http://www.cvbankas.lt/darbo-skelbimai?page=1';
     const firstPageListUrl = 'http://www.cvbankas.lt/?page=1';
 
+    private $project = null;
     private $contentManager = null;
-    private $jobs = array();
-    private $content = null;
     private $url = null;
+    private $content = null;
+    private $jobs = array();
 
-
-    public function __construct($url = null, ContentManager $contentManager)
+    public function __construct($url = null, ContentManager $contentManager, $project)
     {
 
         if (!$url) {
             return;
         }
 
-        $this->set('url', $url);
+        $this->set('project', $project);
         $this->set('contentManager', $contentManager);
+        $this->set('url', $url);
         $this->set('content', $this->getUrlContent($url));
         $this->set('jobs', $this->extractJobs($this->get('content')));
 
@@ -53,7 +54,11 @@ class PageList
         foreach ($EntirePageArticles as $Article) {
             $Links = $Article->getElementsByTagName('a');
 
-            $Job = new Job(trim($Links->item(0)->getAttribute('href')), $this->get('contentManager'));
+            $Job = new Job(
+                trim($Links->item(0)->getAttribute('href')),
+                $this->get('contentManager'),
+                $this->get('project')
+            );
 
             $jobs[$Job->get('url')] = $Job;
         }

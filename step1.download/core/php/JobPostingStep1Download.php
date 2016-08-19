@@ -9,14 +9,20 @@
  */
 class JobPostingStep1Download extends JobPosting {
 
+    // project name (aka. source system, project's directory name, etc.) For example: "cvbankas.lt"
+    public $project = null;
+
     // unique id of any kind in the source system
-    public $idInSourceSystem = null;
+    public $id = null;
 
     // the content of the job ad in html format
     public $html = null;
 
     // statistics in html format
     public $statistics = null;
+
+    // url
+    protected $url = null;
 
 
 
