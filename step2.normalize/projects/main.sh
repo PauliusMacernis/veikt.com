@@ -2,7 +2,7 @@
 
 # Run entrance.sh scripts of ./projects/{project_name} subdirectories
 
-echo -e "\n STEP1.DOWNLOAD: Started: $(date +%Y-%m-%d:%H:%M:%S)"
+echo -e "\n STEP2.NORMALIZE: Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
 for D in $(find ./projects/* -maxdepth 0 -mindepth 0 -type d); do
     if [ -d "${D}" ]; then
@@ -16,4 +16,4 @@ for D in $(find ./projects/* -maxdepth 0 -mindepth 0 -type d); do
     fi
 done
 
-echo -e "\n STEP1.DOWNLOAD: Finished: $(date +%Y-%m-%d:%H:%M:%S)"
+echo -e "\n STEP2.NORMALIZE: Finished: $(date +%Y-%m-%d:%H:%M:%S)"

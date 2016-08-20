@@ -3,6 +3,8 @@
 # Get dir of this script
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+echo -e "\n STEP1.DOWNLOAD: Started: $(date +%Y-%m-%d:%H:%M:%S): $DIR"
+
 # The php file this script should run
 INDEX_FILE_PHP="index.php"
 
@@ -18,3 +20,5 @@ then
 else
    php -f "$DIR/$INDEX_FILE_PHP"
 fi
+
+echo -e "\n STEP1.DOWNLOAD: Finished: $(date +%Y-%m-%d:%H:%M:%S): $DIR"
