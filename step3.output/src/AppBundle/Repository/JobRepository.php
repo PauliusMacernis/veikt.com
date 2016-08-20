@@ -11,13 +11,15 @@ class JobRepository extends EntityRepository
     /**
      * @return Job
      */
-    public function findAllPublishedOrderedByDatePosted()
+    public function findAllPublishedOrderedByDatePosted($offset = 0, $limit = 100)
     {
 
         return $this->createQueryBuilder('job')
             ->andWhere('job.isPublished = :isPublished')
             ->setParameter('isPublished', true)
             ->orderBy('job.datePosted', 'DESC')
+            ->setFirstResult( $offset )
+            ->setMaxResults( $limit )
             ->getQuery()
             ->execute(); // ->getOneOrNullResult()
     }

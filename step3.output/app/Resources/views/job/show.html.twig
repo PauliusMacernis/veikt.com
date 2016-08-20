@@ -3,6 +3,6 @@
 {% block body %}
 <h1>It works. Id: {{ job.id }}</h1>
     <div>
-        {{ job.step1_html }}
+        {{ job.step1_html|raw }}
     </div>
 {% endblock %}
