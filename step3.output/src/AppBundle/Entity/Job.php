@@ -683,7 +683,7 @@ class Job
 
 
     public function getStep1UpdatedAt() {
-        return new \DateTime('-' . rand(0, 100) . ' days');
+        return new \DateTime('-' . rand(0, 24) . ' hours');
     }
 
 

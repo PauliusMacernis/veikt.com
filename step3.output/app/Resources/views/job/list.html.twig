@@ -66,6 +66,9 @@
     <table>
         <tr>
             <th>
+                #
+            </th>
+            <th>
                 Step1.Id
             </th>
             <th>
@@ -87,6 +90,10 @@
 
         {% for job in jobs %}
             <tr>
+                <td>
+                    {% set offset = offset + 1 %}
+                    {{ offset }}.
+                </td>
                 <td>
                     <a href="{{ path('job_show', {
                         'id' : job.id

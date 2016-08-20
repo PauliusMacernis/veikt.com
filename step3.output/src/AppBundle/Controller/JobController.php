@@ -32,15 +32,16 @@ class JobController extends Controller
     }
 
     /**
-     * @Route("/job")
+     * @Route("/job/list/{offset}/{limit}")
      */
-    public function listAction() {
+    public function listAction($offset= 0, $limit = 100) {
         $em = $this->getDoctrine()->getManager();
         $jobs = $em->getRepository('AppBundle:Job')
-            ->findAllPublishedOrderedByDatePosted();
+            ->findAllPublishedOrderedByDatePosted($offset, $limit);
 
         return $this->render('job/list.html.twig', [
-            'jobs' => $jobs
+            'jobs' => $jobs,
+            'offset' => $offset
         ]);
 
     }
