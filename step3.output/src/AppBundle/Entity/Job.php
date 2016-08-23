@@ -154,7 +154,7 @@ class Job
     /**
      * @ORM\Column(type="boolean", options={"default" : true, "unsigned"=true})
      */
-    private $isPublished;
+    private $isPublished = true; //@todo: Is it default for insert query only? Not for column itself?
 
 
     /**

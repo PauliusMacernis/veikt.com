@@ -6,3 +6,10 @@ AppBundle\Entity\Job:
         step1_project: <text(18)>
         step1_url: <url()>
         isPublished: <boolean(75)>
+
+AppBundle\Entity\JobNote:
+    job.note_{0..100}:
+        username: <userName()>
+        userAvatarFilename: '50%? leanna.jpeg : ryan.jpeg'
+        note: <paragraph()>
+        createdAt: <dateTimeBetween('-6 months', 'now')>

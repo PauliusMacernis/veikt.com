@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Job;
+use AppBundle\Entity\JobNote;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,12 +21,23 @@ class JobController extends Controller
      */
     public function newAction() {
         $job = new Job();
-        $job->setStep1Html('Test' . rand(1,100));
         $job->setStep1Id('S' . rand(1,100000));
+        $job->setStep1Html('Html' . rand(1,100));
         $job->setStep1Statistics('Stats' . rand(1,100000));
+        $job->setStep1Project('Project' . rand(1,100000));
+        $job->setStep1Url('http://' . rand(1,100000) . '.com/');
+        //$job->setIsPublished(1); // commented, because default is set on the property of the entity class
+
+        $jobNote = new JobNote();
+        $jobNote->setUsername('PMm');
+        $jobNote->setUserAvatarFilename('ryan.jpeg');
+        $jobNote->setNote('Just the string for testing.');
+        $jobNote->setCreatedAt(new \DateTime('-1 month'));
+        $jobNote->setJob($job);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($job);
+        $em->persist($jobNote);
         $em->flush();
 
         return new Response('<html><body>Job created!</body></html>');
