@@ -17,7 +17,7 @@ class JobRepository extends EntityRepository
         return $this->createQueryBuilder('job')
             ->andWhere('job.isPublished = :isPublished')
             ->setParameter('isPublished', true)
-            ->orderBy('job.datePosted', 'DESC')
+            ->orderBy('job.step1_downloadedTime', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->getQuery()

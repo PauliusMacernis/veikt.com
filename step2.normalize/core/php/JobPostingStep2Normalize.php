@@ -57,6 +57,26 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
         return; // @todo: run normalization process. Every project may have the own process of nornalization?
     }
 
+    public function step1PostingAlreadyExists(PDO $PDO) {
+        $q = 'SELECT 
+                COUNT(*) as entries 
+            FROM job as j 
+            WHERE 
+              j.step1_id = :step1_id
+              AND j.step1_project = :step1_project
+              AND j.step1_url = :step1_url
+              ';
+
+        $PDOStatement = $PDO->prepare($q);
+        $PDOStatement->bindValue(':step1_id', $this->get('id'));
+        $PDOStatement->bindValue(':step1_project', $this->get('project'));
+        $PDOStatement->bindValue(':step1_url', $this->get('url'));
+        $PDOStatement->execute();
+
+        return (int)$PDOStatement->fetchColumn();
+    }
+
+
     /**
      * Save to DB
      *
@@ -71,6 +91,59 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
             return;
         }
 
+        // Check database if the same step1 id exists
+        if($this->step1PostingAlreadyExists($PDO)) {
+            // Update
+            return $this->saveToDbUpdate($PDO, $columns, $prefix);
+        } else {
+            // Insert
+            return $this->saveToDbInsert($PDO, $columns, $prefix);
+        }
+
+    }
+
+    public function saveToDbUpdate(PDO $PDO, $columns, $prefix) {
+
+        $valuesForSql = array();
+
+        // UPDATE `veikt`.`job` SET `step1_html`='<div>TESTING...</div>' WHERE  `id`=70;
+
+        foreach ($columns as $columnName) {
+            // @todo: Maybe replacing main properties in step1 and step2 would be much better than dealing with this kin of conversions?
+            // Convert $this columns to DB (step1) columns format
+            if (substr($columnName, 0, strlen($prefix)) == $prefix) {
+                $columnNameThis = substr($columnName, strlen($prefix));
+            }
+            // ...
+            $valuesForSql[$columnName] = $this->get($columnNameThis);
+        }
+
+        // Prepare query
+        $q = 'UPDATE `job` SET ';
+        foreach($valuesForSql as $columnName => $columnValue) {
+            $q .= '`' . $columnName . '`=:' . $columnName . ',';
+        }
+        $q = substr($q, 0, -1); // cut last comma
+
+        $PDOStatement = $PDO->prepare($q);
+        foreach($valuesForSql as $columnName => $columnValue) {
+            $PDOStatement->bindValue((':' . $columnName), $columnValue);
+        }
+
+        $PDO->beginTransaction();
+        $PDOStatement->execute();
+        $success = $PDO->commit();
+
+        return $success;
+    }
+
+    /**
+     * @param PDO $PDO
+     * @param $columns
+     * @param $prefix
+     * @return bool
+     */
+    public function saveToDbInsert(PDO $PDO, $columns, $prefix) {
         $valuesForSql = array();
 
         foreach ($columns as $columnName) {
@@ -101,7 +174,6 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
         $success = $PDO->commit();
 
         return $success;
-
     }
 
     public function getPropertiesRestrictedToUpdate() {

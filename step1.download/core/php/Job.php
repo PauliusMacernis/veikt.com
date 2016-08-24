@@ -16,6 +16,7 @@ class Job extends JobPostingStep1Download
         $this->set('url', trim($url));
         $idArray = explode('/', (string)$this->get('url'));
         $this->set('id', end($idArray));
+        $this->set('downloaded_time', date("Y-m-d H:i:s"));
 
         // Also sets $this->html and $this->statistics properties
         $this->getUrlContent($ContentManager);

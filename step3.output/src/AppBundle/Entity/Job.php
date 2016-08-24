@@ -111,37 +111,35 @@ class Job
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $image = null;                // URL  or ImageObject
+    protected $image = null;                        // URL  or ImageObject
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $name = null;                 // Text 	The name of the item.
+    protected $name = null;                         // Text 	The name of the item.
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $potentialAction = null;      // Action 	Indicates a potential Action, which describes an idealized action in which this thing would play an 'object' role.
+    protected $potentialAction = null;              // Action 	Indicates a potential Action, which describes an idealized action in which this thing would play an 'object' role.
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $sameAs = null;               // URL 	URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Freebase page, or official website.
+    protected $sameAs = null;                       // URL 	URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Freebase page, or official website.
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $url = null;                  // URL 	URL of the item.
-
-
+    protected $url = null;                          // URL 	URL of the item.
     /**
      * @ORM\Column(type="text", nullable=false)
      */
-    public $step1_id = null;        // unique id of any kind in the source system
+    public $step1_id = null;                        // Unique id of any kind in the source system
     /**
      * @ORM\Column(type="text", nullable=false)
      */
-    public $step1_html = null;                    // the content of the job ad in html format
+    public $step1_html = null;                      // The content of the job ad in html format
     /**
      * @ORM\Column(type="text", nullable=false)
      */
-    public $step1_statistics = null;
+    public $step1_statistics = null;                // Statistics in html format
     /**
      * @ORM\Column(type="string", nullable=false)
      */
@@ -149,12 +147,19 @@ class Job
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-
     public $step1_url = null;
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    public $step1_downloadedTime = null;
     /**
      * @ORM\Column(type="boolean", options={"default" : true, "unsigned"=true})
      */
-    private $isPublished = true; //@todo: Is it default for insert query only? Not for column itself?
+    private $isPublished = true;                    //@todo: Is it default for insert query only? Not for column itself?
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $htmlUpdatedTime = null;
 
 
     /**
@@ -163,7 +168,7 @@ class Job
     public function getId()
     {
         return $this->id;
-    }              // statistics in html format
+    }
 
     /**
      * @return mixed
@@ -680,6 +685,33 @@ class Job
     {
         $this->step1_url = $step1_url;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStep1DownloadedTime()
+    {
+        return $this->step1_downloadedTime;
+    }
+
+    /**
+     * @param mixed $step1_downloadedTime
+     */
+    public function setStep1DownloadedTime($step1_downloadedTime)
+    {
+        $this->step1_downloadedTime = $step1_downloadedTime;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHtmlUpdatedTime()
+    {
+        return $this->htmlUpdatedTime;
+    }
+
+
+
 
 
     public function getStep1UpdatedAt() {

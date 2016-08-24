@@ -24,6 +24,9 @@ class JobPostingStep1Download extends JobPosting {
     // url
     protected $url = null;
 
+    // What was the job ad downloaded?
+    protected $downloaded_time = null;
+
 
 
     public function set($property, $value)

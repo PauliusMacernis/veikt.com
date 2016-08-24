@@ -84,7 +84,7 @@
                 Step1.Url
             </th>
             <th>
-                Last Updated<br />(not true)
+                Step1.DownloadedTime<br />(GMT+0)
             </th>
         </tr>
 
@@ -114,7 +114,7 @@
                     <a href="{{ job.step1_url }}" target="_blank"> {{ job.step1_url }} </a>
                 </td>
                 <td>
-                    {{ job.step1UpdatedAt|date('Y-m-d') }}
+                    {{ job.step1_downloadedTime|date('Y-m-d H:i:s') }}
                 </td>
             </tr>
         {% endfor %}
