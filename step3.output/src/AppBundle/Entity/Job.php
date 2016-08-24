@@ -156,10 +156,6 @@ class Job
      * @ORM\Column(type="boolean", options={"default" : true, "unsigned"=true})
      */
     private $isPublished = true;                    //@todo: Is it default for insert query only? Not for column itself?
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $htmlUpdatedTime = null;
 
 
     /**
@@ -701,16 +697,6 @@ class Job
     {
         $this->step1_downloadedTime = $step1_downloadedTime;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getHtmlUpdatedTime()
-    {
-        return $this->htmlUpdatedTime;
-    }
-
-
 
 
 
