@@ -40,7 +40,8 @@ class JobNote
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="Job")
+     * @ORM\ManyToOne(targetEntity="Job", inversedBy="notes")
+     * @ORM\JoinColumn(nullable=false, onDelete="restrict")
      */
     private $job;
 
@@ -55,7 +56,7 @@ class JobNote
     /**
      * @param mixed $job
      */
-    public function setJob(Job$job)
+    public function setJob(Job $job)
     {
         $this->job = $job;
     }

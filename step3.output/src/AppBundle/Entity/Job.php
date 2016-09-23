@@ -8,7 +8,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\JobNote;
 
 // aka. http://schema.org/JobPosting
 
@@ -156,7 +158,17 @@ class Job
      * @ORM\Column(type="boolean", options={"default" : true, "unsigned"=true})
      */
     private $isPublished = true;                    //@todo: Is it default for insert query only? Not for column itself?
+    /**
+     * @ORM\OneToMany(targetEntity="JobNote", mappedBy="job")
+     * @ORM\OrderBy({"createdAt"="DESC"})
+     */
+    private $notes;
 
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -704,6 +716,12 @@ class Job
         return new \DateTime('-' . rand(0, 24) . ' hours');
     }
 
-
+    /**
+     * @return ArrayCollection|JobNote[]
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
 
 }

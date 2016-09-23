@@ -5,6 +5,7 @@ AppBundle\Entity\Job:
         step1_statistics: <text(200)>
         step1_project: <text(18)>
         step1_url: <url()>
+        step1_downloadedTime: <dateTimeBetween('-6 months', 'now')>
         isPublished: <boolean(75)>
 
 AppBundle\Entity\JobNote:
@@ -13,3 +14,4 @@ AppBundle\Entity\JobNote:
         userAvatarFilename: '50%? leanna.jpeg : ryan.jpeg'
         note: <paragraph()>
         createdAt: <dateTimeBetween('-6 months', 'now')>
+        job: '@job_*'

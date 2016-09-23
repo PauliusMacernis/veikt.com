@@ -24,4 +24,23 @@ class JobRepository extends EntityRepository
             ->execute(); // ->getOneOrNullResult()
     }
 
+    /**
+     * @return Job
+     */
+    public function findAllPublishedOrderedByRecentlyActive($offset, $limit)
+    {
+
+        return $this->createQueryBuilder('job')
+            ->andWhere('job.isPublished = :isPublished')
+            ->setParameter('isPublished', true)
+            ->leftJoin('job.notes', 'job_note')
+            ->orderBy('job.step1_downloadedTime', 'DESC')
+            ->orderBy('job_note.createdAt', 'DESC')
+
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->execute(); // ->getOneOrNullResult()
+    }
+
 }

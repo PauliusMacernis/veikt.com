@@ -10,12 +10,16 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Job;
 use AppBundle\Entity\JobNote;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class JobController extends Controller
 {
+
+
     /**
      * @Route("/job/new")
      */
@@ -26,6 +30,7 @@ class JobController extends Controller
         $job->setStep1Statistics('Stats' . rand(1,100000));
         $job->setStep1Project('Project' . rand(1,100000));
         $job->setStep1Url('http://' . rand(1,100000) . '.com/');
+        $job->setStep1DownloadedTime(new \DateTime('-1 month'));
         //$job->setIsPublished(1); // commented, because default is set on the property of the entity class
 
         $jobNote = new JobNote();
@@ -43,13 +48,15 @@ class JobController extends Controller
         return new Response('<html><body>Job created!</body></html>');
     }
 
+
+
     /**
      * @Route("/job/list/{offset}/{limit}")
      */
     public function listAction($offset= 0, $limit = 100) {
         $em = $this->getDoctrine()->getManager();
         $jobs = $em->getRepository('AppBundle:Job')
-            ->findAllPublishedOrderedByDatePosted($offset, $limit);
+            ->findAllPublishedOrderedByRecentlyActive($offset, $limit);
 
         return $this->render('job/list.html.twig', [
             'jobs' => $jobs,
@@ -57,6 +64,36 @@ class JobController extends Controller
         ]);
 
     }
+
+    /**
+     * @Route("/job/{id}/notes", name="job_show_notes")
+     * @Method("GET")
+     */
+    public function getNotesAction(Job $job)
+    {
+        //dump($job);
+
+        // To remember: "git grep job_show_notes"
+        // END. To remember
+
+        $notes = [];
+        foreach($job->getNotes() as $note) {
+            $notes[] = [
+                'id' => $note->getId(),
+                'username' => $note->getUsername(),
+                'avatarUri' => '/images/' . $note->getUserAvatarFilename(),
+                'note' => $note->getNote(),
+                'date' => $note->getCreatedAt()->format("Y-m-d")
+            ];
+        }
+
+        $data = [
+            'notes' => $notes
+        ];
+
+        return new JsonResponse($data);
+    }
+
 
     /**
      * @Route("/job/{id}", name="job_show")
@@ -78,9 +115,21 @@ class JobController extends Controller
 //        ]);
 //        return new Response($html);
 
+//        $recentNotes = $job->getNotes()
+//            ->filter(function(JobNote $note) {
+//                return $note->getCreatedAt() > new \DateTime('-3 months');
+//            });
+        $recentNotes = $em->getRepository('AppBundle:JobNote')
+            ->findAllRecentNotesForJob($job);
+
         return $this->render('job/show.html.twig', [
-            'job' => $job
+            'job' => $job,
+            'recentNoteCount' => count($recentNotes)
         ]);
 
     }
+
+
+
+
 }

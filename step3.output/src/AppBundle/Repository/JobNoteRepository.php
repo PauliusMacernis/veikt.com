@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Job;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,4 +13,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class JobNoteRepository extends EntityRepository
 {
+    public function findAllRecentNotesForJob(Job $job) {
+        return $this->createQueryBuilder('job_note')
+            ->andWhere('job_note.job = :job')
+            ->setParameter('job', $job)
+            ->andWhere('job_note.createdAt > :recentDate')
+            ->setParameter('recentDate', new \DateTime('-3 months'))
+            ->getQuery()
+            ->execute();
+    }
 }
