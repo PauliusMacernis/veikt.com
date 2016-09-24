@@ -36,3 +36,6 @@ monolog:
 # Twig Configuration
 twig:
     cache: false
+
+parameters:
+    cache_type: array

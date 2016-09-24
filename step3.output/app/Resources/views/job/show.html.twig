@@ -33,6 +33,9 @@
 
     <dl class="job-details-list">
 
+        <dt>Project:</dt>
+        <dd>{{ job.subfamily.name }}</dd>
+
         <dt>Name:</dt>
         <dd>{{ job.name }}</dd>
 
@@ -40,7 +43,7 @@
         <dd>{{ job.title }}</dd>
 
         <dt>Description:</dt>
-        <dd>{{ jobDescription|raw }}</dd>
+        <dd>{{ job.description|markdownify }}</dd>
 
         <dt>Job content, RAW:</dt>
         <dd class="job-content">

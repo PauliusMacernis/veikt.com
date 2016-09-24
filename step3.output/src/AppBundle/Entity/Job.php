@@ -26,6 +26,13 @@ class Job
      * @ORM\Column(type="integer", options={"unsigned"=true})
      */
     private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SubFamily")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $subFamily;
+
     /**
      * @ORM\Column(type="decimal", precision=19, scale=4, nullable=true)
      */
@@ -722,6 +729,14 @@ class Job
     public function getNotes()
     {
         return $this->notes;
+    }
+
+    /**
+     * @return ArrayCollection|SubFamily[]
+     */
+    public function getSubFamily()
+    {
+        return $this->subFamily;
     }
 
 }

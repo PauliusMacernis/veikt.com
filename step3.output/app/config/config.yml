@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    cache_type: file_system
 
 framework:
     #esi:             ~
@@ -36,6 +37,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    number_format:
+            thousands_separator: ","
 
 # Doctrine Configuration
 doctrine:
@@ -73,4 +76,6 @@ swiftmailer:
 doctrine_cache:
     providers:
         my_markdown_cache:
-            type: file_system
+            type: %cache_type%
+            #      file_system:
+            #          directory: "%kernel.cache_dir%/markdown_cache"

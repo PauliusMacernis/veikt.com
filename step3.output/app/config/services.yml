@@ -11,6 +11,8 @@ services:
     app.markdown_extension:
         class: AppBundle\Twig\MarkdownExtension
         tags:
+            # Google for "symfony dependency injetion tags"
             - { name: twig.extension }
         #arguments: ['@app.markdown_transformer']
+        # Reads class' __construct for arguments, injects dependencies automatically so no need for manual injection with "arguments [...]"
         autowire: true

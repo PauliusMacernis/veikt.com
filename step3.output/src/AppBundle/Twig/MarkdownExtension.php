@@ -17,7 +17,7 @@ class MarkdownExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter('markdownify', array($this, 'parseMarkdown'), [
-                'is_safe' => ['html']
+                'is_safe' => ['html']  // alternative to twig's "|raw"
             ])
         ];
     }

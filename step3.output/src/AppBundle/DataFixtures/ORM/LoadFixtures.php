@@ -30,6 +30,21 @@ class LoadFixtures implements FixtureInterface
 
     }
 
+    public function description()
+    {
+        $faker = FakerFactory::create();
+        $text = $faker->sentence(6, true);
+
+        $randBoldMarkdownStart = rand(0, strlen($text)-2);
+        $randBoldMarkdownEnd = rand($randBoldMarkdownStart, strlen($text));
+
+        $text = substr_replace($text, '**', $randBoldMarkdownStart, 0);
+        $text = substr_replace($text, '**', $randBoldMarkdownEnd, 0);
+
+        return $text;
+
+    }
+
     public function step1_html()
     {
         $faker = FakerFactory::create();

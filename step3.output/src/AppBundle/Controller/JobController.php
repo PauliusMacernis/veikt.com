@@ -26,6 +26,7 @@ class JobController extends Controller
      */
     public function newAction() {
         $job = new Job();
+        $job->setSubFamily('project.example.com');
         $job->setStep1Id('S' . rand(1,100000));
         $job->setStep1Html('Html' . rand(1,100));
         $job->setStep1Statistics('Stats' . rand(1,100000));
@@ -110,9 +111,7 @@ class JobController extends Controller
             throw $this->createNotFoundException('No job found');
         }
 
-        $transformer = new MarkdownTransformer(
-            $this->container->get('markdown.parser')
-        );
+        $transformer = $this->get('app.markdown_transformer');
         $jobDescription = $transformer->parse($job->getDescription());
 
 //        $templating = $this->container->get('templating');
