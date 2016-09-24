@@ -10,6 +10,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Job;
 use AppBundle\Entity\JobNote;
+use AppBundle\Service\MarkdownTransformer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -109,6 +110,11 @@ class JobController extends Controller
             throw $this->createNotFoundException('No job found');
         }
 
+        $transformer = new MarkdownTransformer(
+            $this->container->get('markdown.parser')
+        );
+        $jobDescription = $transformer->parse($job->getDescription());
+
 //        $templating = $this->container->get('templating');
 //        $html = $templating->render('job/show.html.twig', [
 //            'jobId' => $jobId
@@ -124,7 +130,8 @@ class JobController extends Controller
 
         return $this->render('job/show.html.twig', [
             'job' => $job,
-            'recentNoteCount' => count($recentNotes)
+            'recentNoteCount' => count($recentNotes),
+            'jobDescription' => $jobDescription,
         ]);
 
     }

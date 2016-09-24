@@ -1,12 +1,77 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>It works. Id: {{ job.id }}</h1>
-    <div>
-        {{ job.step1_html|raw }}
-    </div>
-    <a href="{{ path('job_show_notes', {'id': job.id}) }}">Notes (<abbr title="In last 3 months">Recently</abbr>: {{ recentNoteCount }})</a>
-    <div id="js-notes-wrapper"></div>
+    <style>
+        h2.notes-header {
+            display: none;
+        }
+        .cd-timeline-block {
+            padding: 10px 0;
+            border-bottom: 1px dashed #222222;
+            font-size: small;
+        }
+        .cd-timeline-block a {
+            font-size: small;
+            text-decoration: none;
+            color: #222222;
+        }
+        dt {
+            font-weight: bold;
+            padding-top: 8px;
+        }
+        dd.notes {
+            border: dashed 1px #222222;
+            padding: 5px;
+        }
+        dd.job-content {
+            border: dashed 2px #222222;
+            padding: 10px;
+        }
+    </style>
+
+    <h1>Job #{{ job.id }}</h1>
+
+    <dl class="job-details-list">
+
+        <dt>Name:</dt>
+        <dd>{{ job.name }}</dd>
+
+        <dt>Title:</dt>
+        <dd>{{ job.title }}</dd>
+
+        <dt>Description:</dt>
+        <dd>{{ jobDescription|raw }}</dd>
+
+        <dt>Job content, RAW:</dt>
+        <dd class="job-content">
+            <div>
+                {{ job.step1_html|raw }}
+            </div>
+        </dd>
+
+        <dt title="Noted in last 3 months">
+            Recent notes:
+        </dt>
+        <dd title="Noted in last 3 months">
+            {{ recentNoteCount }}
+        </dd>
+
+        <dt title="Noted in last 3 months">
+            Notes:
+        </dt>
+        <dd class="notes">
+            <div id="js-notes-wrapper"></div>
+        </dd>
+
+        <dt title="Noted in last 3 months">
+            Notes via API:
+        </dt>
+        <dd>
+            <a href="{{ path('job_show_notes', {'id': job.id}) }}">JSON</a>
+        </dd>
+
+    </dl>
+
 {% endblock %}
 
 {% block javascripts %}
