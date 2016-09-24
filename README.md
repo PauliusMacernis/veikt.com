@@ -23,6 +23,14 @@ For those who wish to contribute there is a dev box. This have to make you invol
 https://github.com/sugalvojau/veikt.dev
 ```
 
+Some commands to remember (useful for step3 development):
+`bin/console doctrine:database:drop --force`
+`bin/console doctrine:database:create`
+`bin/console doctrine:migration:diff`
+`bin/console doctrine:migration:migrate`
+`bin/console doctrine:fixtures:load`
+
+
 ```
 Feel free to contact if any questions arise.
 ```
