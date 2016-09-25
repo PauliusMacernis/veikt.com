@@ -46,7 +46,9 @@
             'label': 'Project name (normalized)'
         }) }}
 
-        {{ form_row(jobForm.name) }}
+        {{ form_row(jobForm.name, {
+            'label': 'Job name (normalized)'
+        }) }}
         {{ form_row(jobForm.description) }}
         {{ form_row(jobForm.isPublished) }}
         {{ form_row(jobForm.datePosted) }}

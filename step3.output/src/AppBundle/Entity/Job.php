@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\JobNote;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // aka. http://schema.org/JobPosting
 
@@ -28,6 +29,7 @@ class Job
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SubFamily")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -138,26 +140,32 @@ class Job
      */
     protected $url = null;                          // URL 	URL of the item.
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="text", nullable=false)
      */
     public $step1_id = null;                        // Unique id of any kind in the source system
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="text", nullable=false)
      */
     public $step1_html = null;                      // The content of the job ad in html format
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="text", nullable=false)
      */
     public $step1_statistics = null;                // Statistics in html format
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", nullable=false)
      */
     public $step1_project = null;
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", nullable=false)
      */
     public $step1_url = null;
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $step1_downloadedTime = null;
