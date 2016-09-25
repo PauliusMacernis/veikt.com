@@ -10,11 +10,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Job;
 use AppBundle\Entity\JobNote;
+use AppBundle\Form\JobSearchFormType;
+use AppBundle\Form\JobSearchFormTypeData;
 use AppBundle\Service\MarkdownTransformer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class JobController extends Controller
@@ -55,14 +58,24 @@ class JobController extends Controller
     /**
      * @Route("/job/list/{offset}/{limit}")
      */
-    public function listAction($offset= 0, $limit = 100) {
+    public function listAction(Request $request, $offset= 0, $limit = 100) {
+
+        $form = $this->createForm(JobSearchFormType::class);
+        $form->handleRequest($request);
+
+        $data = $form->getData();
+        if(empty($data)) {
+            $data = new JobSearchFormTypeData();
+        }
+
         $em = $this->getDoctrine()->getManager();
         $jobs = $em->getRepository('AppBundle:Job')
-            ->findAllPublishedOrderedByRecentlyActive($offset, $limit);
+            ->findAllPublishedOrderedByRecentlyActive($data, $offset, $limit);
 
         return $this->render('job/list.html.twig', [
             'jobs' => $jobs,
-            'offset' => $offset
+            'offset' => $offset,
+            'jobSearchForm' => $form->createView(),
         ]);
 
     }
