@@ -39,9 +39,24 @@
 
     {{ form_start(jobForm) }}
 
-        {{ form_widget(jobForm) }}
+        {{ form_row(jobForm.step1_project, {
+            'label': 'Project name (original)'
+        }) }}
+        {{ form_row(jobForm.subFamily, {
+            'label': 'Project name (normalized)'
+        }) }}
 
-        <button type="submit" class="btn btn-primary">Save</button>
+        {{ form_row(jobForm.name) }}
+        {{ form_row(jobForm.description) }}
+        {{ form_row(jobForm.isPublished) }}
+        {{ form_row(jobForm.datePosted) }}
+        {{ form_row(jobForm.step1_id) }}
+        {{ form_row(jobForm.step1_statistics) }}
+        {{ form_row(jobForm.step1_downloadedTime) }}
+        {{ form_row(jobForm.step1_html) }}
+        {{ form_row(jobForm.step1_url) }}
+
+        <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
     {{ form_end(jobForm) }}
 
 {% endblock %}
