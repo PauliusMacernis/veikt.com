@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Job;
 use AppBundle\Form\JobFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -54,6 +55,32 @@ class JobAdminController extends Controller
         }
 
         return $this->render('admin/job/new.html.twig', [
+            'jobForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/job/{id}/edit", name="admin_job_edit")
+     */
+    public function editAction(Request $request, Job $job)
+    {
+        $form = $this->createForm(JobFormType::class, $job);
+
+        // only handles data on POST
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $job = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($job);
+            $em->flush();
+
+            $this->addFlash('success', 'Job updated - you are amazing!');
+
+            return $this->redirectToRoute('admin_job_list');
+        }
+
+        return $this->render('admin/job/edit.html.twig', [
             'jobForm' => $form->createView(),
         ]);
     }
