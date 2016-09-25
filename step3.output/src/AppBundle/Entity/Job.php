@@ -739,4 +739,14 @@ class Job
         return $this->subFamily;
     }
 
+    /**
+     * @param mixed $subFamily
+     */
+    public function setSubFamily($subFamily)
+    {
+        $this->subFamily = $subFamily;
+    }
+
+
+
 }

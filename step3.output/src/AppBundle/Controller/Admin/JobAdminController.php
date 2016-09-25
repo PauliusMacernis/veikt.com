@@ -8,8 +8,10 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Form\JobFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/admin")
@@ -33,8 +35,26 @@ class JobAdminController extends Controller
     /**
      * @Route("/job/new", name="admin_job_new")
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
-        // let's go to work!
+        $form = $this->createForm(JobFormType::class);
+
+        // only handles data on POST
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $job = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($job);
+            $em->flush();
+
+            $this->addFlash('success', 'Job created - you are amazing!');
+
+            return $this->redirectToRoute('admin_job_list');
+        }
+
+        return $this->render('admin/job/new.html.twig', [
+            'jobForm' => $form->createView(),
+        ]);
     }
 }
