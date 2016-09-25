@@ -1,32 +1,4 @@
-{% extends 'base.html.twig' %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap-datepicker-1.6.1/css/bootstrap-datepicker3.min.css') }}">
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <script src="{{ asset('vendor/bootstrap-datepicker-1.6.1/js/bootstrap-datepicker.min.js') }}"></script>
-
-    <script>
-        jQuery( document ).ready(function() {
-            $(".js-datepicker [name='job_form[datePosted][date]']").datepicker({
-                format: 'yyyy-mm-dd',
-                weekStart: 1,
-                autoclose: true,
-                todayHighlight: true
-            });
-            $(".js-datepicker [name='job_form[step1_downloadedTime][date]']").datepicker({
-                format: 'yyyy-mm-dd',
-                weekStart: 1,
-                autoclose: true,
-                todayHighlight: true
-            });
-        });
-    </script>
-{% endblock %}
+{% extends('admin/job/formLayout.html.twig') %}
 
 {% block body %}
     <div class="container">
@@ -37,28 +9,8 @@
         </div>
     </div>
 
-    {{ form_start(jobForm) }}
-
-        {{ form_row(jobForm.step1_project, {
-            'label': 'Project name (original)'
-        }) }}
-        {{ form_row(jobForm.subFamily, {
-            'label': 'Project name (normalized)'
-        }) }}
-
-        {{ form_row(jobForm.name, {
-            'label': 'Job name (normalized)'
-        }) }}
-        {{ form_row(jobForm.description) }}
-        {{ form_row(jobForm.isPublished) }}
-        {{ form_row(jobForm.datePosted) }}
-        {{ form_row(jobForm.step1_id) }}
-        {{ form_row(jobForm.step1_statistics) }}
-        {{ form_row(jobForm.step1_downloadedTime) }}
-        {{ form_row(jobForm.step1_html) }}
-        {{ form_row(jobForm.step1_url) }}
-
-        <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
-    {{ form_end(jobForm) }}
+    {{ include('admin/job/_form.html.twig', {
+        'buttonText': 'Create'
+    }) }}
 
 {% endblock %}
