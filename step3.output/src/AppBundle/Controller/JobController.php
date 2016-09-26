@@ -56,9 +56,9 @@ class JobController extends Controller
 
 
     /**
-     * @Route("/job/list/{page}", name="list_jobs")
+     * @Route("/job/list/{page}/{limit}", name="list_jobs")
      */
-    public function listAction(Request $request, $page = 1, $limit = 5) {
+    public function listAction(Request $request, $page = 1, $limit = 50) {
 
         $form = $this->createForm(JobSearchFormType::class);
         $form->handleRequest($request);
