@@ -56,9 +56,9 @@ class JobController extends Controller
 
 
     /**
-     * @Route("/job/list/{offset}/{limit}")
+     * @Route("/job/list/{page}", name="list_jobs")
      */
-    public function listAction(Request $request, $offset= 0, $limit = 100) {
+    public function listAction(Request $request, $page = 1, $limit = 5) {
 
         $form = $this->createForm(JobSearchFormType::class);
         $form->handleRequest($request);
@@ -69,13 +69,36 @@ class JobController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $jobs = $em->getRepository('AppBundle:Job')
-            ->findAllPublishedOrderedByRecentlyActive($data, $offset, $limit);
+        $data = $em->getRepository('AppBundle:Job')
+            ->findAllPublishedOrderedByRecentlyActive($data, $page, $limit);
+
+        # Total fetched (ie: '5' jobs)
+        //$totalJobsReturned = $jobs->getIterator()->count();
+
+        # Count of ALL jobs (ie: '20' jobs)
+        //$totalJobs = $jobs->count();
+
+        # ArrayIterator
+        //$iterator = $jobs->getIterator();
+
+        //$limit = 5;
+        //$maxPages = ceil($totalJobs / $limit);
+        //$thisPage = $page;
+        // Pass through the 3 above variables to calculate pages in twig
+        //return $this->render('view.twig.html', compact('categories', 'maxPages', 'thisPage'));
 
         return $this->render('job/list.html.twig', [
-            'jobs' => $jobs,
-            'offset' => $offset,
+            'jobs' => $data['data'],
+            //'offset' => $offset,
             'jobSearchForm' => $form->createView(),
+            'paginator' => array(
+                'currentPage' => $page,
+                'maxPages' => $data['maxPages'],
+                'limit' => $limit,
+                'showAlwaysFirstAndLast' => true,
+                'paginationPath' => 'list_jobs',
+                'currentFilters' => array(),
+            )
         ]);
 
     }

@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+    {{ parent() }}
     <link href="{{ asset('under_construction/codepen/codepen.css') }}" rel="stylesheet" >
     <style>
         body {
@@ -14,6 +15,7 @@
             background: #2b2b2b;
         }
         h1 {
+            font-size: 16px;
             margin: 40px 40px 5px 40px;
             color: #a41b0d;
         }
@@ -22,9 +24,9 @@
             font-size: 14px;
             color: #8a6262;
         }
-        h2 a {
+        /*h2 a {
             color: #8a6262;
-        }
+        }*/
         table {
             border-spacing: 1px;
             border-collapse: collapse;
@@ -58,14 +60,19 @@
         #job_search_form_step1_html {
             width: 400px;
         }
+        button.jobs-search {
+            vertical-align: top;
+        }
     </style>
 
 {% endblock %}
 
 {% block body %}
-    <h1>Job postings. From around the world.</h1>
-    <h2>Want job posts from your favorite board to appear here? Want career page of your company to be synced? Need extra filters to filter the data?
-        <br />No problems! Add extra boards and functionality by <a href="https://github.com/sugalvojau/veikt.com" target="_blank">yourself</a> or <a href="https://www.linkedin.com/in/pauliusmacernis" target="_blank">call me</a> to do that for you.</h2>
+    <h1>Job postings from around the internet. Updating daily.</h1>
+    <h2>
+        We search the internet for all job posts of the day so you don't have to. Take care of your time and search all job boards at once here in seconds!
+        <br>Want job posts from your favorite job board to be added? Want career page of your favourite company to be synced? Need extra filters to filter the data?
+        <br>No problem! Add extra boards and functionality by <a href="https://github.com/sugalvojau/veikt.com" target="_blank">yourself</a> or <a href="https://www.linkedin.com/in/pauliusmacernis" target="_blank">call me</a> to do that for you.</h2>
 
     <!--
         cvbankas.lt
@@ -103,8 +110,7 @@
         {% for job in jobs %}
             <tr>
                 <td>
-                    {% set offset = offset + 1 %}
-                    {{ offset }}.
+                    &nbsp;
                 </td>
                 <td>
                     <a href="{{ path('job_show', {
@@ -132,6 +138,10 @@
         {% endfor %}
 
     </table>
+
+    {{ include('paginator/paginator.html.twig', {
+        'paginator': paginator
+    }) }}
 
     <div id="sites_activated">
         <img alt="cvbankas.lt" src="{{ asset('under_construction/activated/cvbankas.lt.jpg') }}">
