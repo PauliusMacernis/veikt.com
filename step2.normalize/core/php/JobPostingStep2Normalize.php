@@ -57,15 +57,16 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
         return; // @todo: run normalization process. Every project may have the own process of nornalization?
     }
 
-    public function step1PostingAlreadyExists(PDO $PDO) {
+    public function step1PostingGetGlobalId(PDO $PDO) {
+        // @todo: What if there is more than one looking the same?
         $q = 'SELECT 
-                COUNT(*) as entries 
+                j.id as id
             FROM job as j 
             WHERE 
               j.step1_id = :step1_id
               AND j.step1_project = :step1_project
               AND j.step1_url = :step1_url
-              ';
+            LIMIT 1';
 
         $PDOStatement = $PDO->prepare($q);
         $PDOStatement->bindValue(':step1_id', $this->get('id'));
@@ -92,9 +93,10 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
         }
 
         // Check database if the same step1 id exists
-        if($this->step1PostingAlreadyExists($PDO)) {
+        $idGlobal = $this->step1PostingGetGlobalId($PDO);
+        if($idGlobal) {
             // Update
-            return $this->saveToDbUpdate($PDO, $columns, $prefix);
+            return $this->saveToDbUpdate($idGlobal, $PDO, $columns, $prefix);
         } else {
             // Insert
             return $this->saveToDbInsert($PDO, $columns, $prefix);
@@ -102,7 +104,7 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
 
     }
 
-    public function saveToDbUpdate(PDO $PDO, $columns, $prefix) {
+    public function saveToDbUpdate($idGlobal, PDO $PDO, $columns, $prefix) {
 
         $valuesForSql = array();
 
@@ -125,10 +127,13 @@ class JobPostingStep2Normalize extends JobPostingStep1Download {
         }
         $q = substr($q, 0, -1); // cut last comma
 
+        $q .= ' WHERE id=:idGlobal';
+
         $PDOStatement = $PDO->prepare($q);
         foreach($valuesForSql as $columnName => $columnValue) {
             $PDOStatement->bindValue((':' . $columnName), $columnValue);
         }
+        $PDOStatement->bindValue(':idGlobal', $idGlobal);
 
         $PDO->beginTransaction();
         $PDOStatement->execute();
