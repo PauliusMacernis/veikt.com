@@ -87,7 +87,11 @@ class JobController extends Controller
                 'showAlwaysFirstAndLast' => true,
                 'paginationPath' => 'list_jobs',
                 'currentFilters' => array(),
-                'qUrl' => '?' . $form->getName() . '[step1_html]=' . urlencode($fData->getStep1Html()),
+                'qUrl' => (
+                    ($fData->getStep1Html())
+                        ? ('?' . $form->getName() . '[step1_html]=' . urlencode($fData->getStep1Html()))
+                        : ''
+                ),
             )
         ]);
 
