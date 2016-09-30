@@ -34,7 +34,11 @@
     <dl class="job-details-list">
 
         <dt>Project:</dt>
-        <dd>{{ job.subfamily.name }}</dd>
+        <dd>
+            {% if foo['bar'] is defined %}
+                {{ job.subfamily.name }}
+            {% endif %}
+        </dd>
 
         <dt>Name:</dt>
         <dd>{{ job.name }}</dd>

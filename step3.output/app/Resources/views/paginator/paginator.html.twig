@@ -19,10 +19,10 @@
 
         <ul class="pagination">
             {% if paginator.currentPage > 1 %}
-                <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: paginator.currentPage-1})) }}">Previous</a></li>
+                <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: paginator.currentPage-1})) }}{{ paginator.qUrl }}">Previous</a></li>
 
                 {% for i in range(1, extremePagesLimit) if ( i < paginator.currentPage - nearbyPagesLimit ) %}
-                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}">{{ i }}</a></li>
+                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}{{ paginator.qUrl }}">{{ i }}</a></li>
                 {% endfor %}
 
                 {% if extremePagesLimit + 1 < paginator.currentPage - nearbyPagesLimit %}
@@ -30,18 +30,18 @@
                 {% endif %}
 
                 {% for i in range(paginator.currentPage-nearbyPagesLimit, paginator.currentPage-1) if ( i > 0 ) %}
-                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}">{{ i }}</a></li>
+                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}{{ paginator.qUrl }}">{{ i }}</a></li>
                 {% endfor %}
             {% elseif paginator.showAlwaysFirstAndLast %}
                 <li><span class="disabled">Previous</span></li>
             {% endif %}
 
-            <li class="active"><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({ page: paginator.currentPage })) }}"
+            <li class="active"><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({ page: paginator.currentPage })) }}{{ paginator.qUrl }}"
                 >{{ paginator.currentPage }}</a></li>
 
             {% if paginator.currentPage < paginator.maxPages %}
                 {% for i in range(paginator.currentPage+1, paginator.currentPage + nearbyPagesLimit) if ( i <= paginator.maxPages ) %}
-                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}">{{ i }}</a></li>
+                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}{{ paginator.qUrl }}">{{ i }}</a></li>
                 {% endfor %}
 
                 {% if  (paginator.maxPages - extremePagesLimit) > (paginator.currentPage + nearbyPagesLimit) %}
@@ -49,10 +49,10 @@
                 {% endif %}
 
                 {% for i in range(paginator.maxPages - extremePagesLimit+1, paginator.maxPages) if ( i > paginator.currentPage + nearbyPagesLimit ) %}
-                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}">{{ i }}</a></li>
+                    <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: i})) }}{{ paginator.qUrl }}">{{ i }}</a></li>
                 {% endfor %}
 
-                <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: paginator.currentPage+1})) }}">Next</a></li>
+                <li><a href="{{ path(paginator.paginationPath, paginator.currentFilters|merge({page: paginator.currentPage+1})) }}{{ paginator.qUrl }}">Next</a></li>
             {% elseif paginator.showAlwaysFirstAndLast %}
                 <li><span class="disabled">Next</span></li>
             {% endif %}

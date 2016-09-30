@@ -66,7 +66,7 @@ class JobRepository extends EntityRepository
 
             ->leftJoin('job.notes', 'job_note')
             ->orderBy('job.step1_downloadedTime', 'DESC')
-            ->orderBy('job_note.createdAt', 'DESC')
+            //->orderBy('job_note.createdAt', 'DESC')
 
             //->setFirstResult($limit * ($currentPage - 1)) // Offset
             //->setMaxResults($limit) // Limit

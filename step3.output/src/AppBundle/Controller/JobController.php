@@ -56,36 +56,25 @@ class JobController extends Controller
 
 
     /**
-     * @Route("/job/list/{page}/{limit}", name="list_jobs")
+     * @Route("/job/list/{page}", name="list_jobs")
      */
     public function listAction(Request $request, $page = 1, $limit = 50) {
 
-        $form = $this->createForm(JobSearchFormType::class);
+        $form = $this->createForm(JobSearchFormType::class, null, [
+            "method" => "get",
+            "action" => $this->container->get('router')->generate("list_jobs"),
+            "csrf_protection" => false
+        ]);
         $form->handleRequest($request);
 
-        $data = $form->getData();
-        if(empty($data)) {
-            $data = new JobSearchFormTypeData();
+        $fData = $form->getData();
+        if(empty($fData)) {
+            $fData = new JobSearchFormTypeData();
         }
 
         $em = $this->getDoctrine()->getManager();
         $data = $em->getRepository('AppBundle:Job')
-            ->findAllPublishedOrderedByRecentlyActive($data, $page, $limit);
-
-        # Total fetched (ie: '5' jobs)
-        //$totalJobsReturned = $jobs->getIterator()->count();
-
-        # Count of ALL jobs (ie: '20' jobs)
-        //$totalJobs = $jobs->count();
-
-        # ArrayIterator
-        //$iterator = $jobs->getIterator();
-
-        //$limit = 5;
-        //$maxPages = ceil($totalJobs / $limit);
-        //$thisPage = $page;
-        // Pass through the 3 above variables to calculate pages in twig
-        //return $this->render('view.twig.html', compact('categories', 'maxPages', 'thisPage'));
+            ->findAllPublishedOrderedByRecentlyActive($fData, $page, $limit);
 
         return $this->render('job/list.html.twig', [
             'jobs' => $data['data'],
@@ -98,6 +87,7 @@ class JobController extends Controller
                 'showAlwaysFirstAndLast' => true,
                 'paginationPath' => 'list_jobs',
                 'currentFilters' => array(),
+                'qUrl' => '?' . $form->getName() . '[step1_html]=' . urlencode($fData->getStep1Html()),
             )
         ]);
 
@@ -109,8 +99,6 @@ class JobController extends Controller
      */
     public function getNotesAction(Job $job)
     {
-        //dump($job);
-
         // To remember: "git grep job_show_notes"
         // END. To remember
 
