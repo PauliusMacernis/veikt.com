@@ -5,7 +5,6 @@
 
 // Makes life easier
 chdir(__DIR__);
-$project =  basename(__DIR__);
 
 // Define core files
 $fileAutoload = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
