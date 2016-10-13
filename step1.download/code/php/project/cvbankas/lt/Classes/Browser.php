@@ -68,8 +68,8 @@ class Browser extends CoreBrowser
 
     protected function getNextPageUrlOfListOfJobLinks() {
 
-        $classname = "pages_ul_inner";
-        $PageNumbersContent = $this->listContent->filterXPath("//ul[contains(@class, '$classname')]");
+        $className = "pages_ul_inner";
+        $PageNumbersContent = $this->listContent->filterXPath("//ul[contains(@class, '$className')]");
 
         $PageNumbersUl = $PageNumbersContent->first();
         $PageNumberLis = $PageNumbersUl->filter('li');

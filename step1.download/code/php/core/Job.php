@@ -74,6 +74,75 @@ class Job
         }
     }
 
+    /*********************************************
+     *
+     * METHODS TO GET DATA FOR SAVING TO FILES
+     *
+     * *******************************************
+     */
+
+    /**
+     * Gets datetime value. When the job posting was downloaded?
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
+    protected function datetime(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings
+    ) {
+
+        $value = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
+        $value = $value->format('Y-m-d H:i:s');
+
+        $this->$fileAndPropertyName = $value;
+
+    }
+
+    /**
+     * Gets project's name
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
+    protected function project(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings
+    ) {
+
+        $value = isset($projectSettings['project_name']) ? $projectSettings['project_name'] : null;
+
+        $this->$fileAndPropertyName = $value;
+
+    }
+
+    /**
+     * Gets URL or the job add
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
+    protected function url(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings
+    ) {
+
+        $this->$fileAndPropertyName = $url;
+
+    }
+
 
 
 

@@ -19,22 +19,28 @@ class Auditor
     protected $loggerFailureDownload;
     protected $loggerSuccessSave;
     protected $loggerFailureSave;
-    protected $settings;
-    protected $requiredProperties;
+    protected $settings;                // All settings (global + related to the project)
+    protected $projectSettings;         // Settings related to the project
+    protected $requiredProperties;      // Required files to create as the output (=properties of Job class)
+    protected $indexDir;                // Project's root directory
 
     public function __construct(array $projectSettings, $indexDir, array $settings)
     {
-        // LOGGERS
-        $this->setLogger($projectSettings, $indexDir, 'SuccessDownload');
-        $this->setLogger($projectSettings, $indexDir, 'FailureDownload');
-        $this->setLogger($projectSettings, $indexDir, 'SuccessSave');
-        $this->setLogger($projectSettings, $indexDir, 'FailureSave');
-
         // SETTINGS
         $this->settings = $settings;
+        $this->projectSettings = $projectSettings;
+
+        // Project's root directory
+        $this->indexDir = $indexDir;
 
         // REQUIRED PROPERTIES/FILES
         $this->requiredProperties = $this->getRequiredProperties();
+
+        // LOGGERS
+        $this->setLogger('SuccessDownload');
+        $this->setLogger('FailureDownload');
+        $this->setLogger('SuccessSave');
+        $this->setLogger('FailureSave');
 
     }
 
@@ -45,10 +51,53 @@ class Auditor
 
     }
 
-    public function doReport() {
+    public function doReport($indexDir) {
         // @TODO:
         //  - Generate file with list of failed to download urls.
         //  - Make repetitive downloading possible by passing that file with fails to somewhere within the system...
+
+        $failureDownload    = file_get_contents($this->getPathToLogFile($indexDir, 'FailureDownload'));
+        $failureSave        = file_get_contents($this->getPathToLogFile($indexDir, 'FailureSave'));
+
+        $subject = "The project " . $this->projectSettings['project_name'] . " |";
+        if(!$failureDownload && !$failureSave) {
+            $subject = "The project " . $this->projectSettings['project_name'] . " downloaded and saved successfully.";
+        }
+        if($failureDownload && $failureSave) {
+            $subject = "UPS... The project " . $this->projectSettings['project_name'] . " had issues downloading and saving information.";
+        }
+        if($failureDownload && !$failureSave) {
+            $subject = "UPS... The project " . $this->projectSettings['project_name'] . " had issues downloading the information. Saving went well.";
+        }
+        if(!$failureDownload && $failureSave) {
+            $subject = "UPS... The project " . $this->projectSettings['project_name'] . " had no problems downloading the information. However, saving was not going well...";
+        }
+
+        // Prepare "to"
+        if(!isset($this->projectSettings['administrators'])
+            || empty($this->projectSettings['administrators'])
+            || !is_array($this->projectSettings['administrators'])
+        ) {
+            return;
+        }
+        $toArray = [];
+        foreach($this->projectSettings['administrators'] as $administrator) {
+            if(!isset($administrator->email) || empty($administrator->email)) {
+                continue;
+            }
+            $toArray[] = $administrator->email;
+        }
+        $to = implode(", ", $toArray);
+
+        $body = $subject
+            . (($failureDownload)   ? ("\n\n" . "**** DOWNLOADING FAILED: ****" . "\n\n" . $failureDownload)   : '')
+            . (($failureSave)       ? ("\n\n" . "**** SAVING FAILED: ****" . "\n\n" . $failureSave)       : '')
+            . "\n\n\n\n" . "You are getting this email because your email address has been pushed to the repository of the project. 
+            Remove your email address from the repository if you wish to avoid these emails.";
+
+
+        return mail($to, $subject, $body);
+
     }
 
     protected function logListAudited(array $ListAudited, array $saveResults) {
@@ -125,18 +174,24 @@ class Auditor
 
     }
 
-    protected function setLogger(array $projectSettings, $indexDir, $name = 'Success') {
+    protected function setLogger($name = 'Success') {
         // LOGGER.SUCCESS
         // create a log channel
         $this->{"logger" . $name} = new Logger($name);
 
         // Get path to log file
-        $pathToLog =
-            $indexDir . DIRECTORY_SEPARATOR
-            . $projectSettings['dir_downloaded_logs'] . DIRECTORY_SEPARATOR
-            . date($projectSettings['file_downloaded_logs']) . '-' . $name . '.log';
+        $pathToLog = $this->getPathToLogFile($name);
 
         $this->{"logger" . $name}->pushHandler(new StreamHandler($pathToLog, Logger::INFO));
+    }
+
+    protected function getPathToLogFile($name = 'Success') {
+        $pathToLog =
+            $this->indexDir . DIRECTORY_SEPARATOR
+            . $this->projectSettings['dir_downloaded_logs'] . DIRECTORY_SEPARATOR
+            . date($this->projectSettings['file_downloaded_logs']) . '-' . $name . '.log';
+
+        return $pathToLog;
     }
 
 }

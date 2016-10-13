@@ -39,7 +39,14 @@
       "entrance.sh": "/code/php/project/cvbankas/lt/entrance.sh",
       "dir_downloaded_posts": "../../../../../downloads/cvbankas/lt/posts",
       "dir_downloaded_logs": "../../../../../downloads/cvbankas/lt/logs",
-      "file_downloaded_logs": "Y-m-d--H-i-s"
+      "file_downloaded_logs": "Y-m-d--H-i-s",
+      "administrators": {
+        "Paulius": {
+          "name": "Paulius",
+          "email": "sugalvojau@gmail.com",
+          "website": "http://portfolio.vertyb.es/"
+        }
+      }
     }
   ]
 }

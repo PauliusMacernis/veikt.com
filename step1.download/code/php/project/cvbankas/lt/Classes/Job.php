@@ -13,45 +13,15 @@ use Core\Job as CoreJob;
 class Job extends CoreJob
 {
 
-
-    protected function datetime(
-        $fileAndPropertyName,
-        \Symfony\Component\DomCrawler\Crawler $Content,
-        $url,
-        array $projectSettings
-    ) {
-
-        $value = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
-        $value = $value->format('Y-m-d H:i:s');
-
-        $this->$fileAndPropertyName = $value;
-
-    }
-
-    protected function project(
-        $fileAndPropertyName,
-        \Symfony\Component\DomCrawler\Crawler $Content,
-        $url,
-        array $projectSettings
-    ) {
-
-        $value = isset($projectSettings['project_name']) ? $projectSettings['project_name'] : null;
-
-        $this->$fileAndPropertyName = $value;
-
-    }
-
-    protected function url(
-        $fileAndPropertyName,
-        \Symfony\Component\DomCrawler\Crawler $Content,
-        $url,
-        array $projectSettings
-    ) {
-
-        $this->$fileAndPropertyName = $url;
-
-    }
-
+    /**
+     * Gets content_static value. This value is saved to file later.
+     * This is the place for job content that DOES NOT change.
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
     protected function content_static(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
@@ -65,6 +35,16 @@ class Job extends CoreJob
 
     }
 
+    /**
+     * Gets content_static value. This value is saved to file later.
+     * This is the place for job content that DOES change.
+     * For example, statistics of page views, unique visitors, applicants, etc.
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
     protected function content_dynamic(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
@@ -78,6 +58,15 @@ class Job extends CoreJob
 
     }
 
+    /**
+     * Unique identifier identifying job posting in the source system
+     * @todo: Move this to the parent class?
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
     protected function id(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
