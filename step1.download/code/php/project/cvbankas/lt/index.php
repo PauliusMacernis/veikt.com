@@ -4,7 +4,6 @@
 
 // Makes life easier
 chdir(__DIR__);
-$project =  basename(__DIR__);
 
 // Require autoload
 require_once '..'
