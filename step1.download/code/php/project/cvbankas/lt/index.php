@@ -2,73 +2,54 @@
 
 // @TODO: Job->id is not required, but files are created based on that id. This id must be required or id should be auto-generated from URL.
 
-
 // Makes life easier
 chdir(__DIR__);
 $project =  basename(__DIR__);
 
-// Define core files
-$fileAutoload = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-    . '..' . DIRECTORY_SEPARATOR
+// Require autoload
+require_once '..'
+    . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
     . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-$fileSettings = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-    . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-    . '..' . DIRECTORY_SEPARATOR
-    . 'settings.json';
 
-// Require core files
-require_once $fileAutoload;
-
-// Require and decode all settings
-$settings = file_get_contents($fileSettings);
-$settings = json_decode($settings, true);
-if(!isset($settings) || empty($settings)) {
-    die('No settings found.');
-}
-
-// Find project settings
-if(!isset($settings['projects-on']) || !is_array($settings['projects-on'])) {
-    die('No projects enabled in \'settings.json\'.');
-}
-
-// Find settings of this project
-$projectSettings = array();
-foreach($settings['projects-on'] as $projectName => $projectSettingsTemp) {
-    if(!isset($projectSettingsTemp['entrance.sh'])) {
-        continue;
-    }
-    $projectDir = pathinfo($projectSettingsTemp['entrance.sh'], PATHINFO_DIRNAME);
-    if(
-        substr_compare(
-            __DIR__,
-            $projectDir,
-            strlen(__DIR__) - strlen($projectDir),
-            strlen($projectDir)
-        ) === 0
-    ) {
-        // $projectSettings item is found!
-        $projectSettings = $projectSettingsTemp;
-        break;
-    }
-}
-
-
-
-// use...
+// Use auto-loading classes...
+use Core\Helper;
 use Project\Cvbankas\Lt\Classes\Auditor;
 use Project\Cvbankas\Lt\Classes\Browser;
 
-$Browser = new Browser($projectSettings, __DIR__, $settings);
-$Auditor = new Auditor($projectSettings, __DIR__, $settings);
+// Get settings: All & Project specific
+$settingsAll        = Helper::getSettingsAll(__DIR__);
+$settingsProject    = Helper::getSettingsProject(__DIR__, $settingsAll);
 
+// Initiate main objects to deal with the content
+$Browser = new Browser(__DIR__, $settingsAll, $settingsProject);
+$Auditor = new Auditor(__DIR__, $settingsAll, $settingsProject);
+
+var_dump("OK"); die;
 // Let's make one url download possible
-//  In case we will want to download several specific urls
-if(!isset($_REQUEST['url'])) {
-    $List = $Browser->getFirstListOfJobLinks();
-} else {
-    $List = array($_REQUEST['url'] => $_REQUEST['url']);
+//  In case we will want to download one specific url
+//  For example: http://step1.veikt.dev/code/php/project/cvbankas/lt/index.php?url=http://www.cvbankas.lt/pardavimu-telefonu-vadybininkas-e-vilniuje-lietuvos-rinka-vilniuje/1-4204758
+if(isset($_REQUEST['url'])) {
+    $iJobUrl = $_REQUEST['url'];
+
+    // Get job info
+    $iJobList = array($iJobUrl => $iJobUrl);
+    $iJob = $Browser->getJobsFromTheList($iJobList);
+
+    // Save info to files
+    $iSave = $Browser->saveJobsToFiles($iJob);
+
+    // Log the action
+    $Auditor->registerListAndJobs($iJobList, $iJob, $iSave);
+
+    // Done.
+    exit;
 }
-//$Jobs = array();
+
+
+// Let's make many urls download possible
+//  In case we will want to download many urls
+//  For example: http://step1.veikt.dev/code/php/project/cvbankas/lt/index.php
+$List = $Browser->getFirstListOfJobLinks();
 
 do {
     // Get and save jobs by one, not by the whole list.
@@ -95,4 +76,4 @@ do {
     $List = $Browser->getNextListOfJobLinks()
 );
 
-$Auditor->doReport(__DIR__);
+$Auditor->doReport();

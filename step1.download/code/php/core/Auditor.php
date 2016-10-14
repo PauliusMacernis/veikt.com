@@ -24,7 +24,7 @@ class Auditor
     protected $requiredProperties;      // Required files to create as the output (=properties of Job class)
     protected $indexDir;                // Project's root directory
 
-    public function __construct(array $projectSettings, $indexDir, array $settings)
+    public function __construct($indexDir, array $settings, array $projectSettings)
     {
         // SETTINGS
         $this->settings = $settings;
@@ -51,13 +51,13 @@ class Auditor
 
     }
 
-    public function doReport($indexDir) {
+    public function doReport() {
         // @TODO:
         //  - Generate file with list of failed to download urls.
         //  - Make repetitive downloading possible by passing that file with fails to somewhere within the system...
 
-        $failureDownload    = file_get_contents($this->getPathToLogFile($indexDir, 'FailureDownload'));
-        $failureSave        = file_get_contents($this->getPathToLogFile($indexDir, 'FailureSave'));
+        $failureDownload    = file_get_contents($this->getPathToLogFile('FailureDownload'));
+        $failureSave        = file_get_contents($this->getPathToLogFile('FailureSave'));
 
         $subject = "The project " . $this->projectSettings['project_name'] . " |";
         if(!$failureDownload && !$failureSave) {

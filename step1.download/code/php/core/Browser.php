@@ -27,7 +27,7 @@ class Browser
     protected $jobProperties;
     protected $blackListCharsForPageNumbers = array('-', '/', '|', ' ', "\n", "\r", '.');
 
-    public function __construct($projectSettings, $baseDir, $settings)
+    public function __construct($baseDir, $settings, $projectSettings)
     {
         // PROJECT SETTINGS
         $this->projectSettings = $projectSettings;
