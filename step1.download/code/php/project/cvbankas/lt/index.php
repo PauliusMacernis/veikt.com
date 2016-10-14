@@ -23,7 +23,6 @@ $settingsProject    = Helper::getSettingsProject(__DIR__, $settingsAll);
 $Browser = new Browser(__DIR__, $settingsAll, $settingsProject);
 $Auditor = new Auditor(__DIR__, $settingsAll, $settingsProject);
 
-var_dump("OK"); die;
 // Let's make one url download possible
 //  In case we will want to download one specific url
 //  For example: http://step1.veikt.dev/code/php/project/cvbankas/lt/index.php?url=http://www.cvbankas.lt/pardavimu-telefonu-vadybininkas-e-vilniuje-lietuvos-rinka-vilniuje/1-4204758
