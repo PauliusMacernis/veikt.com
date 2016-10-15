@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Run entrance.sh scripts of ./projects/{project_name} subdirectories
+# Run entrance.sh scripts of projects-on
 
 echo -e "\n STEP1.DOWNLOAD: Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
