@@ -60,13 +60,13 @@ class Job extends CoreJob
 
     /**
      * Unique identifier identifying job posting in the source system
-     * @todo: Move this to the parent class?
      *
      * @param $fileAndPropertyName
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
      */
+    /* // Comment this for a while as the parent method does the job quite well.
     protected function id(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
@@ -76,5 +76,6 @@ class Job extends CoreJob
         $valueArray = explode('/', (string)$url);
         $this->$fileAndPropertyName = end($valueArray);
     }
+    */
 
 }

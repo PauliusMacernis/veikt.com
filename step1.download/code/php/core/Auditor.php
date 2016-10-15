@@ -23,9 +23,13 @@ class Auditor
     protected $projectSettings;         // Settings related to the project
     protected $requiredProperties;      // Required files to create as the output (=properties of Job class)
     protected $indexDir;                // Project's root directory
+    protected $datetime;                // Datetime value (UTC) of object initiation
 
     public function __construct($indexDir, array $settings, array $projectSettings)
     {
+        // Datetime
+        $this->datetime = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
+
         // SETTINGS
         $this->settings = $settings;
         $this->projectSettings = $projectSettings;
@@ -52,12 +56,17 @@ class Auditor
     }
 
     public function doReport() {
-        // @TODO:
-        //  - Generate file with list of failed to download urls.
-        //  - Make repetitive downloading possible by passing that file with fails to somewhere within the system...
 
-        $failureDownload    = file_get_contents($this->getPathToLogFile('FailureDownload'));
-        $failureSave        = file_get_contents($this->getPathToLogFile('FailureSave'));
+        $failureDownload = false;
+        if(is_file($this->getPathToLogFile('FailureDownload'))) {
+            $failureDownload = file_get_contents($this->getPathToLogFile('FailureDownload'));
+        }
+
+        $failureSave = false;
+        if(is_file($this->getPathToLogFile('FailureSave'))) {
+            $failureSave = file_get_contents($this->getPathToLogFile('FailureSave'));
+        }
+
 
         $subject = "The project " . $this->projectSettings['project_name'] . " |";
         if(!$failureDownload && !$failureSave) {
@@ -185,11 +194,12 @@ class Auditor
         $this->{"logger" . $name}->pushHandler(new StreamHandler($pathToLog, Logger::INFO));
     }
 
-    protected function getPathToLogFile($name = 'Success') {
+    protected function getPathToLogFile($name = 'Success', $new = false) {
         $pathToLog =
             $this->indexDir . DIRECTORY_SEPARATOR
             . $this->projectSettings['dir_downloaded_logs'] . DIRECTORY_SEPARATOR
-            . date($this->projectSettings['file_downloaded_logs']) . '-' . $name . '.log';
+            . $this->datetime->format($this->projectSettings['file_downloaded_logs'])
+            . '-' . $name . '.log';
 
         return $pathToLog;
     }

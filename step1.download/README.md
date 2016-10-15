@@ -1,19 +1,41 @@
+
 # step1.download
-This downloads the job postings and puts them into separate files:
+This step downloads job postings from various web projects and temporary saves the downloaded into separate files
 
-`projects/{project_name_of_yours}/posts/{id_in_source_system}/url` -- this is the text file that contains url of a job post
+## The story begins in the `main.sh` shell script run by Linux's cron ##
+- `main.sh` looks at `projects-on` section of `settings.json` file, extracts every value assigned to `entrance.sh`.
+- Every found `entrance.sh` is being run. One entry after another. The order of run is the same as coded in the `settings.json`. From top to bottom.
+- `entrance.sh` code usually triggers `index.php` file (if the particular project is running on php, - this is by default). And then things go as the PHP code inside `index.php` wants...
+- At the moment `entrance.sh` is made to work with PHP code only. However, you are not limited as you may always write your own `entrance.sh` file and trigger whatever you want in there: Python? Ruby? scripting shell only? You name it.
 
-`projects/{project_name_of_yours}/posts/{id_in_source_system}/html` -- this is the text file that contains html of a job post
+## What does it mean to add the new project (job board, career website, etc.)? ##
+- Put your code under `step1.download/{your_language}/project/{project_domain}/{project_tld_or_alternative}`
+- Your code should have `entrance.sh` file, - this file is the only mandatory file as it is the only file that is run by the system. Write your code in this file and/or create additional files and/or directories inside of the same directory.
+- Take a look at `settings.json` file, - this file holds the configuration and you have to listen for what configuration says. The point of `settings.json` file is to change the behaviour of your code if needed. The file isn't big, but if you felt into troubles understanding that - drop me a message, I will help you.
+- That's it. The rest is optional.
 
-...creating any other files are optional, for example:
+## Could it be easier? ##
+- Of course! For example, create your project by using PHP. It is easier than coding shell scripts, coding everything from scratch and so on...
 
-`projects/{project_name_of_yours}/posts/{id_in_source_system}/statistics` -- this is the text file that contains html of a job post statistics (for example: count of page views, count of applicants, etc.)
+## Add your own job board website or career page by using PHP ##
+- Use the code of already existing similar project as the template. Just simply, do copy > paste.
+- Change namespaces and so rename pasted directories to your own names - to correspond this structure: `step1.download/{your_language}/project/{project_domain}/{project_tld_or_alternative}`
+- After you will look at the content you pasted you will see that there are 5 different files:
+-- `Classes/Auditor.php` - the file is not used really, because all methods come from parent of this class. Anyway, leave this file inside of your project for the brighter future. Pay attention to namespaces - you still need to modify them to match your structure.
+-- `Classes/Browser.php` - the file usually has two methods where one is for the next page url, the other - for job urls of a particular page of the entire list to get.
+-- `Classes/Job.php` - the file with methods named as information required to be extracted out of the job ad. For example, the method `content_static` - used for static content (job ad itself) to extract, `content_dynamic` - optional file for dynamic content to extract (for example: applicants number, page views statistic, etc.). The only mandatory method is `content_static`. The rest goes by default if you do not specify. The default is ok.
+-- `index.php` - the main file that runs all php logic. You usually do not need to modify this.
+-- `entrance.sh` - the main file that triggers `index.php` file. You usually do not need to modify this.
+- Need any extra PHP libraries? No problems! Composer is being used in the project.
 
+## Want your favourite job board or career page to be added? ##
+- Do it by yourself (it should be easy if you are a developer)
+- Or call me to do that for you!
 
-The file named `projects/{project_name_of_yours}/entrance.sh` is the main invokable file of your project. This file is invoked by the main program (global scope deciding which project to update and which to not). Actually, this kind of architecture allows you to choose many tools (and programming languages) for downloading the content of job postings to the web server.
+## Projects added: ##
+- cvbankas.lt
 
-
-# Projects needs to be added: #
+## Projects to be added: ##
 - 01.net
 - 6 Figure Jobs
 - Accounting.com
@@ -196,3 +218,6 @@ The file named `projects/{project_name_of_yours}/entrance.sh` is the main invoka
 - Ying Jiesheng
 - Zhaopin.com
 - ...and more
+
+## The list is missing something important? ##
+Let me know.

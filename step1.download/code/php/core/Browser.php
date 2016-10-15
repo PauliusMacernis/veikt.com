@@ -8,7 +8,8 @@
 
 namespace Core;
 
-use Goutte\Client;
+use Goutte\Client as GoutteClient;
+use GuzzleHttp\Client as GuzzleClient;
 use Project\Cvbankas\Lt\Classes\Job;
 
 
@@ -18,8 +19,16 @@ class Browser
 
     const HOMEPAGE_URL = null;
     const RETRY_TIMES = 3;
-    const RETRY_TIMES_MIN_DELAY_IN_SECONDS = 1;
-    const RETRY_TIMES_MAX_DELAY_IN_SECONDS = 3;
+    const RETRY_TIMES_MIN_DELAY_IN_SECONDS = 3;
+    const RETRY_TIMES_MAX_DELAY_IN_SECONDS = 10;
+
+    // http://php.net/manual/en/function.curl-setopt.php
+    const CURLOPT_TIMEOUT = 900;        // 15 min
+    const CURLOPT_CONNECTTIMEOUT = 900; // 15 min
+    // CURLOPT_LOW_SPEED_LIMIT = 1
+    // CURLOPT_LOW_SPEED_TIME = 3600
+    // CURLOPT_TIMEOUT = 3600
+    // etc?
 
     protected $projectSettings;
     protected $baseDir;
@@ -61,6 +70,8 @@ class Browser
      *  $this::RETRY_TIMES_MIN_DELAY_IN_SECONDS
      *  and
      *  $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS
+     *
+     * @todo: This one definitely requires the test to be written
      *
      * @param string $methodName        Name of method in $this class
      * @return mixed|null               Returned value of $this->$methodName method
@@ -131,8 +142,15 @@ class Browser
             return null;
         }
 
-        $client = new Client();
-        $result = $client->request($actionType, $url);
+        $goutteClient = new GoutteClient();
+        $guzzleClient = new GuzzleClient(array(
+            'curl' => array(
+                CURLOPT_TIMEOUT => $this::CURLOPT_TIMEOUT,
+                CURLOPT_CONNECTTIMEOUT => $this::CURLOPT_CONNECTTIMEOUT,
+            ),
+        ));
+        $goutteClient->setClient($guzzleClient);
+        $result = $goutteClient->request($actionType, $url);
 
         if(!$result) {
             return null;

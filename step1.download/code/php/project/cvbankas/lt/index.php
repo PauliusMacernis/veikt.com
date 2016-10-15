@@ -1,9 +1,5 @@
 <?php
 
-// @TODO: Job->id is not required, but files are created based on that id. This id must be required or id should be auto-generated from URL.
-// @TODO: GuzzleHTTP settings check
-// @TODO: Adjust delay on downloading content
-
 // Makes life easier
 chdir(__DIR__);
 
@@ -69,11 +65,6 @@ do {
 
         // Logging and similar stuff
         $Auditor->registerListAndJobs($iJobList, $iJob, $iSave);
-
-        if(isset($_REQUEST['url'])) {
-            break 2; // break the foreach and do..while
-                     //  if this is the request for one url only
-        }
     }
 } while(
     $List = $Browser->getNextListOfJobLinks()

@@ -144,6 +144,49 @@ class Job
     }
 
 
+    /**
+     * Unique identifier identifying job posting in the source system
+     * Defaults to URL (encoded with MIME base64)
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
+    protected function id(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings
+    ) {
+        $this->$fileAndPropertyName = base64_encode($url);
+    }
+
+
+    /**
+     * Gets content_static value. This value is saved to file later.
+     * This is the place for job content that DOES change.
+     * For example, statistics of page views, unique visitors, applicants, etc.
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     */
+    protected function content_dynamic(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings
+    ) {
+
+        // Empty value by default
+        $this->$fileAndPropertyName = '';
+
+    }
+
+
+
 
 
 }

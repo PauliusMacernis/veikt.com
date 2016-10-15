@@ -3,37 +3,44 @@
     "datetime":{
       "description":"A data inside of the file is required. Just put the datetime value inside for everyone to know when the job information has been downloaded. The datetime value should be in UTC+0 timezone and should be formatted as the string YYYY-MM-DD HH:mm:ss",
       "example-content":"2016-09-30 14:30:59",
-      "required":"1"
+      "required":"1",
+      "file-is-created-by-default": "1"
     },
     "project":{
       "description":"A data inside of the file is required. This file holds the name of the project. The name of the project must be the same as the name of the directory in which all project files reside at step1.",
       "example-content":"ca.indeed.com",
-      "required":"1"
+      "required":"1",
+      "file-is-created-by-default": "1"
     },
     "url":{
       "description":"A data inside of the file is required. This file contains the root URL of the project. However, let's keep in mind that huge organizations and/or huge projects exists and so then the main domain is sometimes being divided into smaller parts - subdomains or local TLDs. For example, this could be named as the big project - https://www.indeed.com/, and smaller parts of it - http://ca.indeed.com/ , https://de.indeed.com/ , http://www.indeed.jobs/ , ... At such case we would use smaller. However, in the particular case of indeed, https://www.indeed.com/ means the project of US and so we will not find the subdomain like that: https://us.indeed.com/ . That's why in the case of indeed https://www.indeed.com/ is ok to be used. The main point here is - research a little on the project before picking the URL.",
       "example-content":"http://ca.indeed.com/",
-      "required":"1"
+      "required":"1",
+      "file-is-created-by-default": "1"
     },
     "content_static":{
       "description":"A data inside of the file is required. This is the file in which you put the content of the job posting. Put it as you found in the web - HTML, XML, JSON, any format is ok. Just make sure the content of this file does not include any dynamic data like: random banners, randomly generated tokens, hashed attributes of tags and other always changing goodies. Think about it like that - the content of this file should be exactly the same after grabbing the content again. If the content of this file is changed then it means that the job posting is changed too. The content of the file is not meant to be valid HTML, XML or other. However, you have to think in front - you prepare the data for extracting. Which means we will want to extract the specific data out of this file later, for example: City, Salary, Company name, Company e-mail, etc. If you see that adding some extra tags would make sense and so the job for the content extractor will be easier then go for it!",
       "example-content":"<div style=\"padding:20px;\"><h1>example job</h1><br>Requirements<ul><li class=\"requirement\">Requirement1</li><li class=\"requirement\">Requirement2</li><li class=\"requirement\">Requirement3</li></ul></div>",
-      "required":"1"
+      "required":"1",
+      "file-is-created-by-default": "0"
     },
     "content_dynamic":{
       "description":"The file is required to be created, but the data inside of the file is not required. The data is about the same as content-static, but this time you are adding dynamic content of the job posting. Banners or generated tokens usually does not cary any information on job posting itself - that's why we skip them even here. However, some dynamic data do cary information on job posting itself, examples of such dynamic content-related data would be: Job posting view statistics, Amount of applicants, etc. Again, put this dynamic information within tags or somehow - make it easily extractable later.",
       "example-content":"<h1>Statistics</h1><br>Applicants: <span id=\"applicants\">1</span><ul><li>Page views: <span id=\"applicants\">1565</span></div>",
-      "required":"0"
+      "required":"1",
+      "file-is-created-by-default": "1"
     },
     "id":{
       "description":"The file is required to be created, but the data inside of the file is not required. This file contains the unique string representing the unique ID of the job posting within the project itself.",
       "example-content":"57bb2f716820a6da",
-      "required":"0"
+      "required":"1",
+      "file-is-created-by-default": "1"
     }
   },
   "projects-on": [
     {
       "project_name": "cvbankas.lt",
+      "since_datetime_utc0": "2016-10-15 03:45:00",
       "language": "php",
       "url": "http://www.cvbankas.lt/",
       "entrance.sh": "/code/php/project/cvbankas/lt/entrance.sh",
