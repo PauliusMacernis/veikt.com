@@ -276,8 +276,14 @@ class Browser
         $result = array('success' => [], 'failure' => []);
 
         foreach($Jobs as $url => $Job) {
+            // Counter
             $counter = ++$this->jobsCounter;
-            $dirName = $counter . '--' . date('Y-m-d--H-i-s') . '--' . uniqid();
+            // Datetime (UTC)
+            $DateTime = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
+            $datetimeStr = $DateTime->format('Y-m-d--H-i-s');
+            // Dir name: <counter>--<datetimeUTC>--<uniqid()>
+            $dirName = $counter . '--' . $datetimeStr . '--' . uniqid();
+            
             $dir = $this->createDirectoryIfNotExists($dirName);
 
             if(!$dir) {
