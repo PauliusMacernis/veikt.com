@@ -276,8 +276,9 @@ class Browser
         $result = array('success' => [], 'failure' => []);
 
         foreach($Jobs as $url => $Job) {
-
-            $dir = $this->createDirectoryIfNotExists(++$this->jobsCounter);
+            $counter = ++$this->jobsCounter;
+            $dirName = $counter . '--' . date('Y-m-d--H-i-s') . '--' . uniqid();
+            $dir = $this->createDirectoryIfNotExists($dirName);
 
             if(!$dir) {
                 $result['failure'][$url] = $url;
