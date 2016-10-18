@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "555db5edab3c36016a1c0db1a69aad45",
-    "content-hash": "b484bb40158710a3bec6daffa179c8c5",
+    "hash": "a09ccd4b07b9099e06b46c5eb6c7dc76",
+    "content-hash": "8836b75cb0679f0eaa941592103f8b6f",
     "packages": [
         {
             "name": "fabpot/goutte",
@@ -626,12 +626,130 @@
                 "shim"
             ],
             "time": "2016-05-18 14:26:46"
+        },
+        {
+            "name": "t1gor/robots-txt-parser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/t1gor/Robots.txt-Parser-Class.git",
+                "reference": "8f6b4e79dfd111d1295b12f874bce4d79911fe06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/t1gor/Robots.txt-Parser-Class/zipball/8f6b4e79dfd111d1295b12f874bce4d79911fe06",
+                "reference": "8f6b4e79dfd111d1295b12f874bce4d79911fe06",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.5.0",
+                "vipnytt/useragentparser": "~1.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": ">=0.2",
+                "phpunit/phpunit": ">=3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "source/robotstxtparser.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Igor Timoshenkov",
+                    "email": "igor.timoshenkov@gmail.com",
+                    "role": "creator"
+                },
+                {
+                    "name": "Jan-Petter Gundersen",
+                    "email": "europe.jpg@gmail.com",
+                    "role": "contributor"
+                }
+            ],
+            "description": "PHP class to parse robots.txt rules according to Google, Yandex, W3C and The Web Robots Pages specifications.",
+            "homepage": "https://github.com/t1gor/Robots.txt-Parser-Class",
+            "keywords": [
+                "The Web Robots Pages",
+                "W3C",
+                "google",
+                "parser",
+                "robots.txt",
+                "yandex"
+            ],
+            "time": "2016-08-10 22:46:31"
+        },
+        {
+            "name": "vipnytt/useragentparser",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VIPnytt/UserAgentParser.git",
+                "reference": "37d64cc2c1593c0fc8f93392220eaa38b981cc85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VIPnytt/UserAgentParser/zipball/37d64cc2c1593c0fc8f93392220eaa38b981cc85",
+                "reference": "37d64cc2c1593c0fc8f93392220eaa38b981cc85",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": ">=0.2.0",
+                "phpunit/phpunit": "~4 || ~5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "vipnytt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "VIP nytt",
+                    "email": "vipnytt@gmail.com",
+                    "role": "Creator"
+                },
+                {
+                    "name": "Jan-Petter Gundersen",
+                    "email": "europe.jpg@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "User-Agent parser for robot rule sets",
+            "homepage": "https://github.com/VIPnytt/UserAgentParser",
+            "keywords": [
+                "REP",
+                "Robots Exclusion Protocol",
+                "Robots meta tag",
+                "crawler",
+                "robot",
+                "robots.txt",
+                "spider",
+                "user-agent",
+                "useragent",
+                "x-robots-tag"
+            ],
+            "time": "2016-08-10 14:03:57"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "t1gor/robots-txt-parser": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

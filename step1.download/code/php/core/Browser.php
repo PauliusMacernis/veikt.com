@@ -11,7 +11,7 @@ namespace Core;
 use Goutte\Client as GoutteClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Project\Cvbankas\Lt\Classes\Job;
-
+use Symfony\Component\DomCrawler\Crawler;
 
 
 class Browser
@@ -35,9 +35,15 @@ class Browser
     protected $settings;
     protected $jobProperties;
     protected $blackListCharsForPageNumbers = array('-', '/', '|', ' ', "\n", "\r", '.');
+    protected $jobsCounter;
+    protected $robotsTxtContent;    // https://en.wikipedia.org/wiki/Robots_exclusion_standard
 
-    public function __construct($baseDir, $settings, $projectSettings)
+    public function __construct($baseDir, $settings, $projectSettings, $careAboutRobotsDotTxt = true)
     {
+        // JOB COUNTER set to 0
+        // It means: No jobs found by Browser at the time of creating Browser object
+        $this->jobsCounter = 0;
+
         // PROJECT SETTINGS
         $this->projectSettings = $projectSettings;
 
@@ -49,6 +55,56 @@ class Browser
 
         // REQUIRED PROPERTIES/FILES
         $this->jobProperties = $this->getJobProperties();
+
+        // Should we take care about robots.txt file?
+        if($careAboutRobotsDotTxt) {
+            $this->robotsTxtContent = $this->getRobotsTxtContent();
+        } else {
+            $this->robotsTxtContent = null;
+        }
+
+    }
+
+    protected function getRobotsTxtContent() {
+
+        if(isset($this->robotsTxtContent)) {
+            return $this->robotsTxtContent;
+        }
+
+        $url = $this->getRobotsTxtUrl();
+        if(!$url) {
+            $this->robotsTxtContent = '';
+            return '';
+        }
+
+        $Content = $this->doRepeatableAction('getContentOfRemoteRobotsTxt', $url);
+        if(!$Content) {
+            $this->robotsTxtContent = '';
+            return '';
+        }
+
+        $this->robotsTxtContent = $Content;
+        return $this->robotsTxtContent;
+
+    }
+
+    protected function getRobotsTxtUrl() {
+
+        $urlParsed = parse_url($this->projectSettings['url']);
+        $url = ''
+            . (isset($urlParsed['scheme']) ? ($urlParsed['scheme']. '://') : '')
+            . (
+                (isset($urlParsed['user']) && isset($urlParsed['user']))
+                ? ($urlParsed['pass'] . ':' . $urlParsed['pass'] . '@')
+                : ''
+              )
+            . (isset($urlParsed['host']) ? $urlParsed['host'] : '')
+            . (isset($urlParsed['port']) ? (':' .$urlParsed['port']) : '')
+            . '/'
+            . 'robots.txt';
+
+        return $url;
+
     }
 
     protected function getJobProperties() {
@@ -136,10 +192,19 @@ class Browser
      * @param string $actionType        "GET", "POST", any other...
      * @return null|\Symfony\Component\DomCrawler\Crawler
      */
-    protected function getContentOfUrl($url, $actionType = 'GET') {
+    protected function getContentOfUrl($url, $actionType = 'GET', $listenRobotsDotTxt = true) {
 
         if(!$url) {
             return null;
+        }
+
+        // Check if url is allowed
+        if($listenRobotsDotTxt && $this->robotsTxtContent) {
+            $parser = new \RobotsTxtParser($this->robotsTxtContent);
+            // $parser->setUserAgent('VeiktDotComBot'); // ???
+            if ($parser->isDisallowed($url)) {
+                return null;
+            }
         }
 
         $goutteClient = new GoutteClient();
@@ -151,6 +216,29 @@ class Browser
         ));
         $goutteClient->setClient($guzzleClient);
         $result = $goutteClient->request($actionType, $url);
+
+        if(!$result) {
+            return null;
+        }
+
+        return $result;
+
+    }
+
+    /**
+     * Gets content of remote rebots.txt file
+     * @todo: merge with getContentUrl
+     *
+     * @param $url              For example: "http://www.example.org/robots.txt
+     * @return null|string
+     */
+    protected function getContentOfRemoteRobotsTxt($url) {
+
+        if(!$url) {
+            return null;
+        }
+
+        $result = file_get_contents($url);
 
         if(!$result) {
             return null;
@@ -189,7 +277,7 @@ class Browser
 
         foreach($Jobs as $url => $Job) {
 
-            $dir = $this->createDirectoryIfNotExists($Job->id);
+            $dir = $this->createDirectoryIfNotExists(++$this->jobsCounter);
 
             if(!$dir) {
                 $result['failure'][$url] = $url;
@@ -241,7 +329,7 @@ class Browser
 
     }
 
-    protected function createDirectoryIfNotExists($jobId, $cmod = 0775) {
+    protected function createDirectoryIfNotExists($jobCounter, $cmod = 0775) {
 
         if(empty($this->projectSettings)) {
             return false;
@@ -251,13 +339,13 @@ class Browser
             return false;
         }
 
-        if(!isset($jobId) || empty($jobId)) {
+        if(!isset($jobCounter) || empty($jobCounter)) {
             return false;
         }
 
         $dir = $this->baseDir
             . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
-            . DIRECTORY_SEPARATOR . $jobId;
+            . DIRECTORY_SEPARATOR . $jobCounter;
 
         $success = true;
         if(!is_dir($dir)) {

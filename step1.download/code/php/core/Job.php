@@ -146,7 +146,7 @@ class Job
 
     /**
      * Unique identifier identifying job posting in the source system
-     * Defaults to URL (encoded with MIME base64)
+     * Defaults to URL
      *
      * @param $fileAndPropertyName
      * @param \Symfony\Component\DomCrawler\Crawler $Content
@@ -159,7 +159,7 @@ class Job
         $url,
         array $projectSettings
     ) {
-        $this->$fileAndPropertyName = base64_encode($url);
+        $this->$fileAndPropertyName = $url;
     }
 
 
