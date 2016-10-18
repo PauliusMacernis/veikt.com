@@ -283,7 +283,7 @@ class Browser
             $datetimeStr = $DateTime->format('Y-m-d--H-i-s');
             // Dir name: <counter>--<datetimeUTC>--<uniqid()>
             $dirName = $counter . '--' . $datetimeStr . '--' . uniqid();
-            
+
             $dir = $this->createDirectoryIfNotExists($dirName);
 
             if(!$dir) {
