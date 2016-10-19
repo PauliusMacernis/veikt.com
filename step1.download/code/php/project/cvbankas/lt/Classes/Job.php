@@ -27,7 +27,8 @@ class Job extends CoreJob
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
         $value = trim($Content->filter('#jobad_cont')->html());
 
@@ -50,7 +51,8 @@ class Job extends CoreJob
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
         $value = trim($Content->filter('#job_ad_statistics')->html());
 

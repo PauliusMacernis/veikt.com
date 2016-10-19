@@ -9,6 +9,7 @@
 namespace Project\Cvbankas\Lt\Classes;
 
 use Core\Browser as CoreBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 
 
 class Browser extends CoreBrowser
@@ -23,7 +24,8 @@ class Browser extends CoreBrowser
     protected $listContent;
 
 
-    public function getFirstListOfJobLinks() {
+    public function getFirstListOfJobLinks()
+    {
         $this->listContent = $this->doRepeatableAction('getContentOfUrl', self::HOMEPAGE_URL);
         return (array)$this->extractJobLinks();
     }
@@ -34,7 +36,17 @@ class Browser extends CoreBrowser
      *
      * @return array
      */
-    protected function extractJobLinks() {
+    protected function extractJobLinks()
+    {
+
+        if (
+            !isset($this->listContent)
+            || !is_object($this->listContent)
+            || !($this->listContent instanceof Crawler)
+        ) {
+            return array();
+        }
+
 
         $linksToJobs = array();
 
@@ -42,18 +54,18 @@ class Browser extends CoreBrowser
 
         foreach ($list as $item) {
 
-            $aElements  = $item->getElementsByTagName('a');
-            if(!$aElements) {
+            $aElements = $item->getElementsByTagName('a');
+            if (!$aElements) {
                 continue;
             }
 
-            $firstItem  = $aElements->item(0);
-            if(!$firstItem) {
+            $firstItem = $aElements->item(0);
+            if (!$firstItem) {
                 continue;
             }
 
             $href = $firstItem->getAttribute('href');
-            if(!$href) {
+            if (!$href) {
                 continue;
             }
 
@@ -66,7 +78,8 @@ class Browser extends CoreBrowser
     }
 
 
-    protected function getNextPageUrlOfListOfJobLinks() {
+    protected function getNextPageUrlOfListOfJobLinks()
+    {
 
         $className = "pages_ul_inner";
         $PageNumbersContent = $this->listContent->filterXPath("//ul[contains(@class, '$className')]");

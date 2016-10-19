@@ -8,8 +8,8 @@
 
 namespace Core;
 
-use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 
 class Auditor

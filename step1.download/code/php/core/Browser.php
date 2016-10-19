@@ -11,7 +11,6 @@ namespace Core;
 use Goutte\Client as GoutteClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Project\Cvbankas\Lt\Classes\Job;
-use Symfony\Component\DomCrawler\Crawler;
 
 
 class Browser
@@ -21,6 +20,8 @@ class Browser
     const RETRY_TIMES = 3;
     const RETRY_TIMES_MIN_DELAY_IN_SECONDS = 3;
     const RETRY_TIMES_MAX_DELAY_IN_SECONDS = 10;
+    const START_MIN_DELAY_IN_SECONDS = 1; // When starting this->doRepeatableAction method
+    const START_MAX_DELAY_IN_SECONDS = 5; // When starting this->doRepeatableAction method
 
     // http://php.net/manual/en/function.curl-setopt.php
     const CURLOPT_TIMEOUT = 900;        // 15 min
@@ -57,7 +58,7 @@ class Browser
         $this->jobProperties = $this->getJobProperties();
 
         // Should we take care about robots.txt file?
-        if($careAboutRobotsDotTxt) {
+        if ($careAboutRobotsDotTxt) {
             $this->robotsTxtContent = $this->getRobotsTxtContent();
         } else {
             $this->robotsTxtContent = null;
@@ -65,20 +66,21 @@ class Browser
 
     }
 
-    protected function getRobotsTxtContent() {
+    protected function getRobotsTxtContent()
+    {
 
-        if(isset($this->robotsTxtContent)) {
+        if (isset($this->robotsTxtContent)) {
             return $this->robotsTxtContent;
         }
 
         $url = $this->getRobotsTxtUrl();
-        if(!$url) {
+        if (!$url) {
             $this->robotsTxtContent = '';
             return '';
         }
 
         $Content = $this->doRepeatableAction('getContentOfRemoteRobotsTxt', $url);
-        if(!$Content) {
+        if (!$Content) {
             $this->robotsTxtContent = '';
             return '';
         }
@@ -88,18 +90,19 @@ class Browser
 
     }
 
-    protected function getRobotsTxtUrl() {
+    protected function getRobotsTxtUrl()
+    {
 
         $urlParsed = parse_url($this->projectSettings['url']);
         $url = ''
-            . (isset($urlParsed['scheme']) ? ($urlParsed['scheme']. '://') : '')
+            . (isset($urlParsed['scheme']) ? ($urlParsed['scheme'] . '://') : '')
             . (
-                (isset($urlParsed['user']) && isset($urlParsed['user']))
+            (isset($urlParsed['user']) && isset($urlParsed['user']))
                 ? ($urlParsed['pass'] . ':' . $urlParsed['pass'] . '@')
                 : ''
-              )
+            )
             . (isset($urlParsed['host']) ? $urlParsed['host'] : '')
-            . (isset($urlParsed['port']) ? (':' .$urlParsed['port']) : '')
+            . (isset($urlParsed['port']) ? (':' . $urlParsed['port']) : '')
             . '/'
             . 'robots.txt';
 
@@ -107,9 +110,10 @@ class Browser
 
     }
 
-    protected function getJobProperties() {
+    protected function getJobProperties()
+    {
 
-        if(!isset($this->jobProperties)) {
+        if (!isset($this->jobProperties)) {
             $this->jobProperties = (array)$this->settings['files-required-to-output'];
         }
 
@@ -129,18 +133,22 @@ class Browser
      *
      * @todo: This one definitely requires the test to be written
      *
-     * @param string $methodName        Name of method in $this class
+     * @param string $methodName Name of method in $this class
      * @return mixed|null               Returned value of $this->$methodName method
      *
      */
-    protected function doRepeatableAction($methodName) {
+    protected function doRepeatableAction($methodName)
+    {
 
-        if(!method_exists($this, $methodName)) {
+        if (!method_exists($this, $methodName)) {
             return null;
         }
 
+        // Wait before starting
+        sleep(rand($this::START_MIN_DELAY_IN_SECONDS, $this::START_MAX_DELAY_IN_SECONDS));
+
         $retryTimes = $this::RETRY_TIMES;
-        if(!$retryTimes || $retryTimes < 0) { // be secured!
+        if ((int)$retryTimes < 0) { // be secured!
             return null;
         }
 
@@ -150,11 +158,11 @@ class Browser
         array_shift($args);
 
         // Do action
-        while($retryTimes) {
+        while ($retryTimes) {
 
-            if($this::RETRY_TIMES != $retryTimes) { // Not the first time?
+            if ($this::RETRY_TIMES != $retryTimes) { // Not the first time?
                 //var_dump('Sleeping for ' . $this::RETRY_TIMES_MIN_DELAY_IN_SECONDS . ', ' . $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS);
-                sleep(rand($this::RETRY_TIMES_MIN_DELAY_IN_SECONDS,$this::RETRY_TIMES_MAX_DELAY_IN_SECONDS)); // Wait
+                sleep(rand($this::RETRY_TIMES_MIN_DELAY_IN_SECONDS, $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS)); // Wait
             }
 
             //var_dump('CALLING "' . $methodName . '"". Try #' . ($this::RETRY_TIMES - $retryTimes +1));
@@ -164,7 +172,7 @@ class Browser
             //var_dump($result);
 
             // If result is strictly NULL or FALSE then it means "NO SUCCESS"
-            if(isset($result) && ($result !== false)){
+            if (isset($result) && ($result !== false)) {
                 return $result;
             }
 
@@ -173,7 +181,7 @@ class Browser
 
         // Result may be FALSE or NULL
         // If result is FALSE...
-        if(isset($result)) {
+        if (isset($result)) {
             return $result;
         }
 
@@ -184,22 +192,22 @@ class Browser
     }
 
 
-
     /**
      * Returns content of URL
      *
-     * @param string $url               Any valid URL
-     * @param string $actionType        "GET", "POST", any other...
+     * @param string $url Any valid URL
+     * @param string $actionType "GET", "POST", any other...
      * @return null|\Symfony\Component\DomCrawler\Crawler
      */
-    protected function getContentOfUrl($url, $actionType = 'GET', $listenRobotsDotTxt = true) {
+    protected function getContentOfUrl($url, $actionType = 'GET', $listenRobotsDotTxt = true)
+    {
 
-        if(!$url) {
+        if (!$url) {
             return null;
         }
 
         // Check if url is allowed
-        if($listenRobotsDotTxt && $this->robotsTxtContent) {
+        if ($listenRobotsDotTxt && $this->robotsTxtContent) {
             $parser = new \RobotsTxtParser($this->robotsTxtContent);
             // $parser->setUserAgent('VeiktDotComBot'); // ???
             if ($parser->isDisallowed($url)) {
@@ -217,7 +225,7 @@ class Browser
         $goutteClient->setClient($guzzleClient);
         $result = $goutteClient->request($actionType, $url);
 
-        if(!$result) {
+        if (!$result) {
             return null;
         }
 
@@ -232,15 +240,16 @@ class Browser
      * @param $url              For example: "http://www.example.org/robots.txt
      * @return null|string
      */
-    protected function getContentOfRemoteRobotsTxt($url) {
+    protected function getContentOfRemoteRobotsTxt($url)
+    {
 
-        if(!$url) {
+        if (!$url) {
             return null;
         }
 
         $result = file_get_contents($url);
 
-        if(!$result) {
+        if (!$result) {
             return null;
         }
 
@@ -249,17 +258,16 @@ class Browser
     }
 
 
+    public function getJobsFromTheList($List)
+    {
 
-
-    public function getJobsFromTheList($List) {
-
-        if(!$List) {
+        if (!$List) {
             return array();
         }
 
         $jobs = array();
 
-        foreach($List as $url) {
+        foreach ($List as $url) {
             $Content = $this->doRepeatableAction('getContentOfUrl', $url);
             $jobs[$url] = $this->extractJob(
                 $Content,
@@ -271,28 +279,29 @@ class Browser
 
     }
 
-    public function saveJobsToFiles(array $Jobs) {
+    public function saveJobsToFiles(array $Jobs)
+    {
 
         $result = array('success' => [], 'failure' => []);
 
-        foreach($Jobs as $url => $Job) {
+        foreach ($Jobs as $url => $Job) {
             // Counter
             $counter = ++$this->jobsCounter;
             // Datetime (UTC)
-            $DateTime = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
+            $DateTime = new \DateTime('now', new \DateTimeZone('UTC'));
             $datetimeStr = $DateTime->format('Y-m-d--H-i-s');
             // Dir name: <counter>--<datetimeUTC>--<uniqid()>
             $dirName = $counter . '--' . $datetimeStr . '--' . uniqid();
 
             $dir = $this->createDirectoryIfNotExists($dirName);
 
-            if(!$dir) {
+            if (!$dir) {
                 $result['failure'][$url] = $url;
                 continue;
             }
 
             $success = $this->saveJobToFile($Job, $dir);
-            if(!$success) {
+            if (!$success) {
                 $result['failure'][$url] = $url;
                 continue;
             }
@@ -305,15 +314,16 @@ class Browser
 
     }
 
-    protected function saveJobToFile(\Core\Job $Job, $dirToSaveTo) {
+    protected function saveJobToFile(\Core\Job $Job, $dirToSaveTo)
+    {
 
         $success = true;
 
-        foreach($Job as $property => $value) {
+        foreach ($Job as $property => $value) {
 
             $file = $dirToSaveTo . DIRECTORY_SEPARATOR . $property;
 
-            if(!$this->saveValueToFile($file, $value)) {
+            if (!$this->saveValueToFile($file, $value)) {
                 $success = false;
             }
         }
@@ -322,13 +332,14 @@ class Browser
 
     }
 
-    protected function saveValueToFile($file, $content) {
+    protected function saveValueToFile($file, $content)
+    {
 
         $fp = fopen($file, 'w');
         $success = fwrite($fp, $content);
         fclose($fp);
 
-        if($success === false) {
+        if ($success === false) {
             return false;
         }
 
@@ -336,17 +347,18 @@ class Browser
 
     }
 
-    protected function createDirectoryIfNotExists($jobCounter, $cmod = 0775) {
+    protected function createDirectoryIfNotExists($jobCounter, $cmod = 0775)
+    {
 
-        if(empty($this->projectSettings)) {
+        if (empty($this->projectSettings)) {
             return false;
         }
 
-        if(!isset($this->projectSettings['dir_downloaded_posts']) || empty($this->projectSettings['dir_downloaded_posts'])) {
+        if (!isset($this->projectSettings['dir_downloaded_posts']) || empty($this->projectSettings['dir_downloaded_posts'])) {
             return false;
         }
 
-        if(!isset($jobCounter) || empty($jobCounter)) {
+        if (!isset($jobCounter) || empty($jobCounter)) {
             return false;
         }
 
@@ -355,11 +367,11 @@ class Browser
             . DIRECTORY_SEPARATOR . $jobCounter;
 
         $success = true;
-        if(!is_dir($dir)) {
+        if (!is_dir($dir)) {
             $success = mkdir($dir, $cmod, true);
         }
 
-        if(!$success) {
+        if (!$success) {
             return false;
         }
 
@@ -376,9 +388,10 @@ class Browser
     public function extractJob(
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url
-    ) {
+    )
+    {
 
-        if(empty($this->jobProperties)) {
+        if (empty($this->jobProperties)) {
             return null;
         }
 
@@ -386,7 +399,8 @@ class Browser
 
     }
 
-    public function getNextListOfJobLinks() {
+    public function getNextListOfJobLinks()
+    {
 
         $nextPageUrl = $this->getNextPageUrlOfListOfJobLinks();
         $this->listContent = $this->doRepeatableAction('getContentOfUrl', $nextPageUrl);
@@ -399,7 +413,8 @@ class Browser
      *
      * @return null
      */
-    protected function getNextPageUrlOfListOfJobLinks() {
+    protected function getNextPageUrlOfListOfJobLinks()
+    {
         return null;
     }
 

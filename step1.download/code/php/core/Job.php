@@ -17,16 +17,17 @@ class Job
         array $filesRequiredToOutput,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
-        if(empty($filesRequiredToOutput)) {
+        if (empty($filesRequiredToOutput)) {
             return $this;
         }
 
         foreach ($filesRequiredToOutput as $fileName => $fileData) {
             //$setMethodName = 'set' . ucfirst(strtolower($fileName));
 
-            if(method_exists($this, $fileName)) {
+            if (method_exists($this, $fileName)) {
                 $this->$fileName($fileName, $Content, $url, $projectSettings);
             } else {
                 $this->{$fileName} = null;
@@ -94,9 +95,10 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
-        $value = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
+        $value = new \DateTime('now', new \DateTimeZone('UTC'));
         $value = $value->format('Y-m-d H:i:s');
 
         $this->$fileAndPropertyName = $value;
@@ -116,7 +118,8 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
         $value = isset($projectSettings['project_name']) ? $projectSettings['project_name'] : null;
 
@@ -137,7 +140,8 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
         $this->$fileAndPropertyName = $url;
 
@@ -158,7 +162,8 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
         $this->$fileAndPropertyName = $url;
     }
 
@@ -178,15 +183,13 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
         array $projectSettings
-    ) {
+    )
+    {
 
         // Empty value by default
         $this->$fileAndPropertyName = '';
 
     }
-
-
-
 
 
 }

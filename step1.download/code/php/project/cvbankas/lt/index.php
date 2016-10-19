@@ -14,8 +14,8 @@ use Project\Cvbankas\Lt\Classes\Auditor;
 use Project\Cvbankas\Lt\Classes\Browser;
 
 // Get settings: All & Project specific
-$settingsAll        = Helper::getSettingsAll(__DIR__);
-$settingsProject    = Helper::getSettingsProject(__DIR__, $settingsAll);
+$settingsAll = Helper::getSettingsAll(__DIR__);
+$settingsProject = Helper::getSettingsProject(__DIR__, $settingsAll);
 
 // Initiate main objects to deal with the content
 $Browser = new Browser(__DIR__, $settingsAll, $settingsProject);
@@ -24,7 +24,7 @@ $Auditor = new Auditor(__DIR__, $settingsAll, $settingsProject);
 // Let's make one url download possible
 //  In case we will want to download one specific url
 //  For example: http://step1.veikt.dev/code/php/project/cvbankas/lt/index.php?url=http://www.cvbankas.lt/pardavimu-telefonu-vadybininkas-e-vilniuje-lietuvos-rinka-vilniuje/1-4204758
-if(isset($_REQUEST['url'])) {
+if (isset($_REQUEST['url'])) {
     $iJobUrl = $_REQUEST['url'];
 
     // Get job info
@@ -52,7 +52,7 @@ $List = $Browser->getFirstListOfJobLinks();
 
 do {
     // Get and save jobs by one, not by the whole list.
-    foreach($List as $iJobUrl) {
+    foreach ($List as $iJobUrl) {
         // Simplify the list & Get new jobs of the simplified list
         $iJobList = array($iJobUrl => $iJobUrl);
         $iJob = $Browser->getJobsFromTheList($iJobList);
@@ -66,8 +66,8 @@ do {
         // Logging and similar stuff
         $Auditor->registerListAndJobs($iJobList, $iJob, $iSave);
     }
-} while(
-    $List = $Browser->getNextListOfJobLinks()
+} while (
+$List = $Browser->getNextListOfJobLinks()
 );
 
 $Auditor->doReport();
