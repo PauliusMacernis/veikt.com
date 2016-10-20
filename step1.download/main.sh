@@ -9,7 +9,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Get entrance.sh scripts of available projects
 ENTRANCE_SCRIPTS=$(php -r "
-    \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . 'settings.json'), true);
+    \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
     \$projectsOn = \$settings['projects-on'];
     \$entranceScripts = [];
      foreach(\$projectsOn as \$projectsOnData) {

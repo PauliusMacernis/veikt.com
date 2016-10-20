@@ -16,6 +16,7 @@ class Helper
     {
 
         $fileSettings = $projectDir . DIRECTORY_SEPARATOR
+            . '..' . DIRECTORY_SEPARATOR
             . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
             . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
             . '..' . DIRECTORY_SEPARATOR
