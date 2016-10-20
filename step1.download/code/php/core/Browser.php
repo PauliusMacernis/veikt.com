@@ -114,7 +114,7 @@ class Browser
     {
 
         if (!isset($this->jobProperties)) {
-            $this->jobProperties = (array)$this->settings['files-required-to-output'];
+            $this->jobProperties = (array)$this->settings['files-to-output'];
         }
 
         return $this->jobProperties;

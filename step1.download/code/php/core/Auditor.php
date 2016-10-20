@@ -139,7 +139,7 @@ class Auditor
     protected function getRequiredProperties() {
 
         if(!isset($this->requiredProperties)) {
-            $requiredProperties = array_filter($this->settings['files-required-to-output'], function($value) {
+            $requiredProperties = array_filter($this->settings['files-to-output'], function($value) {
                 return $value['required'];
             });
             $this->requiredProperties = $requiredProperties;

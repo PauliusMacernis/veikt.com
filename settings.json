@@ -1,5 +1,5 @@
 {
-  "files-required-to-output":{
+  "files-to-output":{
     "datetime":{
       "description":"A data inside of the file is required. Just put the datetime value inside for everyone to know when the job information has been downloaded. The datetime value should be in UTC+0 timezone and should be formatted as the string YYYY-MM-DD HH:mm:ss",
       "example-content":"2016-09-30 14:30:59",

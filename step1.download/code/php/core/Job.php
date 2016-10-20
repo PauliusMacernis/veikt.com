@@ -62,7 +62,7 @@ class Job
     /**
      * Gets property value.
      *  Property name is the same as file name from
-     *  settings.js ["files-required-to-output"]
+     *  settings.js ["files-to-output"]
      *
      * @param $name
      * @return mixed
