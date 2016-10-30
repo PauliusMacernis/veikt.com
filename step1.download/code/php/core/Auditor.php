@@ -196,9 +196,15 @@ class Auditor
 
     protected function getPathToLogFile($name = 'Success', $new = false) {
         $pathToLog =
-            $this->indexDir . DIRECTORY_SEPARATOR
-            . $this->projectSettings['dir_downloaded_logs'] . DIRECTORY_SEPARATOR
-            . $this->datetime->format($this->projectSettings['file_downloaded_logs'])
+            $this->indexDir
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_logs']
+            . DIRECTORY_SEPARATOR . $this->datetime->format($this->projectSettings['file_downloaded_logs'])
             . '-' . $name . '.log';
 
         return $pathToLog;

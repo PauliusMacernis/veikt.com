@@ -289,11 +289,7 @@ class Browser
             $counter = ++$this->jobsCounter;
             // Datetime (UTC)
             $DateTime = new \DateTime('now', new \DateTimeZone('UTC'));
-            $datetimeStr = $DateTime->format('Y-m-d--H-i-s');
-            // Dir name: <counter>--<datetimeUTC>--<uniqid()>
-            $dirName = $counter . '--' . $datetimeStr . '--' . uniqid();
-
-            $dir = $this->createDirectoryIfNotExists($dirName);
+            $dir = $this->createDirectoryIfNotExists($counter, $DateTime);
 
             if (!$dir) {
                 $result['failure'][$url] = $url;
@@ -347,7 +343,7 @@ class Browser
 
     }
 
-    protected function createDirectoryIfNotExists($jobCounter, $cmod = 0775)
+    protected function createDirectoryIfNotExists($jobCounter, \DateTime $DateTime, $cmod = 0775)
     {
 
         if (empty($this->projectSettings)) {
@@ -363,8 +359,15 @@ class Browser
         }
 
         $dir = $this->baseDir
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
             . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
-            . DIRECTORY_SEPARATOR . $jobCounter;
+            . DIRECTORY_SEPARATOR . $DateTime->format('Y-m-d')
+            . DIRECTORY_SEPARATOR . $jobCounter . '--' . $DateTime->format('Y-m-d--H-i-s') . '--' . uniqid();
 
         $success = true;
         if (!is_dir($dir)) {

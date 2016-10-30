@@ -13,9 +13,14 @@ ENTRANCE_SCRIPTS=$(php -r "
     \$projectsOn = \$settings['projects-on'];
     \$entranceScripts = [];
      foreach(\$projectsOn as \$projectsOnData) {
-         \$file = '$DIR' . \$projectsOnData['entrance.sh'];
+         if(!isset(\$projectsOnData['entrance_sh_step1_download'])) {
+            // Skip the project that does not have the entrance.sh script defined
+            continue;
+         }
+         \$file = '$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . \$projectsOnData['entrance_sh_step1_download'];
          if(!is_file(\$file)) {
-            //continue;
+            // Skip the project that does not have the entrance.sh script in filesystem
+            continue;
          }
          \$entranceScripts[] = \$file;
      }

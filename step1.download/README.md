@@ -3,8 +3,8 @@
 This step downloads job postings from various web projects and temporary saves the downloaded into separate files
 
 ## The story begins in the `main.sh` shell script run by Linux's cron ##
-- `main.sh` looks at `projects-on` section of `settings.json` file, extracts every value assigned to `entrance.sh`.
-- Every found `entrance.sh` is being run. One entry after another. The order of run is the same as coded in the `settings.json`. From top to bottom.
+- `main.sh` looks at `projects-on` section of `settings.json` file, extracts every value assigned to `entrance_sh_step1_download`.
+- Every found and existing `entrance.sh` is being run. One entry after another. The order of run is the same as coded in the `settings.json`. From top to bottom.
 - `entrance.sh` code usually triggers `index.php` file (if the particular project is running on php, - this is by default). And then things go as the PHP code inside `index.php` wants...
 - At the moment `entrance.sh` is made to work with PHP code only. However, you are not limited as you may always write your own `entrance.sh` file and trigger whatever you want in there: Python? Ruby? scripting shell only? You name it.
 

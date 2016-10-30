@@ -38,7 +38,7 @@ class Helper
 
     }
 
-    public static function getSettingsProject($projectDir, array $settingsAll)
+    public static function getSettingsProject($projectDirFromEntranceScript, array $settingsAll)
     {
 
         // Find project settings
@@ -48,16 +48,16 @@ class Helper
 
         // Find settings of this project
         foreach ($settingsAll['projects-on'] as $projectName => $projectSettingsTemp) {
-            if (!isset($projectSettingsTemp['entrance.sh'])) {
+            if (!isset($projectSettingsTemp['entrance_sh_step1_download'])) {
                 continue;
             }
-            $projectDir = pathinfo($projectSettingsTemp['entrance.sh'], PATHINFO_DIRNAME);
+            $projectDirFromSettings = pathinfo($projectSettingsTemp['entrance_sh_step1_download'], PATHINFO_DIRNAME);
             if (
                 substr_compare(
-                    $projectDir,
-                    $projectDir,
-                    strlen($projectDir) - strlen($projectDir),
-                    strlen($projectDir)
+                    $projectDirFromEntranceScript,
+                    $projectDirFromSettings,
+                    strlen($projectDirFromEntranceScript) - strlen($projectDirFromSettings),
+                    strlen($projectDirFromSettings)
                 ) === 0
             ) {
                 // $projectSettings item is found!
