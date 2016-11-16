@@ -1,0 +1,58 @@
+.<div id="jobad_cont_main">
+                <header><h1 class="heading1" id="jobad_heading1" itemprop="title">Back-End Developer</h1>
+                    <div class="txt_3">Skelbimas galioja iki: 2016.11.27</div>
+                </header><section><h4 class="heading4 pt20">Darbo vieta</h4>
+                    <div class="jobad_txt"><a href="http://www.cvbankas.lt/darbas-vilniuje">Vilnius</a></div>
+                </section><section><h4 class="heading4 pt20">Darbo pobūdis</h4>
+                        <div class="jobad_txt" itemprop="responsibilities">BetGames.TV is looking for motivated professional to become a valued member of our development<br>
+team. You will work in a collaborative environment and discover new solutions and the best<br>
+practices for back-end development to deliver the best experience for our customers. Since we are<br>
+working in cross-functional teams, you will get the possibility to work with other type of projects.</div>
+                    </section><section><h4 class="heading4 pt20">Reikalavimai</h4>
+                        <div class="jobad_txt" itemprop="qualifications"> Knowledge of PHP, MySQL, Node.js<br>
+ Strong understanding OOP and SOLID<br>
+ Strong understanding of the best practices in developing web applications<br>
+ Knowledge of at least one PHP MVC framework (Symphony, YII)<br>
+ Experience with GIT<br>
+ Experience with Linux systems<br>
+ Ability to work in a team<br>
+ Fluent English<br><br>
+Advantages<br>
+ Experience with Vagrant, Jira, Stash, Jenkins<br>
+ Experience with database optimization<br>
+ Experience with API development and integration<br>
+ Experience with RabbitMQ, Gearman<br>
+ Basic knowledge of Russian</div>
+                    </section><section><h4 class="heading4 pt20">Mes jums siūlome</h4>
+                        <div class="jobad_txt" itemprop="benefits"> Agile working environment<br>
+ Possibility to implement own ideas in product development and other activities<br>
+ Goal oriented and creative teammates<br>
+ Continuous professional training courses<br>
+ Modern working tools<br>
+ Foosball, basketball, table tennis, X-box console, relax room with an aquarium, free coffee,<br>
+open terrace with a grill, team building events<br>
+ Free parking space</div>
+                    </section><a href="http://www.cvbankas.lt/kandidatuoti-neuzsiregistravus.html?sk_id=4358421" class="button_jsk button_mod_important mt20">Siųsti savo CV</a>
+                                                                <div class="pt20">
+                            <a href="http://www.cvbankas.lt/">« Grįžti į skelbimų sąrašą</a>
+                        </div>
+                                                </div>
+            <div id="jobad_cont_company">
+                <section id="jobad_section_company" itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><div id="jobad_img_c">
+                                                    <a href="http://www.cvbankas.lt/tv-zaidimai-siulo-darba/4-17225" itemprop="url">
+                                                <img src="http://cvbankas-img.dgn.lt/companylogo_4_2114329/tv-zaidimai.jpg" alt='UAB "TV ŽAIDIMAI"' title='UAB "TV ŽAIDIMAI"'></a>
+                                            </div>
+                    <div id="jobad_company">
+                        <h2 id="jobad_company_title" itemprop="name">UAB "TV ŽAIDIMAI"</h2>
+                        <div id="jobad_company_descr"><a href="http://www.betgames.tv" target="_blank" rel="nofollow">www.betgames.tv</a></div>
+                                                    <a href="http://www.cvbankas.lt/tv-zaidimai-siulo-darba/4-17225" class="mt20 db">Visi UAB "TV ŽAIDIMAI" darbo skelbimai</a>
+                                            </div>
+                    <div id="releated_fb_friends">
+                                                    <div class="p15">
+                                <div class="fwb">Kokie žmonės Jus sieja su šia įmone?</div>
+                                <div>Prisijunkite soc. profiliu ir sužinokite!</div>
+                                <a href="http://www.cvbankas.lt/prisijungti-facebook.html" class="button_ico button_ico_fb mt10" id="fb_login_but2">Jungtis su Facebook »</a>
+                            </div>
+                                            </div>
+                </section>
+</div>

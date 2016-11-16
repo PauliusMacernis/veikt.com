@@ -1,0 +1,184 @@
+
+ NORMALIZE: Started: 2016-11-06:15:12:28
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(25) "code/php/project/cvbankas"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(63) "/home/veikt.dev/httpdocs/normalize/code/php/project/cvbankas/lt"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+string(26) "code/php/project/cvbankas2"
+/home/veikt.dev/httpdocs/download/code/php/core/Settings.php:62:
+bool(false)
+/home/veikt.dev/httpdocs/normalize/code/php/core/JobAsFile.php:49:
+array(0) {
+}
+
+ NORMALIZE: Finished: 2016-11-06:15:12:30

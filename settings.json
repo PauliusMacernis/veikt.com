@@ -7,7 +7,7 @@
       "file-is-created-by-default": "1"
     },
     "project":{
-      "description":"A data inside of the file is required. This file holds the name of the project. The name of the project must be the same as the name of the directory in which all project files reside at step1.",
+      "description":"A data inside of the file is required. This file holds the name of the project.",
       "example-content":"ca.indeed.com",
       "required":"1",
       "file-is-created-by-default": "1"
@@ -37,22 +37,166 @@
       "file-is-created-by-default": "1"
     }
   },
+  "content-to-extract-from-files": {
+    "file_datetime":{
+      "description":"The content from the file named 'datetime'.",
+      "example-content":"2016-09-30 14:30:59",
+      "database-table": "jobtest",
+      "database-column": "file_datetime",
+      "database-column-id": "id",
+      "required":"1",
+      "is-identity-component": "0",
+      "content-is-extracted-by-default": ""
+    },
+    "file_project":{
+      "description":"The content from the file named 'project'.",
+      "example-content":"ca.indeed.com",
+      "database-table": "jobtest",
+      "database-column": "file_project",
+      "database-column-id": "id",
+      "required":"",
+      "is-identity-component": "0",
+      "content-is-extracted-by-default": ""
+    },
+    "file_url":{
+      "description":"The content from the file named 'url'. This url is pointing to the particular job posting.",
+      "example-content":"http://ca.indeed.com/",
+      "database-table": "jobtest",
+      "database-column": "file_url",
+      "database-column-id": "id",
+      "required":"",
+      "is-identity-component": "0",
+      "content-is-extracted-by-default": ""
+    },
+    "file_content_static":{
+      "description":"The content from the file named 'content_static'.",
+      "example-content":"<div style=\"padding:20px;\"><h1>example job</h1><br>Requirements<ul><li class=\"requirement\">Requirement1</li><li class=\"requirement\">Requirement2</li><li class=\"requirement\">Requirement3</li></ul></div>",
+      "database-table": "jobtest",
+      "database-column": "file_content_static",
+      "database-column-id": "id",
+      "required":"1",
+      "is-identity-component": "0",
+      "content-is-extracted-by-default": ""
+    },
+    "file_content_dynamic":{
+      "description":"The content from the file named 'content_dynamic'.",
+      "example-content":"<h1>Statistics</h1><br>Applicants: <span id=\"applicants\">1</span><ul><li>Page views: <span id=\"applicants\">1565</span></div>",
+      "database-table": "jobtest2",
+      "database-column": "file_content_dynamic",
+      "database-column-id": "id",
+      "required":"0",
+      "is-identity-component": "1",
+      "content-is-extracted-by-default": ""
+    },
+    "file_id":{
+      "description":"The content from the file named 'id'.",
+      "example-content":"57bb2f716820a6da",
+      "database-table": "jobtest",
+      "database-column": "file_id",
+      "database-column-id": "id",
+      "required":"",
+      "is-identity-component": "1",
+      "content-is-extracted-by-default": ""
+    },
+
+    "file_id2":{
+      "description":"The content from the file named 'id'.",
+      "example-content":"57bb2f716820a6da",
+      "database-table": "jobtest2",
+      "database-column": "file_id2",
+      "database-column-id": "id",
+      "required":"",
+      "is-identity-component": "1",
+      "content-is-extracted-by-default": ""
+    },
+
+    "datetime_imported":{
+      "description":"Just put the datetime value inside for everyone to know when the job information has been put into database. The datetime value should be in UTC+0 timezone and should be formatted as the string YYYY-MM-DD HH:mm:ss",
+      "example-content":"2016-09-30 14:30:59",
+      "database-table": "jobtest",
+      "database-column": "datetime_imported",
+      "database-column-id": "id",
+      "required":"",
+      "is-identity-component": "0",
+      "content-is-extracted-by-default": ""
+    },
+    "content_static_without_tags":{
+      "description":"The content is the same as in content_static file, but without any HTML, XML, CSS or other tags mixed in. It is the plain text of job posting - for humans to read. Our search engine likes this text as well.",
+      "database-table": "jobtest",
+      "database-column": "content_static_without_tags",
+      "database-column-id": "id"
+    },
+    "content_dynamic_without_tags": {
+      "description":"The content is the same as in content_dynamic file, but without any HTML, XML, CSS or other tags mixed in. It is the plain text of job posting - for humans to read.",
+      "database-table": "jobtest",
+      "database-column": "content_dynamic_without_tags",
+      "database-column-id": "id"
+    },
+
+    "base_salary_min": {
+      "description":"Min. base salary of the job or of an employee in an EmployeeRole.",
+      "database-table": "jobtest",
+      "database-column": "base_salary_min",
+      "database-column-id": "id"
+    },
+    "base_salary_max": {
+      "description":"Max. base salary of the job or of an employee in an EmployeeRole.",
+      "database-table": "jobtest",
+      "database-column": "base_salary_max",
+      "database-column-id": "id"
+    },
+    "base_salary_currency": {
+      "description":"The currency (in 3-letter ISO 4217 format) of the job or of an employee in an EmployeeRole.",
+      "database-table": "jobtest",
+      "database-column": "base_salary_currency"
+    },
+    "valid_from": {
+      "description":"DateTime value. A job posting will be/is/was posted and valid from this datetime. The value mentioned is included in the from ... to ... range.",
+      "database-table": "jobtest",
+      "database-column": "valid_from"
+    },
+    "valid_to": {
+      "description":"DateTime value. A job posting will be/is/was posted and valid till this datetime. The value mentioned is included in the from ... to ... range.",
+      "database-table": "jobtest",
+      "database-column": "valid_to"
+    }
+  },
   "projects-on": [
     {
       "project_name": "cvbankas.lt",
       "since_datetime_utc0": "2016-10-15 03:45:00",
       "language": "php",
       "url": "http://www.cvbankas.lt/",
-      "entrance_sh_step1_download": "step1.download/code/php/project/cvbankas/lt/entrance.sh",
-      "entrance_sh_step2_normalize": "step2.normalize/code/php/project/cvbankas/lt/entrance.sh",
-      "dir_downloaded_posts": "step1.download/downloads/cvbankas/lt/posts",
-      "dir_downloaded_logs": "step1.download/downloads/cvbankas/lt/logs",
+      "unique_project_path": "code/php/project/cvbankas/lt",
+      "entrance_sh_download": "download/code/php/project/cvbankas/lt/entrance.sh",
+      "entrance_sh_normalize": "normalize/code/php/project/cvbankas/lt/entrance.sh",
+      "dir_downloaded_posts": "download/downloads/cvbankas/lt/posts",
+      "dir_downloaded_logs": "download/downloads/cvbankas/lt/logs",
       "file_downloaded_logs": "Y-m-d--H-i-s",
       "administrators": {
         "Paulius": {
           "name": "Paulius",
           "email": "sugalvojau@gmail.com",
           "website": "http://portfolio.vertyb.es/"
+        }
+      }
+    },
+    {
+      "project_name": "cvbankas2.lt",
+      "since_datetime_utc0": "2016-10-16 03:45:00",
+      "language": "php",
+      "url": "http://www.cvbankas2.lt/",
+      "unique_project_path": "code/php/project/cvbankas2/lt",
+      "entrance_sh_download": "download/code/php/project/cvbankas2/lt/entrance.sh",
+      "entrance_sh_normalize": "normalize/code/php/project/cvbankas2/lt/entrance.sh",
+      "dir_downloaded_posts": "download/downloads/cvbankas2/lt/posts",
+      "dir_downloaded_logs": "download/downloads/cvbankas2/lt/logs",
+      "file_downloaded_logs": "Y-m-d--H-i-s",
+      "administrators": {
+        "Paulius": {
+          "name": "Paulius2",
+          "email": "sugalvojau2@gmail.com",
+          "website": "http://portfolio2.vertyb.es/"
         }
       }
     }
