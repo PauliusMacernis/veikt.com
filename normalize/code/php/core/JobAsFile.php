@@ -26,6 +26,11 @@ class JobAsFile
         $this->setFilesContentText();
     }
 
+    protected function setFilesToSkip()
+    {
+        $this->filesToSkip = ['.', '..', '.gitignore'];
+    }
+
     protected function setEntranceDir($entranceDir)
     {
         $this->entranceDir = $entranceDir;
@@ -35,7 +40,6 @@ class JobAsFile
     {
         $this->downloadedPostDir = $downloadedPostDir;
     }
-
 
     public function validateDownloaded()
     {
@@ -84,7 +88,8 @@ class JobAsFile
 
     }
 
-    public function normalize($normalizerClass, $transformerClass) {
+    public function normalize($normalizerClass, $transformerClass)
+    {
 
         $Normalizer = new $normalizerClass;
         $Transformer = new $transformerClass;
@@ -95,17 +100,18 @@ class JobAsFile
         $SettingsAll = $Settings->getAll();
 
         $this->normalizedContent = array();
-        foreach($SettingsAll['content-to-extract-from-files'] as $name => $details) {
+        foreach ($SettingsAll['content-to-extract-from-files'] as $name => $details) {
 
-            if(
+            if (
                 !isset($details['required'])
-                || (!$details['required'] && !method_exists($Normalizer, $name))) {
+                || (!$details['required'] && !method_exists($Normalizer, $name))
+            ) {
 
                 // If $name is not $required and there is no method then skip it
                 continue;
             }
 
-            if($details['required'] && !method_exists($Normalizer, $name)) {
+            if ($details['required'] && !method_exists($Normalizer, $name)) {
                 $message = 'Normalizer "' . $normalizerClass
                     . '" must have a method named "'
                     . $name . '". This method is used to extract "' . $name
@@ -124,9 +130,10 @@ class JobAsFile
      * @param string $writerToDbClass
      * @return bool
      */
-    public function writeNormalizedContentToDb($writerToDbClass) {
+    public function writeNormalizedContentToDb($writerToDbClass)
+    {
 
-        if(empty($this->normalizedContent)) {
+        if (empty($this->normalizedContent)) {
             return true;
         }
 
@@ -138,8 +145,6 @@ class JobAsFile
 
 
     }
-
-
 
     public function validateNormalized()
     {
@@ -153,6 +158,11 @@ class JobAsFile
 
     }
 
+    protected function getNormalizedContent()
+    {
+        return $this->normalizedContent;
+    }
+
     public function validateWritten()
     {
         //@todo
@@ -161,42 +171,43 @@ class JobAsFile
 
     public function removeDownloadedFiles()
     {
-        if($this->downloadedPostDirContainsOtherDir()) {
-           throw new \Exception("Cannot remove directory if it contains any other directory. Tried to remove: " . $this->downloadedPostDir);
+        $dirPath = $this->downloadedPostDir;
+
+        if ($this->dirContainsOtherDir($dirPath)) {
+            throw new \Exception("Cannot remove directory if it contains any other directory. Tried to remove: " . $dirPath);
         }
 
         // Remove every file by file name
-        $this->removeFilesMatchingPropertiesOfFilesContentText();
+        $this->removeFilesMatchingPropertiesOfFilesContentText($dirPath);
 
         // Dir should be empty at the moment so removing empty should not cause any problems.
-        return rmdir($this->downloadedPostDir);
+        return rmdir($dirPath);
 
         // @todo: remove upper directory as well?
 
     }
 
-    protected function fileGetContent($filePath)
+    protected function dirContainsOtherDir($dirPath)
     {
-        return file_get_contents($filePath);
+        $this->validateDirOrFail($dirPath);
+        return $this->isDirContainingOtherDir($dirPath);
     }
 
-    protected function getNormalizedContent()
+    protected function validateDirOrFail($dirPath)
     {
-        return $this->normalizedContent;
-    }
-
-    protected function downloadedPostDirContainsOtherDir()
-    {
-        if(!is_dir($this->downloadedPostDir)) {
-            throw new \Exception("downloadedPostDir is not set");
+        if (!is_dir($dirPath)) {
+            throw new \Exception($dirPath . " is not set");
         }
+    }
 
-        $files = scandir($this->downloadedPostDir);
+    protected function isDirContainingOtherDir($dirPath)
+    {
+        $files = scandir($dirPath);
         foreach ($files as $file) {
             if (in_array($file, $this->filesToSkip)) {
                 continue;
             }
-            if(is_dir($this->downloadedPostDir . DIRECTORY_SEPARATOR . $file)) {
+            if (is_dir($dirPath . DIRECTORY_SEPARATOR . $file)) {
                 return true;
             }
         }
@@ -205,23 +216,39 @@ class JobAsFile
 
     }
 
-    protected function setFilesToSkip()
+    private function removeFilesMatchingPropertiesOfFilesContentText($dirPath)
     {
-        $this->filesToSkip = ['.', '..', '.gitignore'];
-    }
-
-    private function removeFilesMatchingPropertiesOfFilesContentText()
-    {
-        foreach($this->filesContentText as $keyRepresentingFilename => $otherInfo) {
-            $file = $this->downloadedPostDir . DIRECTORY_SEPARATOR . $keyRepresentingFilename;
-            if(!is_file($file)) {
+        foreach ($this->filesContentText as $keyRepresentingFilename => $otherInfo) {
+            $file = $dirPath . DIRECTORY_SEPARATOR . $keyRepresentingFilename;
+            if (!is_file($file)) {
                 throw new \Exception("A file was expected, but the given was not the file given. The file given: " . $file);
             }
             $success = unlink($file);
-            if(!$success) {
+            if (!$success) {
                 throw new \Exception("Action removing the file returned false which means file was not removed successfully or other problems. Check by human is required.");
             }
         }
+    }
+
+    public function removeDownloadedFilesDate()
+    {
+        $pathAsArray = explode(DIRECTORY_SEPARATOR, strtr($this->downloadedPostDir, ["\\" => DIRECTORY_SEPARATOR, "/" => DIRECTORY_SEPARATOR]));
+        array_pop($pathAsArray);
+        $dirPath = implode(DIRECTORY_SEPARATOR, $pathAsArray);
+
+        if ($this->dirContainsOtherDir($dirPath)) {
+            // Do not remove dirs with content
+            return;
+        }
+
+        // Dir should be empty at the moment so removing empty should not cause any problems.
+        return rmdir($dirPath);
+
+    }
+
+    protected function fileGetContent($filePath)
+    {
+        return file_get_contents($filePath);
     }
 
 }

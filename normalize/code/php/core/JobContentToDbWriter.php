@@ -92,7 +92,7 @@ class JobContentToDbWriter
 
         // Begin transaction
         $this->dbConnection->beginTransaction();
-        $this->dbConnection->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+        $this->dbConnection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         foreach ($contentDataByTable as $tableName => $info) {
             $existingItemsData = $this->getExistingItemsDataFromDb($tableName, $info);
@@ -163,7 +163,7 @@ class JobContentToDbWriter
         // WHERE...
         list($dataForEmbedding, $qWhereString) = $this->getQueryWhereIdentityStringWithDataColumnsAndDataToEmbed($dataWithSettings);
 
-        if(empty($dataForEmbedding)) {
+        if (empty($dataForEmbedding)) {
             return array();
         }
 
@@ -246,20 +246,20 @@ class JobContentToDbWriter
     protected function getToManyExistingItemsErrorText($similarDataCount, $tableName, $existingData)
     {
         return $similarDataCount . ' similar entries have been found'
-        . ' inside "' . $tableName . '" table.'
-        . ' One or none expected.'
-        . ' Either a bug in the system exists'
-        . ' (and so:'
-        . ' 1. The system creates multiple values'
-        . ' instead of updating an old one;'
-        . ' 2. Any existing value has been manually updated'
-        . ' and so now matches other value;'
-        . ' 3. other'
-        . ')'
-        . ', either'
-        . ' columns sharing "is-identity-component" values'
-        . ' needs to be adjusted.'
-        . ' Founding: ' . print_r($existingData, true);
+            . ' inside "' . $tableName . '" table.'
+            . ' One or none expected.'
+            . ' Either a bug in the system exists'
+            . ' (and so:'
+            . ' 1. The system creates multiple values'
+            . ' instead of updating an old one;'
+            . ' 2. Any existing value has been manually updated'
+            . ' and so now matches other value;'
+            . ' 3. other'
+            . ')'
+            . ', either'
+            . ' columns sharing "is-identity-component" values'
+            . ' needs to be adjusted.'
+            . ' Founding: ' . print_r($existingData, true);
     }
 
     protected function updateData($tableName, $dataAndSettings, $existingItemsData)

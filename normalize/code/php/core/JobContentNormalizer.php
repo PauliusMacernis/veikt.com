@@ -20,7 +20,8 @@ class JobContentNormalizer
      *                                  related to method name.
      *                                  For more info look into settings.json file
      */
-    public function file_datetime($transformedContent) {
+    public function file_datetime($transformedContent)
+    {
         return (string)$transformedContent['datetime'];
     }
 }

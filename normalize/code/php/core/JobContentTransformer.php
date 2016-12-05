@@ -21,7 +21,8 @@ class JobContentTransformer
      * The main method
      * @param $content Content found in file after downloading job posting
      */
-    public function transform($content) {
+    public function transform($content)
+    {
         return $content;
     }
 }
