@@ -49,5 +49,6 @@ try {
     exit;
 }
 
-echo '.';
+// Print the dot to imitate the "progress bar"
+echo ".";
 exit;
