@@ -183,8 +183,6 @@ class JobAsFile
         // Dir should be empty at the moment so removing empty should not cause any problems.
         return rmdir($dirPath);
 
-        // @todo: remove upper directory as well?
-
     }
 
     protected function dirContainsOtherDir($dirPath)
@@ -228,6 +226,31 @@ class JobAsFile
                 throw new \Exception("Action removing the file returned false which means file was not removed successfully or other problems. Check by human is required.");
             }
         }
+    }
+
+    public function removeDownloadedFilesStartFinishMarkers() {
+        $dirPath = $this->downloadedPostDir;
+
+        if ($this->dirContainsOtherDir($dirPath)) {
+            throw new \Exception("Cannot remove START and FINISH markers while downloaded posts directory contains any other directory. Tried to remove: " . $dirPath);
+        }
+
+        $startMarkerFile    = $dirPath . DIRECTORY_SEPARATOR . 'START';
+        if(is_file($startMarkerFile)) {
+            $success = unlink($startMarkerFile);
+            if(!$success) {
+                throw new \Exception("Cannot remove START marker file. Tried to remove: " . $startMarkerFile);
+            }
+        }
+
+        $finishMarkerFile   = $dirPath . DIRECTORY_SEPARATOR . 'FINISH';
+        if(is_file($startMarkerFile)) {
+            $success = unlink($startMarkerFile);
+            if(!$success) {
+                throw new \Exception("Cannot remove FINISH marker file. Tried to remove: " . $finishMarkerFile);
+            }
+        }
+
     }
 
     public function removeDownloadedFilesDate()

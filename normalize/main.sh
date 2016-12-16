@@ -24,6 +24,9 @@ REQUIRED_FILES=$(php -r "
     \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
     \$filesToOutput = \$settings['files-to-output'];
 
+    \$startFileName  = 'START';
+    \$finishFileName = 'FINISH';
+
     \$result = array();
     foreach(\$filesToOutput as \$filename => \$fileToOutput) {
         if(!\$fileToOutput['required']) {
@@ -31,8 +34,19 @@ REQUIRED_FILES=$(php -r "
         }
         \$result[] = \$filename;
     }
-    echo \"{}/\" . implode(\" -a -e {}/\", \$result); // Let's leave this logic for the project's code to deal with...
+    if(!empty(\$result)) {
+        \$result[] = '..' . DIRECTORY_SEPARATOR . \$startFileName;
+        \$result[] = '..' . DIRECTORY_SEPARATOR . \$finishFileName;
+    }
+    \$resultString = \"-e \$1/\" . implode(\" && -e \$1/\", \$result); // Let's leave this logic for the project's code to deal with...
+
+    // Check for the content of START and FINISH. The content must be the same
+    //\$resultString .= ' -a \"\$(cmp --silent {}/../' . \$startFileName . ' {}/../' . \$finishFileName . ')\"';
+
+    echo \$resultString;
+
 ");
+
 # Simmpler REQUIRED_FILES solution (uncomment for easier debugging)
 #REQUIRED_FILES=$(php -r "
 #    \$result = array(\"id\");
@@ -96,9 +110,55 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
             continue
     fi
 
-    PROJECT_DIRS_TO_NORMALIZE=$(find $POSTS_DIR -type d -exec test -e $REQUIRED_FILES \; -print)
+    #echo $UNIQUE_ID_ASSIGNED_FOR_A_QUEUE
+    #exit
+
+
+
+    # NO SPACES IN DIRECTORY NAMES!
+    # @TODO: fix find ... to let spaces in dirs of file names?
+    #
+    #
+    # Explaining find:
+    # $POSTS_DIR    -- search inside this dir
+    # -type d       -- look for directories
+    # -exec         -- execute command on each line found
+    # test          -- command tells to accept only result lines that pass the filer (filter is in coming lines)
+    #  -e           -- file exists
+    #  {}           -- the line as found
+    #  -a           -- the same as "and" (one of operators for condition to create)
+    # \;            -- the end of the condition part of the test command
+    # -printf       -- print results by using the following format
+    #  %T           -- file's last modification time in the format specified later
+    #    @          -- seconds since Jan. 1, 1970, 00:00 GMT, with fractional part (http://explainshell.com/explain?cmd=find+%2Fusr%2Finclude+-printf+%25P%5C%5Cn+%3E+found_files)
+    # (empty space) -- empty space between '%T@' and '%p' is simply a separator (space)
+    # %p            -- file's name
+    # \n            -- new line
+    # |             -- linux's pipe passing a result of one command to other command
+    # sort          -- command for sorting lines of text
+    # -k1           -- start a key at position 1, end it at end of line
+    # -n            -- compare according to string numerical value (numeric-sort)
+    # awk           -- pattern scanning and processing language.
+    # print         -- The print command is used to output text. The output text is always terminated with a predefined string called the output record separator (ORS) whose default value is a newline.
+    # $1            -- Displays the first field of the current record, separated by a predefined string called the output field separator (OFS) whose default value is a single space character. Although these fields ($X) may bear resemblance to variables (the $ symbol indicates variables in Perl), they actually refer to the fields of the current record. A special case, $0, refers to the entire record. In fact, the commands "print" and "print $0" are identical in functionality.
+
+    # TESTING...
+    #echo -e $REQUIRED_FILES
+    #exit
+    #echo -e                    "find $POSTS_DIR -type d -exec bash -c '[[ $REQUIRED_FILES ]] && cmp -s \"\$1/../START\" \"\$1/../FINISH\"' bash {} \; -printf '%T@ \"%p\"\n' | sort -k1 -n -z | awk '{print $2}'"
+    #exit
+    #echo $POSTS_DIR
+    #exit
+
+    echo -e "find $POSTS_DIR -type d -exec bash -c '[[ -e $1/browser_id  ]]' bash {} \; -printf '%T@ %p\n'"
+    exit
+
+    PROJECT_DIRS_TO_NORMALIZE=$(find $POSTS_DIR -type d -exec bash -c '[[ -e $1/browser_id  ]] && cmp -s "$1/../START" "$1/../FINISH"' bash {} \; -printf '%T@ %p\n' | sort -k1 -n -z | awk '{print $2}')
+    echo -e $PROJECT_DIRS_TO_NORMALIZE
+    exit
+
     # If PROJECT_DIRS_TO_NORMALIZE is empty then read next ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED
-    if [ -z $PROJECT_DIRS_TO_NORMALIZE ];
+    if [ -z "$PROJECT_DIRS_TO_NORMALIZE" ];
         then
             echo -e "\"$POSTS_DIR\" do not have any of required files. No action taken." 1>&2
             continue
@@ -107,7 +167,7 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
     echo -e "$PROJECT_DIRS_TO_NORMALIZE" | while IFS2= read -r PROJECT_DIR_TO_NORMALIZE; do
 
         # If PROJECT_DIR_TO_NORMALIZE is empty then read next PROJECT_DIR_TO_NORMALIZE
-        if [ -z $PROJECT_DIR_TO_NORMALIZE ];
+        if [ -z "$PROJECT_DIR_TO_NORMALIZE" ];
             then
                 echo -e "PROJECT_DIR_TO_NORMALIZE is empty. No action taken.\n More info: POSTS_DIR: \"$POSTS_DIR\", UNIQUE_ID_ASSIGNED_FOR_A_QUEUE: \"$UNIQUE_ID_ASSIGNED_FOR_A_QUEUE\", ENTRANCE_SH_FILE: \"$ENTRANCE_SH_FILE\"" 1>&2
                 continue

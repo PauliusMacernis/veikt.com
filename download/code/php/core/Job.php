@@ -16,7 +16,8 @@ class Job
         \Symfony\Component\DomCrawler\Crawler $Content,
         array $filesRequiredToOutput,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -28,7 +29,7 @@ class Job
             //$setMethodName = 'set' . ucfirst(strtolower($fileName));
 
             if (method_exists($this, $fileName)) {
-                $this->$fileName($fileName, $Content, $url, $projectSettings);
+                $this->$fileName($fileName, $Content, $url, $projectSettings, $uniqueBrowserId);
             } else {
                 $this->{$fileName} = null;
             }
@@ -83,18 +84,42 @@ class Job
      */
 
     /**
+     * Gets unique id to identify the process of download.
+     * All items downloaded at the same try
+     *  will have the same unique id associated with.
+     *
+     * @param $fileAndPropertyName
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $url
+     * @param array $projectSettings
+     * @param string $uniqueBrowserId
+     */
+    protected function browser_id(
+        $fileAndPropertyName,
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url,
+        array $projectSettings,
+        $uniqueBrowserId
+    ) {
+        // @TODO: create Browser id...
+        $this->$fileAndPropertyName = $uniqueBrowserId;
+    }
+
+    /**
      * Gets datetime value. When the job posting was downloaded?
      *
      * @param $fileAndPropertyName
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
+     * @param string $uniqueBrowserId
      */
     protected function datetime(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -112,12 +137,14 @@ class Job
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
+     * @param string $uniqueBrowserId
      */
     protected function project(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -134,12 +161,14 @@ class Job
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
+     * @param string $uniqueBrowserId
      */
     protected function url(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -156,12 +185,14 @@ class Job
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
+     * @param string $uniqueBrowserId
      */
     protected function id(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
         $this->$fileAndPropertyName = $url;
@@ -177,12 +208,14 @@ class Job
      * @param \Symfony\Component\DomCrawler\Crawler $Content
      * @param $url
      * @param array $projectSettings
+     * @param string $uniqueBrowserId
      */
     protected function content_dynamic(
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 

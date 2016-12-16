@@ -19,8 +19,8 @@ $settingsAll = $settings->getAll();
 $settingsProject = $settings->getProject();
 
 // Initiate main objects to deal with the content
-$Browser = new Browser(__DIR__, $settingsAll, $settingsProject);
 $Auditor = new Auditor(__DIR__, $settingsAll, $settingsProject);
+$Browser = new Browser(__DIR__, $settingsAll, $settingsProject);
 
 // Let's make one url download possible
 //  In case we will want to download one specific url
@@ -45,6 +45,8 @@ if (isset($_REQUEST['url'])) {
     exit;
 }
 
+// We are starting to get the whole list of jobs...
+$Browser->markQueueStart();
 
 // Let's make many urls download possible
 //  In case we will want to download many urls
@@ -71,6 +73,7 @@ do {
 $List = $Browser->getNextListOfJobLinks()
 );
 
+$Browser->markQueueFinish();
 $Auditor->doReport();
 
 echo "\nDONE.";

@@ -12,7 +12,14 @@ use Goutte\Client as GoutteClient;
 use GuzzleHttp\Client as GuzzleClient;
 use DownloadProject\Cvbankas\Lt\Classes\Job;
 
-
+/**
+ * @TODO: Rename to "Worker" or something close to that?
+ * The main reason to rename - the "uniqueBrowserId" for every run.
+ * ...which is actually "uniqueWorkerId" or "uniqueCrawlingId" or...
+ *
+ * Class Browser
+ * @package DownloadCore
+ */
 class Browser
 {
 
@@ -31,6 +38,7 @@ class Browser
     // CURLOPT_TIMEOUT = 3600
     // etc?
 
+    protected $id;                  // Unique id of the Browser object.
     protected $projectSettings;
     protected $baseDir;
     protected $settings;
@@ -41,6 +49,11 @@ class Browser
 
     public function __construct($baseDir, $settings, $projectSettings, $careAboutRobotsDotTxt = true)
     {
+
+        // UNIQUE AUDITOR ID
+        $reflect = new \ReflectionClass($this);
+        $this->id = uniqid($reflect->getShortName(), true);
+
         // JOB COUNTER set to 0
         // It means: No jobs found by Browser at the time of creating Browser object
         $this->jobsCounter = 0;
@@ -63,6 +76,9 @@ class Browser
         } else {
             $this->robotsTxtContent = null;
         }
+
+        // Datetime (UTC)
+        $this->browserUtcDateTimeStart = new \DateTime('now', new \DateTimeZone('UTC'));
 
     }
 
@@ -191,6 +207,18 @@ class Browser
 
     }
 
+    public function markQueueStart()
+    {
+        $startFileName = 'START';
+        $this->createQueueMarkerFile($startFileName);
+    }
+
+    public function markQueueFinish()
+    {
+        $startFileName = 'FINISH';
+        $this->createQueueMarkerFile($startFileName);
+    }
+
 
     /**
      * Returns content of URL
@@ -287,9 +315,8 @@ class Browser
         foreach ($Jobs as $url => $Job) {
             // Counter
             $counter = ++$this->jobsCounter;
-            // Datetime (UTC)
-            $DateTime = new \DateTime('now', new \DateTimeZone('UTC'));
-            $dir = $this->createDirectoryIfNotExists($counter, $DateTime);
+
+            $dir = $this->createJobDirectoryIfNotExists($counter);
 
             if (!$dir) {
                 $result['failure'][$url] = $url;
@@ -343,7 +370,7 @@ class Browser
 
     }
 
-    protected function createDirectoryIfNotExists($jobCounter, \DateTime $DateTime, $cmod = 0775)
+    protected function createJobDirectoryIfNotExists($jobCounter)
     {
 
         if (empty($this->projectSettings)) {
@@ -358,21 +385,8 @@ class Browser
             return false;
         }
 
-        $dir = $this->baseDir
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
-            . DIRECTORY_SEPARATOR . $DateTime->format('Y-m-d')
-            . DIRECTORY_SEPARATOR . $jobCounter . '--' . $DateTime->format('Y-m-d--H-i-s') . '--' . uniqid();
-
-        $success = true;
-        if (!is_dir($dir)) {
-            $success = mkdir($dir, $cmod, true);
-        }
+        $dir = $this->getDownloadsDirectoryPathJob($jobCounter);
+        $success = $this->createDirectoryIfNotExist($dir);
 
         if (!$success) {
             return false;
@@ -398,7 +412,7 @@ class Browser
             return null;
         }
 
-        return new Job($Content, $this->jobProperties, $url, $this->projectSettings);
+        return new Job($Content, $this->jobProperties, $url, $this->projectSettings, $this->getId());
 
     }
 
@@ -419,6 +433,77 @@ class Browser
     protected function getNextPageUrlOfListOfJobLinks()
     {
         return null;
+    }
+
+    /**
+     * @param $jobCounter
+     * @return string
+     */
+    protected function getDownloadsDirectoryPathJob($jobCounter)
+    {
+        $dir = $this->getDownloadsDirectoryPathJobs()
+            . DIRECTORY_SEPARATOR . $jobCounter
+            . '--' . $this->browserUtcDateTimeStart->format('Y-m-d--H-i-s')
+            . '--' . uniqid();
+        return $dir;
+    }
+
+    /**
+     * @param \DateTime $DateTime
+     * @return string
+     */
+    protected function getDownloadsDirectoryPathJobs()
+    {
+        $dir = $this->baseDir
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
+            . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeStart->format('Y-m-d')
+            . '--' . $this->getId();
+        return $dir;
+    }
+
+    /**
+     * @param $dir
+     * @param int $cmod
+     * @return bool
+     */
+    protected function createDirectoryIfNotExist($dir, $cmod = 0775)
+    {
+        if (!is_dir($dir)) {
+            return mkdir($dir, $cmod, true);
+        }
+        return true;
+    }
+
+    private function createFileIfNotExists($fileFullPath, $fileContent)
+    {
+        return file_put_contents($fileFullPath, $fileContent);
+    }
+
+    /**
+     * @param $markerFileName
+     */
+    protected function createQueueMarkerFile($markerFileName)
+    {
+        $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $jobsPath = $this->getDownloadsDirectoryPathJobs();
+        $this->createDirectoryIfNotExist($jobsPath);
+        $this->createFileIfNotExists(
+            $jobsPath . DIRECTORY_SEPARATOR . $markerFileName,
+            //$this->browserUtcDateTimeStart->format('Y-m-d H:i:s') .
+            //$this->getId()
+            $currentDateTime->format('Y-m-d H:i:s')
+        );
+    }
+
+    protected function getId() {
+        return $this->id;
     }
 
 }

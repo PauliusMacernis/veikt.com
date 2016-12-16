@@ -26,7 +26,8 @@ class Job extends CoreJob
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -50,7 +51,8 @@ class Job extends CoreJob
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     )
     {
 
@@ -73,7 +75,8 @@ class Job extends CoreJob
         $fileAndPropertyName,
         \Symfony\Component\DomCrawler\Crawler $Content,
         $url,
-        array $projectSettings
+        array $projectSettings,
+        $uniqueBrowserId
     ) {
         $valueArray = explode('/', (string)$url);
         $this->$fileAndPropertyName = end($valueArray);

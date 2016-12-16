@@ -14,6 +14,10 @@ use NormalizeCore\JobContentToDbWriter;
 use NormalizeProject\Cvbankas\Lt\Classes\JobContentNormalizer;
 use NormalizeProject\Cvbankas\Lt\Classes\JobContentTransformer;
 
+echo $argv[1] . "\n";
+//echo "\n\n";
+die();
+
 try {
 
     // Check for empty
@@ -40,6 +44,7 @@ try {
     $Job->writeNormalizedContentToDb(JobContentToDbWriter::class);
     $Job->validateWritten();
     $Job->removeDownloadedFiles();
+    $Job->removeDownloadedFilesStartFinishMarkers();
     $Job->removeDownloadedFilesDate();
 } catch (\Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n"
