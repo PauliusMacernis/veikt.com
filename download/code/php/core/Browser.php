@@ -452,7 +452,7 @@ class Browser
      * @param \DateTime $DateTime
      * @return string
      */
-    protected function getDownloadsDirectoryPathJobs()
+    public function getDownloadsDirectoryPathJobs()
     {
         $dir = $this->baseDir
             . DIRECTORY_SEPARATOR . '..'

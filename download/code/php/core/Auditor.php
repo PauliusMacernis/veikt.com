@@ -8,6 +8,7 @@
 
 namespace DownloadCore;
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -19,13 +20,15 @@ class Auditor
     protected $loggerFailureDownload;
     protected $loggerSuccessSave;
     protected $loggerFailureSave;
+    protected $loggerDataIntegrity;
     protected $settings;                // All settings (global + related to the project)
     protected $projectSettings;         // Settings related to the project
     protected $requiredProperties;      // Required files to create as the output (=properties of Job class)
     protected $indexDir;                // Project's root directory
     protected $datetime;                // Datetime value (UTC) of object initiation
+    protected $downloadsDirectoryPathJobs; // The place where job adds are being downloaded to
 
-    public function __construct($indexDir, array $settings, array $projectSettings)
+    public function __construct($indexDir, array $settings, array $projectSettings, $downloadsDirectoryPathJobs)
     {
         // Datetime
         $this->datetime = new \DateTime('now',  new \DateTimeZone( 'UTC' ));
@@ -46,12 +49,16 @@ class Auditor
         $this->setLogger('SuccessSave');
         $this->setLogger('FailureSave');
 
+        $this->downloadsDirectoryPathJobs = $downloadsDirectoryPathJobs;
+        $this->setLoggerDataIntegrity();
+
     }
 
     public function registerListAndJobs(array $List, array $Jobs, array $saveResults) {
         $ListAudited = $this->auditList($List, $Jobs);
 
         $this->logListAudited($ListAudited, $saveResults);
+        $this->logSuccessOrFail($ListAudited);
 
     }
 
@@ -208,6 +215,47 @@ class Auditor
             . '-' . $name . '.log';
 
         return $pathToLog;
+    }
+
+    protected function getPathToDataIntegrityLogFile($name = 'DataIntegrity') {
+        $pathToLog =
+            $this->downloadsDirectoryPathJobs
+            . DIRECTORY_SEPARATOR . $name . '.log';
+
+        return $pathToLog;
+    }
+
+    protected function logSuccessOrFail($ListAudited)
+    {
+        if(isset($ListAudited['failure']) && !empty($ListAudited['failure'])) {
+            $message = 'The data integrity failure detected. Cannot continue further, because integrity is already lost. URLs failing: ' . print_r($ListAudited['failure'], true);
+            throw new \Exception($message);
+        }
+
+        $this->logSuccess($ListAudited['success']);
+
+    }
+
+    private function logSuccess(array $successfulUrls, $name = 'DataIntegrity')
+    {
+        foreach($successfulUrls as $url) {
+            $this->{'logger' . $name}->info($url);
+        }
+    }
+
+    private function setLoggerDataIntegrity($name = 'DataIntegrity')
+    {
+        // LOGGER.SUCCESS
+        // create a log channel
+        $this->{'logger' . $name} = new Logger($name);
+
+        // Get path to log file
+        $pathToLog = $this->getPathToDataIntegrityLogFile($name);
+
+        $streamHandler = new StreamHandler($pathToLog, Logger::INFO);
+        $streamHandler->setFormatter(new LineFormatter('%message%' . "\n"));
+
+        $this->{"logger" . $name}->pushHandler($streamHandler);
     }
 
 }
