@@ -14,28 +14,13 @@ use NormalizeCore\JobContentToDbWriter;
 use NormalizeProject\Cvbankas\Lt\Classes\JobContentNormalizer;
 use NormalizeProject\Cvbankas\Lt\Classes\JobContentTransformer;
 
-echo $argv[1] . "\n";
-//echo "\n\n";
-die();
 
 try {
+    failIfNotValid($argv);
 
-    // Check for empty
-    // @todo: Better solution for checking if empty?
-    $empty = "...";
-    if (count($argv) < 3
-        || empty($argv[1]) || (string)$argv[1] === (string)$empty
-        || empty($argv[2]) || (string)$argv[2] == (string)$empty
-    ) {
-        $msg = "Arguments not received or received as empty. Arguments received: "
-            . print_r($argv, true);
-        throw new \LogicException($msg);
-    }
-    //END. Check for empty
-
-    $projectDirToNormalize = isset($argv[1]) ? (string)$argv[1] : '';
-    $uniqueProcessIdAssignedByMain = isset($argv[2]) ? (string)$argv[2] : '';
-
+    $projectDirToNormalize = (string)trim($argv[1]);
+    $projectDirToNormalizeParent = getParentDir($projectDirToNormalize);
+    $uniqueProcessIdAssignedByMain = (string)trim($argv[2]);
 
     $Job = new JobAsFile(__DIR__, $projectDirToNormalize);
     $Job->validateDownloaded();
@@ -44,8 +29,6 @@ try {
     $Job->writeNormalizedContentToDb(JobContentToDbWriter::class);
     $Job->validateWritten();
     $Job->removeDownloadedFiles();
-    $Job->removeDownloadedFilesStartFinishMarkers();
-    $Job->removeDownloadedFilesDate();
 } catch (\Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n"
         . 'File: ' . $e->getFile() . "\n"
@@ -57,3 +40,44 @@ try {
 // Print the dot to imitate the "progress bar"
 echo ".";
 exit;
+
+function failIfNotValid(array $argv, $argumentsCountExpected = 3)
+{
+
+    if (count($argv) < $argumentsCountExpected) {
+        throw new \LogicException(
+            "Arguments not received or received as empty. Arguments received: "
+            . print_r($argv, true)
+        );
+    }
+
+    for ($varCount = 0; $varCount < $argumentsCountExpected; $varCount++) {
+        $var = isset($argv[$varCount]) ? trim($argv[$varCount]) : null;
+        if (empty($var)) {
+            throw new \LogicException(
+                "Argument #" . $varCount . " is not valid. Arguments received: "
+                . print_r($argv, true)
+            );
+        }
+    }
+    //END. Check for empty
+}
+
+/**
+ * Get parent directory path.
+ * Using "../" will not work, because the child may not exist.
+ *
+ * @param $dir      Child dir
+ * @return string   Parent dir
+ */
+function getParentDir($dir)
+{
+
+    $ds = DIRECTORY_SEPARATOR;
+
+    $path = explode($ds, $dir);
+    array_pop($path);
+
+    return implode($ds, $path);
+
+}

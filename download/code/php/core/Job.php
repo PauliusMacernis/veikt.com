@@ -41,6 +41,22 @@ class Job
     }
 
     /**
+     * Gets property value.
+     *  Property name is the same as file name from
+     *  settings.js ["files-to-output"]
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        switch ($name) {
+            default:
+                return $this->$name;
+        }
+    }
+
+    /**
      * This method is used as default method to set default values
      *  for properties that have no individual set{FileName} method.
      * Simply saying, this is the method we use for:
@@ -58,22 +74,6 @@ class Job
     public function __set($name, $value)
     {
         $this->$name = isset($value) ? $value : null;
-    }
-
-    /**
-     * Gets property value.
-     *  Property name is the same as file name from
-     *  settings.js ["files-to-output"]
-     *
-     * @param $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            default:
-                return $this->$name;
-        }
     }
 
     /*********************************************
@@ -100,7 +100,8 @@ class Job
         $url,
         array $projectSettings,
         $uniqueBrowserId
-    ) {
+    )
+    {
         // @TODO: create Browser id...
         $this->$fileAndPropertyName = $uniqueBrowserId;
     }

@@ -7,7 +7,8 @@
  */
 
 namespace NormalizeCore;
-use \DownloadCore\Settings as DownloadSettings;
+
+use DownloadCore\Settings as DownloadSettings;
 
 
 class Settings extends DownloadSettings

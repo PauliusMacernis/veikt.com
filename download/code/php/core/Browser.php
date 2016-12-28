@@ -8,9 +8,9 @@
 
 namespace DownloadCore;
 
+use DownloadProject\Cvbankas\Lt\Classes\Job;
 use Goutte\Client as GoutteClient;
 use GuzzleHttp\Client as GuzzleClient;
-use DownloadProject\Cvbankas\Lt\Classes\Job;
 
 /**
  * @TODO: Rename to "Worker" or something close to that?
@@ -82,6 +82,17 @@ class Browser
 
     }
 
+    protected function getJobProperties()
+    {
+
+        if (!isset($this->jobProperties)) {
+            $this->jobProperties = (array)$this->settings['files-to-output'];
+        }
+
+        return $this->jobProperties;
+
+    }
+
     protected function getRobotsTxtContent()
     {
 
@@ -123,17 +134,6 @@ class Browser
             . 'robots.txt';
 
         return $url;
-
-    }
-
-    protected function getJobProperties()
-    {
-
-        if (!isset($this->jobProperties)) {
-            $this->jobProperties = (array)$this->settings['files-to-output'];
-        }
-
-        return $this->jobProperties;
 
     }
 
@@ -213,12 +213,241 @@ class Browser
         $this->createQueueMarkerFile($startFileName);
     }
 
+    /**
+     * @param $markerFileName
+     */
+    protected function createQueueMarkerFile($markerFileName)
+    {
+        $jobsPath = $this->getDownloadsDirectoryPathJobs();
+        $this->createDirectoryIfNotExist($jobsPath);
+        $this->createFileIfNotExists(
+            $jobsPath . DIRECTORY_SEPARATOR . $markerFileName,
+            $this->getMarkerContent()
+        );
+    }
+
+    /**
+     * @param \DateTime $DateTime
+     * @return string
+     */
+    public function getDownloadsDirectoryPathJobs()
+    {
+        $dir = $this->baseDir
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
+            . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeStart->format('Y-m-d')
+            . '--' . $this->getId();
+        return $dir;
+    }
+
+    protected function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param $dir
+     * @param int $cmod
+     * @return bool
+     */
+    protected function createDirectoryIfNotExist($dir, $cmod = 0775)
+    {
+        if (!is_dir($dir)) {
+            return mkdir($dir, $cmod, true);
+        }
+        return true;
+    }
+
+    private function createFileIfNotExists($fileFullPath, $fileContent)
+    {
+        return file_put_contents($fileFullPath, $fileContent);
+    }
+
+    protected function getMarkerContent()
+    {
+
+        $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        return
+            $this->getId()
+            . "\n"
+            . $currentDateTime->format('Y-m-d H:i:s');
+    }
+
     public function markQueueFinish()
     {
         $startFileName = 'FINISH';
         $this->createQueueMarkerFile($startFileName);
     }
 
+    public function getJobsFromTheList($List)
+    {
+
+        if (!$List) {
+            return array();
+        }
+
+        $jobs = array();
+
+        foreach ($List as $url) {
+            $Content = $this->doRepeatableAction('getContentOfUrl', $url);
+            $jobs[$url] = $this->extractJob(
+                $Content,
+                $url
+            );
+        }
+
+        return $jobs;
+
+    }
+
+    /**
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param array $filesRequiredToOutput
+     * @param $url
+     * @return
+     */
+    public function extractJob(
+        \Symfony\Component\DomCrawler\Crawler $Content,
+        $url
+    )
+    {
+
+        if (empty($this->jobProperties)) {
+            return null;
+        }
+
+        return new Job($Content, $this->jobProperties, $url, $this->projectSettings, $this->getId());
+
+    }
+
+    public function saveJobsToFiles(array $Jobs)
+    {
+
+        $result = array('success' => [], 'failure' => []);
+
+        foreach ($Jobs as $url => $Job) {
+            // Counter
+            $counter = ++$this->jobsCounter;
+
+            $dir = $this->createJobDirectoryIfNotExists($counter);
+
+            $JobSaved = new JobSaved($url, $dir, $Job);
+
+            if (!$dir) {
+                $result['failure'][$url] = $JobSaved;
+                continue;
+            }
+
+            $success = $this->saveJobToFile($Job, $dir);
+            if (!$success) {
+                $result['failure'][$url] = $JobSaved;
+                continue;
+            }
+
+            $result['success'][$url] = $JobSaved;
+
+        }
+
+        return $result;
+
+    }
+
+    protected function createJobDirectoryIfNotExists($jobCounter)
+    {
+
+        if (empty($this->projectSettings)) {
+            return false;
+        }
+
+        if (!isset($this->projectSettings['dir_downloaded_posts']) || empty($this->projectSettings['dir_downloaded_posts'])) {
+            return false;
+        }
+
+        if (!isset($jobCounter) || empty($jobCounter)) {
+            return false;
+        }
+
+        $dir = $this->getDownloadsDirectoryPathJob($jobCounter);
+        $success = $this->createDirectoryIfNotExist($dir);
+
+        if (!$success) {
+            return false;
+        }
+
+        return $dir;
+
+    }
+
+    /**
+     * @param $jobCounter
+     * @return string
+     */
+    protected function getDownloadsDirectoryPathJob($jobCounter)
+    {
+        $dir = $this->getDownloadsDirectoryPathJobs()
+            . DIRECTORY_SEPARATOR . $jobCounter
+            . '--' . $this->browserUtcDateTimeStart->format('Y-m-d--H-i-s')
+            . '--' . uniqid();
+        return $dir;
+    }
+
+    protected function saveJobToFile(\DownloadCore\Job $Job, $dirToSaveTo)
+    {
+
+        $success = true;
+
+        foreach ($Job as $property => $value) {
+
+            $file = $dirToSaveTo . DIRECTORY_SEPARATOR . $property;
+
+            if (!$this->saveValueToFile($file, $value)) {
+                $success = false;
+            }
+        }
+
+        return $success;
+
+    }
+
+    protected function saveValueToFile($file, $content)
+    {
+
+        $fp = fopen($file, 'w');
+        $success = fwrite($fp, $content);
+        fclose($fp);
+
+        if ($success === false) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public function getNextListOfJobLinks()
+    {
+
+        $nextPageUrl = $this->getNextPageUrlOfListOfJobLinks();
+        $this->listContent = $this->doRepeatableAction('getContentOfUrl', $nextPageUrl);
+        return (array)$this->extractJobLinks();
+
+    }
+
+    /**
+     * To be implemented in child class
+     *
+     * @return null
+     */
+    protected function getNextPageUrlOfListOfJobLinks()
+    {
+        return null;
+    }
 
     /**
      * Returns content of URL
@@ -283,227 +512,6 @@ class Browser
 
         return $result;
 
-    }
-
-
-    public function getJobsFromTheList($List)
-    {
-
-        if (!$List) {
-            return array();
-        }
-
-        $jobs = array();
-
-        foreach ($List as $url) {
-            $Content = $this->doRepeatableAction('getContentOfUrl', $url);
-            $jobs[$url] = $this->extractJob(
-                $Content,
-                $url
-            );
-        }
-
-        return $jobs;
-
-    }
-
-    public function saveJobsToFiles(array $Jobs)
-    {
-
-        $result = array('success' => [], 'failure' => []);
-
-        foreach ($Jobs as $url => $Job) {
-            // Counter
-            $counter = ++$this->jobsCounter;
-
-            $dir = $this->createJobDirectoryIfNotExists($counter);
-
-            if (!$dir) {
-                $result['failure'][$url] = $url;
-                continue;
-            }
-
-            $success = $this->saveJobToFile($Job, $dir);
-            if (!$success) {
-                $result['failure'][$url] = $url;
-                continue;
-            }
-
-            $result['success'][$url] = $url;
-
-        }
-
-        return $result;
-
-    }
-
-    protected function saveJobToFile(\DownloadCore\Job $Job, $dirToSaveTo)
-    {
-
-        $success = true;
-
-        foreach ($Job as $property => $value) {
-
-            $file = $dirToSaveTo . DIRECTORY_SEPARATOR . $property;
-
-            if (!$this->saveValueToFile($file, $value)) {
-                $success = false;
-            }
-        }
-
-        return $success;
-
-    }
-
-    protected function saveValueToFile($file, $content)
-    {
-
-        $fp = fopen($file, 'w');
-        $success = fwrite($fp, $content);
-        fclose($fp);
-
-        if ($success === false) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-    protected function createJobDirectoryIfNotExists($jobCounter)
-    {
-
-        if (empty($this->projectSettings)) {
-            return false;
-        }
-
-        if (!isset($this->projectSettings['dir_downloaded_posts']) || empty($this->projectSettings['dir_downloaded_posts'])) {
-            return false;
-        }
-
-        if (!isset($jobCounter) || empty($jobCounter)) {
-            return false;
-        }
-
-        $dir = $this->getDownloadsDirectoryPathJob($jobCounter);
-        $success = $this->createDirectoryIfNotExist($dir);
-
-        if (!$success) {
-            return false;
-        }
-
-        return $dir;
-
-    }
-
-    /**
-     * @param \Symfony\Component\DomCrawler\Crawler $Content
-     * @param array $filesRequiredToOutput
-     * @param $url
-     * @return
-     */
-    public function extractJob(
-        \Symfony\Component\DomCrawler\Crawler $Content,
-        $url
-    )
-    {
-
-        if (empty($this->jobProperties)) {
-            return null;
-        }
-
-        return new Job($Content, $this->jobProperties, $url, $this->projectSettings, $this->getId());
-
-    }
-
-    public function getNextListOfJobLinks()
-    {
-
-        $nextPageUrl = $this->getNextPageUrlOfListOfJobLinks();
-        $this->listContent = $this->doRepeatableAction('getContentOfUrl', $nextPageUrl);
-        return (array)$this->extractJobLinks();
-
-    }
-
-    /**
-     * To be implemented in child class
-     *
-     * @return null
-     */
-    protected function getNextPageUrlOfListOfJobLinks()
-    {
-        return null;
-    }
-
-    /**
-     * @param $jobCounter
-     * @return string
-     */
-    protected function getDownloadsDirectoryPathJob($jobCounter)
-    {
-        $dir = $this->getDownloadsDirectoryPathJobs()
-            . DIRECTORY_SEPARATOR . $jobCounter
-            . '--' . $this->browserUtcDateTimeStart->format('Y-m-d--H-i-s')
-            . '--' . uniqid();
-        return $dir;
-    }
-
-    /**
-     * @param \DateTime $DateTime
-     * @return string
-     */
-    public function getDownloadsDirectoryPathJobs()
-    {
-        $dir = $this->baseDir
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
-            . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeStart->format('Y-m-d')
-            . '--' . $this->getId();
-        return $dir;
-    }
-
-    /**
-     * @param $dir
-     * @param int $cmod
-     * @return bool
-     */
-    protected function createDirectoryIfNotExist($dir, $cmod = 0775)
-    {
-        if (!is_dir($dir)) {
-            return mkdir($dir, $cmod, true);
-        }
-        return true;
-    }
-
-    private function createFileIfNotExists($fileFullPath, $fileContent)
-    {
-        return file_put_contents($fileFullPath, $fileContent);
-    }
-
-    /**
-     * @param $markerFileName
-     */
-    protected function createQueueMarkerFile($markerFileName)
-    {
-        $currentDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
-
-        $jobsPath = $this->getDownloadsDirectoryPathJobs();
-        $this->createDirectoryIfNotExist($jobsPath);
-        $this->createFileIfNotExists(
-            $jobsPath . DIRECTORY_SEPARATOR . $markerFileName,
-            //$this->browserUtcDateTimeStart->format('Y-m-d H:i:s') .
-            //$this->getId()
-            $currentDateTime->format('Y-m-d H:i:s')
-        );
-    }
-
-    protected function getId() {
-        return $this->id;
     }
 
 }

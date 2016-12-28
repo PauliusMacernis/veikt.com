@@ -228,46 +228,6 @@ class JobAsFile
         }
     }
 
-    public function removeDownloadedFilesStartFinishMarkers() {
-        $dirPath = $this->downloadedPostDir;
-
-        if ($this->dirContainsOtherDir($dirPath)) {
-            throw new \Exception("Cannot remove START and FINISH markers while downloaded posts directory contains any other directory. Tried to remove: " . $dirPath);
-        }
-
-        $startMarkerFile    = $dirPath . DIRECTORY_SEPARATOR . 'START';
-        if(is_file($startMarkerFile)) {
-            $success = unlink($startMarkerFile);
-            if(!$success) {
-                throw new \Exception("Cannot remove START marker file. Tried to remove: " . $startMarkerFile);
-            }
-        }
-
-        $finishMarkerFile   = $dirPath . DIRECTORY_SEPARATOR . 'FINISH';
-        if(is_file($startMarkerFile)) {
-            $success = unlink($startMarkerFile);
-            if(!$success) {
-                throw new \Exception("Cannot remove FINISH marker file. Tried to remove: " . $finishMarkerFile);
-            }
-        }
-
-    }
-
-    public function removeDownloadedFilesDate()
-    {
-        $pathAsArray = explode(DIRECTORY_SEPARATOR, strtr($this->downloadedPostDir, ["\\" => DIRECTORY_SEPARATOR, "/" => DIRECTORY_SEPARATOR]));
-        array_pop($pathAsArray);
-        $dirPath = implode(DIRECTORY_SEPARATOR, $pathAsArray);
-
-        if ($this->dirContainsOtherDir($dirPath)) {
-            // Do not remove dirs with content
-            return;
-        }
-
-        // Dir should be empty at the moment so removing empty should not cause any problems.
-        return rmdir($dirPath);
-
-    }
 
     protected function fileGetContent($filePath)
     {

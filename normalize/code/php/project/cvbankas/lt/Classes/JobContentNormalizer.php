@@ -8,12 +8,26 @@
 
 namespace NormalizeProject\Cvbankas\Lt\Classes;
 
-use \NormalizeCore\JobContentNormalizer as CoreNormalizer;
-use Symfony\Component\DomCrawler\Crawler;
+use NormalizeCore\JobContentNormalizer as CoreNormalizer;
 
 
 class JobContentNormalizer extends CoreNormalizer
 {
+
+    public function file_id2($transformedContent)
+    {
+
+        return $this->file_id($transformedContent);
+
+    }
+
+    public function file_id($transformedContent)
+    {
+
+        return $transformedContent['id'];
+
+    }
+
     /**
      * @param $transformedContent   Job posting related content - all job content
      *                                  downloaded from web.
@@ -23,34 +37,16 @@ class JobContentNormalizer extends CoreNormalizer
      *                                  related to method name.
      *                                  For more info look into settings.json file
      */
-//    public function content_static($transformedContent) {
-//
-//        var_dump($transformedContent['content_static']); die();
-//
-//        return (string)$transformedContent['datetime'];
-//    }
-
-    public function file_id($transformedContent) {
-
-        return $transformedContent['id'];
-
-    }
-
-    public function file_id2($transformedContent) {
-
-        return $this->file_id($transformedContent);
-
-    }
-
-
-    public function file_content_static($transformedContent) {
+    public function file_content_static($transformedContent)
+    {
 
         return $transformedContent['content_static']->html();
 
     }
 
 
-    public function file_content_dynamic($transformedContent) {
+    public function file_content_dynamic($transformedContent)
+    {
 
         return $transformedContent['content_dynamic']->html();
 

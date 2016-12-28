@@ -2,7 +2,7 @@
 
 namespace NormalizeProject\Cvbankas\Lt\Classes;
 
-use \NormalizeCore\JobContentTransformer as CoreTransformer;
+use NormalizeCore\JobContentTransformer as CoreTransformer;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -18,7 +18,8 @@ class JobContentTransformer extends CoreTransformer
      * The main method
      * @param $content Content found in file after downloading job posting
      */
-    public function transform($content) {
+    public function transform($content)
+    {
 
         // Transform main HTML content to easier extract smaller amount of it later
         $content['content_static'] = new Crawler($content['content_static']);
