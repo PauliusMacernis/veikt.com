@@ -31,6 +31,10 @@ class Settings
      */
     protected $entranceDirOfProject;
 
+    /**
+     * Settings constructor.
+     * @param string $entranceDirOfProject Directory where entrance.sh resides
+     */
     public function __construct($entranceDirOfProject)
     {
         $this->setEntranceDirOfProject($entranceDirOfProject);
@@ -53,8 +57,7 @@ class Settings
         // Find project settings
         if (!isset($settingsAll['projects-on']) || !is_array($settingsAll['projects-on'])) {
             $errorText = 'No projects enabled in \'settings.json\'.';
-            throw new \LogicException($errorText);
-            die($errorText);
+            throw new ErrorHandler($errorText);
         }
 
         // Find settings of this project
@@ -87,6 +90,9 @@ class Settings
         return $this->entranceDirOfProject;
     }
 
+    /**
+     * @param string $entranceDirOfProject Directory where entrance.sh resides
+     */
     protected function setEntranceDirOfProject($entranceDirOfProject)
     {
         $this->entranceDirOfProject = $entranceDirOfProject;
@@ -102,6 +108,10 @@ class Settings
         $this->database = $this->getSettingsFileContent('database');
     }
 
+    /**
+     * @param array $contentFiles
+     * @return bool
+     */
     public function isContentValid(array $contentFiles)
     {
         $settings = $this->getAll();
@@ -135,6 +145,10 @@ class Settings
         $this->all = $this->getSettingsFileContent('');
     }
 
+    /**
+     * @param array $normalizedContent
+     * @return bool
+     */
     public function isNormalizedContentValid(array $normalizedContent)
     {
         $settings = $this->getRequiredToNormalize();
@@ -185,14 +199,13 @@ class Settings
 
         // Require and decode all settings
         if (!is_file($fileSettings)) {
-            die('Settings file is not found.');
+            throw new ErrorHandler('Settings file is not found.');
         }
 
         $settings = file_get_contents($fileSettings);
         $settings = json_decode($settings, true);
         if (!isset($settings) || empty($settings)) {
-            // @todo: Shouldn't be just die (applies everywhere where die is being used)... Another solution needed in here.
-            die('No settings found.');
+            throw new ErrorHandler('No settings found.');
         }
         return $settings;
     }

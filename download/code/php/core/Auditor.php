@@ -104,7 +104,7 @@ class Auditor
         $this->{'logger' . $name} = new Logger($name);
 
         // Get path to log file
-        $pathToLog = $this->getPathToDataIntegrityLogFile($name);
+        $pathToLog = $this->getPathToDataIntegrityLogFile();
 
         $streamHandler = new StreamHandler($pathToLog, Logger::INFO);
         $streamHandler->setFormatter(new LineFormatter('%message%' . "\n"));
@@ -112,11 +112,12 @@ class Auditor
         $this->{"logger" . $name}->pushHandler($streamHandler);
     }
 
-    protected function getPathToDataIntegrityLogFile($name = 'DataIntegrity')
+    protected function getPathToDataIntegrityLogFile()
     {
         $pathToLog =
             $this->downloadsDirectoryPathJobs
-            . DIRECTORY_SEPARATOR . $name . '.log';
+            . DIRECTORY_SEPARATOR
+            . $this->settings['markers']['content']['file-name'];
 
         return $pathToLog;
     }
@@ -126,7 +127,6 @@ class Auditor
         $ListAudited = $this->auditList($List, $saveResults);
         $this->logListAudited($ListAudited, $saveResults);
         $this->logSuccessOrFail($ListAudited);
-
     }
 
     protected function auditList(array $List, array $JobsSaved)
@@ -217,7 +217,7 @@ class Auditor
     {
         if (isset($ListAudited['failure']) && !empty($ListAudited['failure'])) {
             $message = 'The data integrity failure detected. Cannot continue further, because integrity is already lost. URLs failing: ' . print_r($ListAudited['failure'], true);
-            throw new \Exception($message);
+            throw new ErrorHandler($message);
         }
 
         $this->logSuccess($ListAudited['success']);

@@ -23,8 +23,7 @@ class ListNextPage extends Core
 
 
     /*
-     * Let's make one url download possible
-     * In case we will want to download one specific url
+     * Download one job posting.
      * For example:
      * http://download.veikt.dev/code/php/project/cvbankas/lt/index.php?url=http://www.cvbankas.lt/pardavimu-telefonu-vadybininkas-e-vilniuje-lietuvos-rinka-vilniuje/1-4204758
      */
@@ -52,15 +51,14 @@ class ListNextPage extends Core
 
 
     /**
-     * Let's make many urls download possible
-     * In case we will want to download many urls
+     * Download many job posting urls.
      * For example:
      * http://download.veikt.dev/code/php/project/cvbankas/lt/index.php
      */
     public function downloadAll()
     {
         // We are starting to get the whole list of jobs...
-        $this->Browser->markQueueStart();
+        $this->Browser->markQueueBegin();
 
         // Getting the initial list
         $List = $this->Browser->getFirstListOfJobLinks();
@@ -86,7 +84,7 @@ class ListNextPage extends Core
             //$List = null
         );
 
-        $this->Browser->markQueueFinish();
+        $this->Browser->markQueueEnd();
         $this->Auditor->doReport();
     }
 

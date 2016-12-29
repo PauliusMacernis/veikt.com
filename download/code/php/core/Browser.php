@@ -78,7 +78,7 @@ class Browser
         }
 
         // Datetime (UTC)
-        $this->browserUtcDateTimeStart = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->browserUtcDateTimeBegin = new \DateTime('now', new \DateTimeZone('UTC'));
 
     }
 
@@ -207,10 +207,9 @@ class Browser
 
     }
 
-    public function markQueueStart()
+    public function markQueueBegin()
     {
-        $startFileName = 'START';
-        $this->createQueueMarkerFile($startFileName);
+        $this->createQueueMarkerFile($this->settings['markers']['begin']['file-name']);
     }
 
     /**
@@ -240,7 +239,7 @@ class Browser
             . DIRECTORY_SEPARATOR . '..'
             . DIRECTORY_SEPARATOR . '..'
             . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
-            . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeStart->format('Y-m-d')
+            . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeBegin->format('Y-m-d')
             . '--' . $this->getId();
         return $dir;
     }
@@ -279,10 +278,9 @@ class Browser
             . $currentDateTime->format('Y-m-d H:i:s');
     }
 
-    public function markQueueFinish()
+    public function markQueueEnd()
     {
-        $startFileName = 'FINISH';
-        $this->createQueueMarkerFile($startFileName);
+        $this->createQueueMarkerFile($this->settings['markers']['end']['file-name']);
     }
 
     public function getJobsFromTheList($List)
@@ -392,7 +390,7 @@ class Browser
     {
         $dir = $this->getDownloadsDirectoryPathJobs()
             . DIRECTORY_SEPARATOR . $jobCounter
-            . '--' . $this->browserUtcDateTimeStart->format('Y-m-d--H-i-s')
+            . '--' . $this->browserUtcDateTimeBegin->format('Y-m-d--H-i-s')
             . '--' . uniqid();
         return $dir;
     }

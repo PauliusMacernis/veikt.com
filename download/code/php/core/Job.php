@@ -102,7 +102,6 @@ class Job
         $uniqueBrowserId
     )
     {
-        // @TODO: create Browser id...
         $this->$fileAndPropertyName = $uniqueBrowserId;
     }
 
