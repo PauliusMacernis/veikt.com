@@ -50,7 +50,7 @@ class JobAsFile
 
         if (!$Settings->isContentValid($filesContentText)) {
             $message = "Downloaded content does not match requirements of existing settings: " . $this->downloadedPostDir;
-            throw new \LogicException($message);
+            throw new ErrorHandler($message);
         }
 
     }
@@ -117,7 +117,7 @@ class JobAsFile
                     . $name . '". This method is used to extract "' . $name
                     . '" content from downloaded job posting. '
                     . 'This method is required by settings.json.';
-                throw new \LogicException($message);
+                throw new ErrorHandler($message);
             }
 
             $this->normalizedContent[$name] = $Normalizer->$name($transformedData);
@@ -153,7 +153,7 @@ class JobAsFile
 
         if (!$Settings->isNormalizedContentValid($this->getNormalizedContent())) {
             $message = "Normalized content does not match requirements of existing settings: " . $this->downloadedPostDir;
-            throw new \LogicException($message);
+            throw new ErrorHandler($message);
         }
 
     }
@@ -174,7 +174,7 @@ class JobAsFile
         $dirPath = $this->downloadedPostDir;
 
         if ($this->dirContainsOtherDir($dirPath)) {
-            throw new \Exception("Cannot remove directory if it contains any other directory. Tried to remove: " . $dirPath);
+            throw new ErrorHandler("Cannot remove directory if it contains any other directory. Tried to remove: " . $dirPath);
         }
 
         // Remove every file by file name
@@ -194,7 +194,7 @@ class JobAsFile
     protected function validateDirOrFail($dirPath)
     {
         if (!is_dir($dirPath)) {
-            throw new \Exception($dirPath . " is not set");
+            throw new ErrorHandler($dirPath . " is not set");
         }
     }
 
@@ -219,11 +219,11 @@ class JobAsFile
         foreach ($this->filesContentText as $keyRepresentingFilename => $otherInfo) {
             $file = $dirPath . DIRECTORY_SEPARATOR . $keyRepresentingFilename;
             if (!is_file($file)) {
-                throw new \Exception("A file was expected, but the given was not the file given. The file given: " . $file);
+                throw new ErrorHandler("A file was expected, but the given was not the file given. The file given: " . $file);
             }
             $success = unlink($file);
             if (!$success) {
-                throw new \Exception("Action removing the file returned false which means file was not removed successfully or other problems. Check by human is required.");
+                throw new ErrorHandler("Action removing the file returned false which means file was not removed successfully or other problems. Check by human is required.");
             }
         }
     }

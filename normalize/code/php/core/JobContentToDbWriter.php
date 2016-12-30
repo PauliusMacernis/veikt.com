@@ -9,8 +9,6 @@
 namespace NormalizeCore;
 
 
-//use Symfony\Component\Asset\Exception\LogicException;
-
 class JobContentToDbWriter
 {
 
@@ -76,8 +74,8 @@ class JobContentToDbWriter
 
         try {
             $this->dbConnection = new \PDO($dsn, $user, $password);
-        } catch (\PDOException $e) {
-            throw new \LogicException('Connection failed: ' . $e->getMessage());
+        } catch (ErrorHandler $e) {
+            throw new ErrorHandler('Connection failed: ' . $e->getMessage());
         }
 
     }
@@ -101,7 +99,7 @@ class JobContentToDbWriter
             $existingItemsCount = count($existingItemsData);
             if ($existingItemsCount > 1) {
                 $this->dbConnection->rollBack();
-                throw new \LogicException($this->getToManyExistingItemsErrorText($existingItemsCount, $tableName, $existingItemsData));
+                throw new ErrorHandler($this->getToManyExistingItemsErrorText($existingItemsCount, $tableName, $existingItemsData));
             }
 
             if ($existingItemsCount == 1) {
@@ -145,7 +143,7 @@ class JobContentToDbWriter
     protected function getExistingItemsDataFromDb($tableName, array $dataWithSettings)
     {
         if (empty($tableName)) {
-            throw new \LogicException('Table name is not set.');
+            throw new ErrorHandler('Table name is not set.');
         }
 
         //var_dump($dataWithSettings, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
@@ -266,7 +264,7 @@ class JobContentToDbWriter
     {
         // @todo: (think about it if needed at all...) Check if we need to update at all...?
         if (!$existingItemsData) {
-            throw new \LogicException("Update action is not available while no data presented for WHERE... part of the update query.");
+            throw new ErrorHandler("Update action is not available while no data presented for WHERE... part of the update query.");
         }
 
         // @todo: Update...
@@ -287,7 +285,7 @@ class JobContentToDbWriter
         $success = $PDOQuery->execute($columnValuesForEmbedding);
 
         if (!$success) {
-            throw new \PDOException(implode(";\n", $PDOQuery->errorInfo()));
+            throw new ErrorHandler(implode(";\n", $PDOQuery->errorInfo()));
         }
 
     }
@@ -349,7 +347,7 @@ class JobContentToDbWriter
 
         foreach ($existingItemsData as $item) {
             if (!property_exists($item, $idColumnName)) {
-                throw new \LogicException('Would like to update entries in "' . $tableName . '" table, but there is no ids of updatable entries.');
+                throw new ErrorHandler('Would like to update entries in "' . $tableName . '" table, but there is no ids of updatable entries.');
             }
             $idsToUpdate[(int)$item->$idColumnName] = (int)$item->$idColumnName;
         }

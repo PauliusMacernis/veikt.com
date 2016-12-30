@@ -29,7 +29,7 @@ try {
     $Job->writeNormalizedContentToDb(JobContentToDbWriter::class);
     $Job->validateWritten();
     $Job->removeDownloadedFiles();
-} catch (\Exception $e) {
+} catch (\NormalizeCore\ErrorHandler $e) {
     echo 'Error: ' . $e->getMessage() . "\n"
         . 'File: ' . $e->getFile() . "\n"
         . 'Line: ' . $e->getLine() . "\n"
@@ -45,7 +45,7 @@ function failIfNotValid(array $argv, $argumentsCountExpected = 3)
 {
 
     if (count($argv) < $argumentsCountExpected) {
-        throw new \LogicException(
+        throw new \NormalizeCore\ErrorHandler(
             "Arguments not received or received as empty. Arguments received: "
             . print_r($argv, true)
         );
@@ -54,7 +54,7 @@ function failIfNotValid(array $argv, $argumentsCountExpected = 3)
     for ($varCount = 0; $varCount < $argumentsCountExpected; $varCount++) {
         $var = isset($argv[$varCount]) ? trim($argv[$varCount]) : null;
         if (empty($var)) {
-            throw new \LogicException(
+            throw new \NormalizeCore\ErrorHandler(
                 "Argument #" . $varCount . " is not valid. Arguments received: "
                 . print_r($argv, true)
             );
