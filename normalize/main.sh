@@ -53,6 +53,24 @@ DIRS_FOR_CONTENT=$(php -r "
      echo implode(\"\\\n\", \$dirsToSearchIn);
     ");
 
+MARKER_FILENAME_BEGIN=$(php -r "
+        \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
+        echo \$settings['markers']['begin']['file-name'];
+")
+MARKER_FILENAME_CONTENT=$(php -r "
+        \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
+        echo \$settings['markers']['content']['file-name'];
+")
+MARKER_FILENAME_END=$(php -r "
+        \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
+        echo \$settings['markers']['end']['file-name'];
+")
+
+export MARKER_FILENAME_BEGIN
+export MARKER_FILENAME_CONTENT
+export MARKER_FILENAME_END
+
+
 # Find all sub-dirs within dirs & run index script on every sub-dir
 echo -e $DIRS_FOR_CONTENT |
 while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
@@ -73,8 +91,7 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
             continue
     fi
 
-
-    PROJECT_DIRS_TO_NORMALIZE=$(find $POSTS_DIR -maxdepth 1 -type d -exec bash -c '[[ -e $1/START && -e $1/FINISH && -e $1/DataIntegrity.log && $(head -n 1 $1/START) == $(head -n 1 $1/FINISH) ]]' bash {} \; -printf '%T@ %p\n' | sort -k1 -n -z | awk '{ print $2 "\\n" }')
+    PROJECT_DIRS_TO_NORMALIZE=$(find $POSTS_DIR -maxdepth 1 -type d -exec bash -c '[[ -e $1/$MARKER_FILENAME_BEGIN && -e $1/$MARKER_FILENAME_CONTENT && -e $1/$MARKER_FILENAME_END && $(head -n 1 $1/$MARKER_FILENAME_BEGIN) == $(head -n 1 $1/$MARKER_FILENAME_END) ]]' bash {} \; -printf '%T@ %p\n' | sort -k1 -n -z | awk '{ print $2 "\\n" }')
 
     # Read DataIntegrity.log found in each directory.
     echo -e $PROJECT_DIRS_TO_NORMALIZE |
@@ -107,21 +124,21 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
             chmod 774 $ENTRANCE_SH_FILE
             bash "$ENTRANCE_SH_FILE" "$PROJECT_DIR_TO_NORMALIZE" "$UNIQUE_ID_ASSIGNED_FOR_A_QUEUE"
 
-        done < "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/DataIntegrity.log"
+        done < "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_CONTENT"
 
-        # Remove START file
-        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/START" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 3 ] ; then
-            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/START"
+        # Remove $MARKER_FILENAME_BEGIN file
+        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 3 ] ; then
+            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN"
         fi
 
-        # Remove FINISH file
-        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/FINISH" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 2 ] ; then
-            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/FINISH"
+        # Remove $MARKER_FILENAME_END file
+        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_END" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 2 ] ; then
+            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_END"
         fi
 
-        # Remove DataIntegrity.log file as we red it already
-        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/DataIntegrity.log" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 1 ] ; then
-            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE/DataIntegrity.log"
+        # Remove $MARKER_FILENAME_CONTENT file as we red it already
+        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_CONTENT" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 1 ] ; then
+            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_CONTENT"
         fi
 
         # Remove directory containing once downloaded data as we red it already
@@ -135,5 +152,8 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
 
 done
 
+unset MARKER_FILENAME_BEGIN
+unset MARKER_FILENAME_CONTENT
+unset MARKER_FILENAME_END
 
 echo -e "\n NORMALIZE: Finished: $(date +%Y-%m-%d:%H:%M:%S)"
