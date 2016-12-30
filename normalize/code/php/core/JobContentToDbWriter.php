@@ -146,13 +146,9 @@ class JobContentToDbWriter
             throw new ErrorHandler('Table name is not set.');
         }
 
-        //var_dump($dataWithSettings, 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
-        //
-
         // Extract column settings
         $anyItem = reset($dataWithSettings);
         $idColumn = $this->getIdColumnNameFromDataWithSettingsItem($anyItem);
-        //var_dump($idColumn, $dataWithSettings); die();
 
         // SELECT
         $q = 'SELECT `' . $idColumn . '`';
@@ -166,7 +162,6 @@ class JobContentToDbWriter
         }
 
         $q .= ' WHERE (' . $qWhereString . ')';
-        //var_dump($q, $dataForEmbedding); //die();
 
         // query
         $PDOQuery = $this->dbConnection->prepare($q);
