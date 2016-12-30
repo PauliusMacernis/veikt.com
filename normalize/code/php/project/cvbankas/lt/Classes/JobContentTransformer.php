@@ -22,8 +22,13 @@ class JobContentTransformer extends CoreTransformer
     {
 
         // Transform main HTML content to easier extract smaller amount of it later
-        $content['content_static'] = new Crawler($content['content_static']);
-        $content['content_dynamic'] = new Crawler($content['content_dynamic']);
+        $contentStatic = new Crawler();
+        $contentStatic->addHtmlContent($content['content_static'], 'UTF-8');
+        $content['content_static'] = $contentStatic;
+
+        $contentDynamic = new Crawler();
+        $contentDynamic->addHtmlContent($content['content_dynamic'], 'UTF-8');
+        $content['content_dynamic'] = $contentDynamic;
 
         return $content;
 
