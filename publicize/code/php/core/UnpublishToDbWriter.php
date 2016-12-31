@@ -98,22 +98,28 @@ class UnpublishToDbWriter extends JobContentToDbWriter
                         
                         # Selected all latest file_browser_id values per project
                         SELECT
-                            jobDataGroupedByProject.browser_process_id
-                        FROM (
-                            SELECT
-                                jobData.random_job_id_within_group, jobData.project, jobData.browser_process_id, MAX(jobData.last_import_datetime)
+                            dataProjectProcess.browser_process_id
                             FROM (
                                 SELECT
-                                        j.id as random_job_id_within_group, j.file_project as project, j.file_browser_id as browser_process_id, MAX(j.datetime_imported) as last_import_datetime
-                                    FROM 
-                                        job as j
-                                    #WHERE
-                                    #	j.is_published = 1
-                                    GROUP BY 
-                                        j.file_project, j.file_browser_id
-                            ) as jobData
-                            GROUP BY jobData.project
-                        ) as jobDataGroupedByProject
+                                    j.file_project as project, j.file_browser_id as browser_process_id, MAX(j.datetime_imported) as last_import_datetime
+                                FROM 
+                                    job as j
+                                #WHERE
+                                #	j.is_published = 1
+                                GROUP BY 
+                                    j.file_project, j.file_browser_id
+                            ) as dataProjectProcess
+                        
+                            INNER JOIN (
+                                SELECT
+                                    j.file_project as project, MAX(j.datetime_imported) as last_import_datetime
+                                FROM 
+                                    job as j
+                                #WHERE
+                                #	j.is_published = 1
+                                GROUP BY 
+                                    j.file_project
+                            ) as dataProject ON (dataProjectProcess.project = dataProject.project AND dataProjectProcess.last_import_datetime = dataProject.last_import_datetime)
                         # END. Selected all latest file_browser_id values per project
                 
                   )
