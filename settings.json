@@ -76,7 +76,7 @@
       "database-column": "file_project",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "1"
     },
     "file_url":{
       "description":"Extracted by default. The content from the file named 'url'. This url is pointing to the particular job posting.",
@@ -117,10 +117,19 @@
 
 
     "datetime_imported":{
-      "description":"Extracted by default. Datetime value inside for everyone to know when the job information has been put into database. The datetime value should be in UTC+0 timezone and should be formatted as the string YYYY-MM-DD HH:mm:ss",
+      "description":"Extracted by default. Datetime value for everyone to know when the job information has been synced with the database. datetime_imported could be named as datetime_ping to clarify the meaning, but lets stick with datetime_imported name. The datetime value should be in UTC+0 timezone and should be formatted as the string YYYY-MM-DD HH:mm:ss",
       "example-content":"2016-09-30 14:30:59",
       "database-table": "job",
       "database-column": "datetime_imported",
+      "database-column-id": "id",
+      "required":"1",
+      "is-identity-component": "0"
+    },
+    "datetime_updated":{
+      "description":"Extracted as file_datetime value by default. file_datetime and datetime_updated holds the same value for now. However, looking for the future - it should be made possible to edit-extend part of the downloaded information and so file_datetime and datetime_updated will differ after/if edit-extend action would be performed.",
+      "example-content":"2016-09-30 14:30:59",
+      "database-table": "job",
+      "database-column": "datetime_updated",
       "database-column-id": "id",
       "required":"1",
       "is-identity-component": "0"
@@ -131,7 +140,7 @@
       "database-column": "content_static_without_tags",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "1"
+      "is-identity-component": "0"
     },
     "content_dynamic_without_tags": {
       "description":"Extracted by default as HTML (stripped by strip_tags function of PHP). The content is the same as in content_dynamic file, but without any HTML, XML, CSS or other tags mixed in. It is the plain text of job posting - for humans to read.",
@@ -139,6 +148,14 @@
       "database-column": "content_dynamic_without_tags",
       "database-column-id": "id",
       "required":"0",
+      "is-identity-component": "0"
+    },
+    "is_published": {
+      "description":"Extracted as 1 (true) by default.",
+      "database-table": "job",
+      "database-column": "is_published",
+      "database-column-id": "id",
+      "required":"1",
       "is-identity-component": "0"
     }
   },

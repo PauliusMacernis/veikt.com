@@ -72,13 +72,45 @@ class JobContentNormalizer
 
     public function content_static_without_tags($transformedContent)
     {
-        return strip_tags($transformedContent['content_static']->html());
+        $translationDictionary = [
+            "\r\n" => "\n",
+        ];
+
+        return preg_replace('/  +/', ' ',
+            strtr(
+                trim(strip_tags($transformedContent['content_static']->html())),
+                $translationDictionary
+            )
+        );
     }
 
 
     public function content_dynamic_without_tags($transformedContent)
     {
-        return strip_tags($transformedContent['content_dynamic']->html());
+        $translationDictionary = [
+            "\r\n" => "\n",
+        ];
+
+        return preg_replace('/  +/', ' ',
+            strtr(
+                trim(strip_tags($transformedContent['content_dynamic']->html())),
+                $translationDictionary
+            )
+        );
+    }
+
+
+    public function is_published($transformedContent)
+    {
+        // Always published by default
+        return 1;
+    }
+
+
+    public function datetime_updated($transformedContent)
+    {
+        // Always the same as file_datetime by default
+        return $this->file_datetime($transformedContent);
     }
 
 
