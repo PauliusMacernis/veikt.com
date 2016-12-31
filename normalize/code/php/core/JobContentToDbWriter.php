@@ -36,7 +36,7 @@ class JobContentToDbWriter
 
     protected function getSettingsMergedIntoContentData()
     {
-        $Settings = new Settings($this->entranceDir);
+        $Settings = $this->createAndReturnSettingsObject();
         $settingsAll = $Settings->getAll();
 
         if (!isset($this->contentData)) {
@@ -61,7 +61,7 @@ class JobContentToDbWriter
 
     protected function setDbConnectionOrFail()
     {
-        $settings = new Settings($this->entranceDir);
+        $settings = $this->createAndReturnSettingsObject($this->entranceDir);
         $settingsDatabase = $settings->getDatabase();
 
         $dsn = $settingsDatabase['connections']['mysql']['driver'] . ':'
@@ -371,6 +371,15 @@ class JobContentToDbWriter
 
         $PDOQuery = $this->dbConnection->prepare($q);
         $PDOQuery->execute($columnValuesForEmbedding);
+    }
+
+    /**
+     * @return Settings
+     */
+    protected function createAndReturnSettingsObject()
+    {
+        $Settings = new Settings($this->entranceDir);
+        return $Settings;
     }
 
 }

@@ -156,4 +156,11 @@ unset MARKER_FILENAME_BEGIN
 unset MARKER_FILENAME_CONTENT
 unset MARKER_FILENAME_END
 
+
+# Apply (PHP) action - Publicize
+PUBLICIZE_MAIN_SH_FILE="$DIR"/../publicize/main.sh
+chmod 774 "$PUBLICIZE_MAIN_SH_FILE"
+bash "$PUBLICIZE_MAIN_SH_FILE"
+# END. Apply (PHP) action - Publicize
+
 echo -e "\n NORMALIZE: Finished: $(date +%Y-%m-%d:%H:%M:%S)"

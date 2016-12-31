@@ -35,7 +35,7 @@ class Settings
      * Settings constructor.
      * @param string $entranceDirOfProject Directory where entrance.sh resides
      */
-    public function __construct($entranceDirOfProject)
+    public function __construct($entranceDirOfProject = null)
     {
         $this->setEntranceDirOfProject($entranceDirOfProject);
         $this->setAll();
@@ -66,8 +66,11 @@ class Settings
                 continue;
             }
             $uniqueProjectDirFromSettings = $projectSettingsTemp['unique_project_path'];
+
             if (
-                substr_compare(
+                !empty($projectDirFromEntranceScript)
+                && !empty($uniqueProjectDirFromSettings)
+                && substr_compare(
                     $projectDirFromEntranceScript,
                     $uniqueProjectDirFromSettings,
                     strlen($projectDirFromEntranceScript) - strlen($uniqueProjectDirFromSettings),
@@ -180,6 +183,8 @@ class Settings
 
     }
 
+
+
     /**
      * @param $case
      * @return mixed|string
@@ -188,11 +193,25 @@ class Settings
     {
         $projectDir = $this->getEntranceDirOfProject();
 
-        $fileSettings = $projectDir . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR
+        $fileSettings = $this->getSettingsFilePath($case, $projectDir);
+
+        $settings = file_get_contents($fileSettings);
+        $settings = json_decode($settings, true);
+        if (!isset($settings) || empty($settings)) {
+            throw new ErrorHandler('No settings found.');
+        }
+        return $settings;
+    }
+
+    /**
+     * @param $case
+     * @param $projectDir
+     * @return string
+     * @throws ErrorHandler
+     */
+    protected function getSettingsFilePath($case, $projectDir)
+    {
+        $fileSettings = $this->getSettingsDirPath($projectDir)
             . 'settings'
             . ($case ? ('.' . $case . '.private') : '')
             . '.json';
@@ -201,13 +220,22 @@ class Settings
         if (!is_file($fileSettings)) {
             throw new ErrorHandler('Settings file is not found.');
         }
+        return $fileSettings;
+    }
 
-        $settings = file_get_contents($fileSettings);
-        $settings = json_decode($settings, true);
-        if (!isset($settings) || empty($settings)) {
-            throw new ErrorHandler('No settings found.');
-        }
-        return $settings;
+    /**
+     * @param $projectDir
+     * @return string
+     */
+    protected function getSettingsDirPath($projectDir)
+    {
+        $settingsDirPath =
+            $projectDir . DIRECTORY_SEPARATOR
+            . '..'      . DIRECTORY_SEPARATOR
+            . '..'      . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+            . '..'      . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+            . '..'      . DIRECTORY_SEPARATOR;
+        return $settingsDirPath;
     }
 
 }
