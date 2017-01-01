@@ -178,25 +178,6 @@
           "website": "http://portfolio.vertyb.es/"
         }
       }
-    },
-    {
-      "project_name": "cvbankas2.lt",
-      "since_datetime_utc0": "2016-10-16 03:45:00",
-      "language": "php",
-      "url": "http://www.cvbankas2.lt/",
-      "unique_project_path": "code/php/project/cvbankas2/lt",
-      "entrance_sh_download": "download/code/php/project/cvbankas2/lt/entrance.sh",
-      "entrance_sh_normalize": "normalize/code/php/project/cvbankas2/lt/entrance.sh",
-      "dir_downloaded_posts": "download/downloads/cvbankas2/lt/posts",
-      "dir_downloaded_logs": "download/downloads/cvbankas2/lt/logs",
-      "file_downloaded_logs": "Y-m-d--H-i-s",
-      "administrators": {
-        "Paulius": {
-          "name": "Paulius2",
-          "email": "sugalvojau2@gmail.com",
-          "website": "http://portfolio2.vertyb.es/"
-        }
-      }
     }
   ]
 }

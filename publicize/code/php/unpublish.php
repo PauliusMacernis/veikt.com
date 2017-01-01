@@ -4,6 +4,8 @@
 require_once
     'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
+//set_error_handler(array(new \DownloadCore\ErrorHandler, 'defaultErrorHandler'));
+//register_shutdown_function(array(new \NormalizeCore\ErrorHandler, 'defaultRegisterShutdown'));
 
 use PublicizeCore\UnpublishToDbWriter as Db;
 

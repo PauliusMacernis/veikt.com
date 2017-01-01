@@ -9,7 +9,7 @@
 namespace PublicizeCore;
 
 
-class ErrorHandler extends \Exception
+class ErrorHandler extends \NormalizeCore\ErrorHandler
 {
 
 }

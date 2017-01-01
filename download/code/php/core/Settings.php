@@ -11,6 +11,12 @@ namespace DownloadCore;
 
 class Settings
 {
+
+    /**
+     * @var string Path to directory where the settings files reside
+     */
+    protected $settingsDirPath;
+
     /**
      * @var array All settings from settings.json
      */
@@ -23,8 +29,15 @@ class Settings
 
     /**
      * @var array All settings related to database from settings.database.private.json
+     * or settings.database.public.json if the previous does not exist
      */
     protected $database;
+
+    /**
+     * @var array All settings related to mail from settings.mail.private.json
+     * or settings.mail.public.json if the previous does not exist
+     */
+    protected $mail;
 
     /**
      * @var string Directory where entrance.sh resides
@@ -40,6 +53,7 @@ class Settings
         $this->setEntranceDirOfProject($entranceDirOfProject);
         $this->setAll();
         $this->setDatabase();
+        $this->setMail();
         $this->setProject();
     }
 
@@ -109,6 +123,16 @@ class Settings
     protected function setDatabase()
     {
         $this->database = $this->getSettingsFileContent('database');
+    }
+
+    public function getMail()
+    {
+        return $this->mail;
+    }
+
+    protected function setMail()
+    {
+        $this->mail = $this->getSettingsFileContent('mail');
     }
 
     /**
@@ -184,7 +208,6 @@ class Settings
     }
 
 
-
     /**
      * @param $case
      * @return mixed|string
@@ -229,13 +252,22 @@ class Settings
      */
     protected function getSettingsDirPath($projectDir)
     {
-        $settingsDirPath =
-            $projectDir . DIRECTORY_SEPARATOR
-            . '..'      . DIRECTORY_SEPARATOR
-            . '..'      . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-            . '..'      . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-            . '..'      . DIRECTORY_SEPARATOR;
-        return $settingsDirPath;
+        if (!isset($this->settingsDirPath)) {
+            $this->setSettingsDirPath();
+        }
+
+        return $this->settingsDirPath;
+
+    }
+
+    protected function setSettingsDirPath()
+    {
+        $this->settingsDirPath =
+            dirname(__FILE__) . DIRECTORY_SEPARATOR
+            . '..' . DIRECTORY_SEPARATOR
+            . '..' . DIRECTORY_SEPARATOR
+            . '..' . DIRECTORY_SEPARATOR
+            . '..' . DIRECTORY_SEPARATOR;
     }
 
 }

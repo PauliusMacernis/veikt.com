@@ -1,0 +1,18 @@
+{
+    "transport":{
+        "smtp":{
+            "host": "smtp.example.com",
+            "port": "25",
+
+            "from":{
+                "FROM Example": "from@example.com"
+            },
+            "to":{
+                "TO Exampl": "to@example.com"
+            },
+            "encryption": "tls",
+            "username": "myusername",
+            "password": "mypassword"
+        }
+    }
+}

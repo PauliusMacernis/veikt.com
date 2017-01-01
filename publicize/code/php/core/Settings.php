@@ -13,16 +13,5 @@ use NormalizeCore\Settings as NormalizeSettings;
 
 class Settings extends NormalizeSettings
 {
-    protected function getSettingsDirPath($projectDir)
-    {
-        $settingsDirPath =
-            __DIR__ . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR
-            . '..' . DIRECTORY_SEPARATOR;
 
-        return $settingsDirPath;
-
-    }
 }

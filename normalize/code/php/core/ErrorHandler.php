@@ -9,7 +9,7 @@
 namespace NormalizeCore;
 
 
-class ErrorHandler extends \Exception
+class ErrorHandler extends \DownloadCore\ErrorHandler
 {
 
 }

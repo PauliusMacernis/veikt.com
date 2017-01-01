@@ -8,6 +8,9 @@ require_once '..'
     . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
     . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
+//set_error_handler(array(new \DownloadCore\ErrorHandler, 'defaultErrorHandler'));
+//register_shutdown_function(array(new \NormalizeCore\ErrorHandler, 'defaultRegisterShutdown'));
+
 
 use NormalizeCore\JobAsFile;
 use NormalizeCore\JobContentToDbWriter;
@@ -15,27 +18,20 @@ use NormalizeProject\Cvbankas\Lt\Classes\JobContentNormalizer;
 use NormalizeProject\Cvbankas\Lt\Classes\JobContentTransformer;
 
 
-try {
-    failIfNotValid($argv);
+failIfNotValid($argv);
 
-    $projectDirToNormalize = (string)trim($argv[1]);
-    $projectDirToNormalizeParent = getParentDir($projectDirToNormalize);
-    $uniqueProcessIdAssignedByMain = (string)trim($argv[2]);
+$projectDirToNormalize = (string)trim($argv[1]);
+$projectDirToNormalizeParent = getParentDir($projectDirToNormalize);
+$uniqueProcessIdAssignedByMain = (string)trim($argv[2]);
 
-    $Job = new JobAsFile(__DIR__, $projectDirToNormalize);
-    $Job->validateDownloaded();
-    $Job->normalize(JobContentNormalizer::class, JobContentTransformer::class);
-    $Job->validateNormalized();
-    $Job->writeNormalizedContentToDb(JobContentToDbWriter::class);
-    $Job->validateWritten();
-    $Job->removeDownloadedFiles();
-} catch (\NormalizeCore\ErrorHandler $e) {
-    echo 'Error: ' . $e->getMessage() . "\n"
-        . 'File: ' . $e->getFile() . "\n"
-        . 'Line: ' . $e->getLine() . "\n"
-        . 'Backtrace: ' . $e->getTraceAsString();
-    exit;
-}
+$Job = new JobAsFile(__DIR__, $projectDirToNormalize);
+$Job->validateDownloaded();
+$Job->normalize(JobContentNormalizer::class, JobContentTransformer::class);
+$Job->validateNormalized();
+$Job->writeNormalizedContentToDb(JobContentToDbWriter::class);
+$Job->validateWritten();
+$Job->removeDownloadedFiles();
+
 
 // Print the dot to imitate the "progress bar"
 echo ".";
@@ -43,7 +39,6 @@ exit;
 
 function failIfNotValid(array $argv, $argumentsCountExpected = 3)
 {
-
     if (count($argv) < $argumentsCountExpected) {
         throw new \NormalizeCore\ErrorHandler(
             "Arguments not received or received as empty. Arguments received: "
