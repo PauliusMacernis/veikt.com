@@ -19,47 +19,43 @@ class ErrorHandler extends \Exception
             'FUNC_GET_ARGS' => func_get_args()
         ];
 
-        $this->sendErrorEmail(print_r($data, true));
+        $this->sendErrorEmail(
+            print_r($data, true),
+            'Veikt error. Case: defaultErrorHandler'
+        );
 
     }
 
-    public function sendErrorEmail($bodyAsString)
+    public function sendErrorEmail($body, $subject = 'Veikt error.')
     {
 
+        $to = $this->getTo();
+
+        $Mail = new Mail();
+        $Mail->createAndSendMessage($body, $subject, $to);
+
+        printf("Sent %d email messages\n", $Mail->getLastNumSent());
+
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getTo($toKey = 'to-error')
+    {
         $Settings = new Settings();
         $MailSettings = $Settings->getMail();
-
-        $encryption = $MailSettings['transport']['smtp']['encryption'];
-        $host = $MailSettings['transport']['smtp']['host'];
-        $port = $MailSettings['transport']['smtp']['port'];
-        $username = $MailSettings['transport']['smtp']['username'];
-        $password = $MailSettings['transport']['smtp']['password'];
-
-        $from = $MailSettings['transport']['smtp']['from'];
-        $to = $MailSettings['transport']['smtp']['to-error'];
-
-        // Create the Transport
-        $transport = \Swift_SmtpTransport::newInstance($host, $port)
-            ->setUsername($username)
-            ->setPassword($password);
-
-        // Create the Mailer using your created Transport
-        $mailer = \Swift_Mailer::newInstance($transport);
-
-        // Create a message
-        $message = \Swift_Message::newInstance('Veikt error. ')
-            ->setFrom($from)
-            ->setTo($to)
-            ->setBody($bodyAsString);
-
-        // Send the message
-        $numSent = $mailer->send($message);
-        printf("Sent %d email messages\n", $numSent);
-
+        $to = $MailSettings['transport']['smtp'][$toKey];
+        return $to;
     }
 
     public function defaultRegisterShutdown()
     {
+        $lastError = error_get_last();
+        if (null === $lastError) {
+            return;
+        }
+
         // @TODO: Change the functionality of mailing.
         //  It would be better if all errors would be filtered to unique only
         //  and then saved to file or somewhere else into one place.
@@ -72,7 +68,11 @@ class ErrorHandler extends \Exception
         //  Enable register_shutdown_function in the entire project
         //  after mailing functionality is fixed.
 
-        $this->sendErrorEmail(print_r(error_get_last(), true));
+        $this->sendErrorEmail(
+            print_r([
+                'LAST_ERROR' => print_r($lastError, true)
+            ], true),
+            'Veikt error. Case: defaultRegisterShutdown');
 
     }
 

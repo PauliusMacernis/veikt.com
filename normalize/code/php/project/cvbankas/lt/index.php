@@ -56,6 +56,16 @@ function failIfNotValid(array $argv, $argumentsCountExpected = 3)
         }
     }
     //END. Check for empty
+
+    $projectDirToNormalize = (string)trim($argv[1]);
+    if (!is_dir($projectDirToNormalize)) {
+        throw new \NormalizeCore\ErrorHandler(
+            "Project DIR \"" . $projectDirToNormalize . "\" is not valid directory. "
+            . "Cannot analyze. "
+            . "Failing & skipping. "
+        );
+    }
+
 }
 
 /**
@@ -73,6 +83,17 @@ function getParentDir($dir)
     $path = explode($ds, $dir);
     array_pop($path);
 
-    return implode($ds, $path);
+    $dir = implode($ds, $path);
+    if (!is_dir($dir)) {
+        throw new \NormalizeCore\ErrorHandler(
+            "Parent DIR \"" . $dir . "\" is not valid directory. "
+            . "Cannot analyze. "
+            . "Failing & skipping. "
+            . "Child directory received: "
+            . print_r($dir, true)
+        );
+    }
+
+    return $dir;
 
 }

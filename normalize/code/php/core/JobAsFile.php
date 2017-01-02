@@ -48,10 +48,7 @@ class JobAsFile
 
         $Settings = new Settings($this->entranceDir);
 
-        if (!$Settings->isContentValid($filesContentText)) {
-            $message = "Downloaded content does not match requirements of existing settings: " . $this->downloadedPostDir;
-            throw new ErrorHandler($message);
-        }
+        $Settings->validateContentDownloaded($filesContentText);
 
     }
 

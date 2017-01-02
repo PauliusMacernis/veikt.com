@@ -24,7 +24,7 @@ class Browser
 {
 
     const HOMEPAGE_URL = null;
-    const RETRY_TIMES = 3;
+    const RETRY_TIMES = 10;
     const RETRY_TIMES_MIN_DELAY_IN_SECONDS = 3;
     const RETRY_TIMES_MAX_DELAY_IN_SECONDS = 10;
     const START_MIN_DELAY_IN_SECONDS = 1; // When starting this->doRepeatableAction method

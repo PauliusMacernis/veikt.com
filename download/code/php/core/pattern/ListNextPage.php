@@ -62,6 +62,7 @@ class ListNextPage extends Core
 
         // Getting the initial list
         $List = $this->Browser->getFirstListOfJobLinks();
+        //$List = [reset($List)];
 
         do {
             // Get and save jobs by one, not by the whole list.

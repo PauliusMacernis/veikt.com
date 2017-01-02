@@ -139,26 +139,42 @@ class Settings
      * @param array $contentFiles
      * @return bool
      */
-    public function isContentValid(array $contentFiles)
+    public function validateContentDownloaded(array $contentFiles)
     {
         $settings = $this->getAll();
 
+        // No requirements? The content is valid then...
         if (!isset($settings['files-to-output'])) {
-            return true;
+            return;
         }
 
         foreach ($settings['files-to-output'] as $filename => $fileInfo) {
-            if (!$fileInfo['required']) {
+            // Ignore non-required files
+            if (!$fileInfo['required-file']) {
                 continue;
             }
 
-            if (!isset($contentFiles[$filename])) {
-                return false;
+            // Fail if file is not created
+            if ($fileInfo['required-file'] && !isset($contentFiles[$filename])) {
+                throw new ErrorHandler(
+                    'Error. File "' . $filename . '" is not created. '
+                    . 'It must be created according to settings.json '
+                    . 'Dir: "' . $this->downloadedPostDir . '"'
+                );
             }
 
+            // Fail if file is empty
+            if ($fileInfo['required-data'] && empty($contentFiles[$filename])) {
+                throw new ErrorHandler(
+                    'Error. File "' . $filename . '" is empty. '
+                    . 'It must be not empty according to settings.json '
+                    . 'Dir: "' . $this->downloadedPostDir . '"'
+                );
+            }
         }
 
-        return true;
+        // OK
+        return;
 
     }
 

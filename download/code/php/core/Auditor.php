@@ -23,7 +23,8 @@ class Auditor
     protected $loggerDataIntegrity;
     protected $settings;                // All settings (global + related to the project)
     protected $projectSettings;         // Settings related to the project
-    protected $requiredProperties;      // Required files to create as the output (=properties of Job class)
+    protected $requiredPropertiesFile;      // Required files to create as the output (=properties of Job class)
+    protected $requiredPropertiesData;      // Required data to create as the output (=properties of Job class)
     protected $indexDir;                // Project's root directory
     protected $datetime;                // Datetime value (UTC) of object initiation
     protected $downloadsDirectoryPathJobs; // The place where job adds are being downloaded to
@@ -41,7 +42,8 @@ class Auditor
         $this->indexDir = $indexDir;
 
         // REQUIRED PROPERTIES/FILES
-        $this->requiredProperties = $this->getRequiredProperties();
+        $this->requiredPropertiesFile = $this->getRequiredPropertiesFile();
+        $this->requiredPropertiesData = $this->getRequiredPropertiesData();
 
         // LOGGERS
         $this->setLogger('SuccessDownload');
@@ -54,17 +56,38 @@ class Auditor
 
     }
 
-    protected function getRequiredProperties()
+    protected function getRequiredPropertiesFile()
     {
 
-        if (!isset($this->requiredProperties)) {
-            $requiredProperties = array_filter($this->settings['files-to-output'], function ($value) {
-                return $value['required'];
-            });
-            $this->requiredProperties = $requiredProperties;
+        if (!isset($this->requiredPropertiesFile)) {
+            $this->setRequiredProperties('required-file', 'requiredPropertiesFile');
         }
 
-        return $this->requiredProperties;
+        return $this->requiredPropertiesFile;
+
+    }
+
+    protected function setRequiredProperties($keyInSettings, $propertyName)
+    {
+
+        $requiredProperties = array_filter($this->settings['files-to-output'],
+            function ($value) use ($keyInSettings) {
+                return $value[$keyInSettings];
+            }
+        );
+
+        $this->$propertyName = $requiredProperties;
+
+    }
+
+    protected function getRequiredPropertiesData()
+    {
+
+        if (!isset($this->requiredPropertiesData)) {
+            $this->setRequiredProperties('required-data', 'requiredPropertiesData');
+        }
+
+        return $this->requiredPropertiesData;
 
     }
 
@@ -160,10 +183,18 @@ class Auditor
     protected function isSuccess(\DownloadCore\Job $Job)
     {
 
-        $requiredProperties = $this->getRequiredProperties();
+        // Check for required files to set
+        $requiredPropertiesFile = $this->getRequiredPropertiesFile();
+        foreach ($requiredPropertiesFile as $property => $propertyData) {
+            if (!isset($Job->$property)) {
+                return false;
+            }
+        }
 
-        foreach ($requiredProperties as $property => $propertyData) {
-            if (!isset($Job->$property) || empty($Job->$property)) {
+        // Check for required non-empty content
+        $requiredPropertiesData = $this->getRequiredPropertiesData();
+        foreach ($requiredPropertiesData as $property => $propertyData) {
+            if (empty($Job->$property)) {
                 return false;
             }
         }
@@ -216,7 +247,9 @@ class Auditor
     protected function logSuccessOrFail($ListAudited)
     {
         if (isset($ListAudited['failure']) && !empty($ListAudited['failure'])) {
-            $message = 'The data integrity failure detected. Cannot continue further, because integrity is already lost. URLs failing: ' . print_r($ListAudited['failure'], true);
+            $message = 'The data integrity failure detected. 
+            Cannot continue further, because integrity is already lost. 
+            URLs failing: ' . print_r($ListAudited['failure'], true);
             throw new ErrorHandler($message);
         }
 
@@ -236,18 +269,79 @@ class Auditor
 
     public function doReport()
     {
-
-        $failureDownload = false;
-        if (is_file($this->getPathToLogFile('FailureDownload'))) {
-            $failureDownload = file_get_contents($this->getPathToLogFile('FailureDownload'));
+        // Prepare "to"
+        $to = $this->getAdminEmails();
+        if (empty($to)) {
+            return;
         }
 
-        $failureSave = false;
+        $failureDownload = $this->getFailureDownloadContent();
+        $failureSave = $this->getFailureSaveContent();
+
+        $subject = $this->createSubjectForDoReport($failureDownload, $failureSave);
+        $body = $this->createBodyForDoReport($failureDownload, $failureSave);
+
+        $Mail = new Mail();
+        return $Mail->createAndSendMessage($body, $subject, $to);
+
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdminEmails()
+    {
+
+        if (!isset($this->projectSettings['administrators'])
+            || empty($this->projectSettings['administrators'])
+            || !is_array($this->projectSettings['administrators'])
+        ) {
+            return [];
+        }
+
+        $to = [];
+        foreach ($this->projectSettings['administrators'] as $administrator) {
+            if (!isset($administrator['email']) || empty($administrator['email'])) {
+                continue;
+            }
+            $to[$administrator['email']] = $administrator['name'];
+        }
+        return $to;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFailureDownloadContent()
+    {
+        $failureDownload = '';
+        if (is_file($this->getPathToLogFile('FailureDownload'))) {
+            $failureDownload = file_get_contents(
+                $this->getPathToLogFile('FailureDownload')
+            );
+        }
+        return (string)$failureDownload;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFailureSaveContent()
+    {
+        $failureSave = '';
         if (is_file($this->getPathToLogFile('FailureSave'))) {
             $failureSave = file_get_contents($this->getPathToLogFile('FailureSave'));
         }
+        return (string)$failureSave;
+    }
 
-
+    /**
+     * @param $failureDownload
+     * @param $failureSave
+     * @return string
+     */
+    protected function createSubjectForDoReport($failureDownload, $failureSave)
+    {
         $subject = "The project " . $this->projectSettings['project_name'] . " |";
         if (!$failureDownload && !$failureSave) {
             $subject = "The project " . $this->projectSettings['project_name'] . " downloaded and saved successfully.";
@@ -261,32 +355,24 @@ class Auditor
         if (!$failureDownload && $failureSave) {
             $subject = "UPS... The project " . $this->projectSettings['project_name'] . " had no problems downloading the information. However, saving was not going well...";
         }
+        return $subject;
+    }
 
-        // Prepare "to"
-        if (!isset($this->projectSettings['administrators'])
-            || empty($this->projectSettings['administrators'])
-            || !is_array($this->projectSettings['administrators'])
-        ) {
-            return;
-        }
-        $toArray = [];
-        foreach ($this->projectSettings['administrators'] as $administrator) {
-            if (!isset($administrator->email) || empty($administrator->email)) {
-                continue;
-            }
-            $toArray[] = $administrator->email;
-        }
-        $to = implode(", ", $toArray);
-
-        $body = $subject
-            . (($failureDownload) ? ("\n\n" . "**** DOWNLOADING FAILED: ****" . "\n\n" . $failureDownload) : '')
+    /**
+     * @param $subject
+     * @param $failureDownload
+     * @param $failureSave
+     * @return string
+     */
+    protected function createBodyForDoReport($failureDownload, $failureSave)
+    {
+        $body =
+            (($failureDownload) ? ("\n\n" . "**** DOWNLOADING FAILED: ****" . "\n\n" . $failureDownload) : '')
             . (($failureSave) ? ("\n\n" . "**** SAVING FAILED: ****" . "\n\n" . $failureSave) : '')
-            . "\n\n\n\n" . "You are getting this email because your email address has been pushed to the repository of the project. 
-            Remove your email address from the repository if you wish to avoid these emails.";
-
-
-        return mail($to, $subject, $body);
-
+            . "\n\n\n\n"
+            . "You are getting this email because your email address has been pushed to the repository of the project.\n"
+            . "Remove your email address from the repository if you wish to avoid these emails.";
+        return $body;
     }
 
 }
