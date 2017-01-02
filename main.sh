@@ -18,7 +18,7 @@ chmod 774 "$DIR/$MAIN_NORMALIZE"
 "$DIR/$MAIN_NORMALIZE"
 
 # Publicize is moved to inside of MAIN_NORMALIZE
-# chmod 774 "$DIR/$MAIN_PUBLICIZE" 
+# chmod 774 "$DIR/$MAIN_PUBLICIZE"
 # "$DIR/$MAIN_PUBLICIZE"
 
 
