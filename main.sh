@@ -11,7 +11,7 @@ MAIN_DOWNLOAD="download/main.sh"
 MAIN_NORMALIZE="normalize/main.sh"
 MAIN_PUBLICIZE="publicize/main.sh"
 
-# Run all
+# Run all 
 chmod 774 "$DIR/$MAIN_DOWNLOAD"
 "$DIR/$MAIN_DOWNLOAD"
 chmod 774 "$DIR/$MAIN_NORMALIZE"
