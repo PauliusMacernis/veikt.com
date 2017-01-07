@@ -172,11 +172,11 @@
       "since_datetime_utc0": "2016-10-15 03:45:00",
       "language": "php",
       "url": "http://www.cvbankas.lt/",
-      "unique_project_path": "code/php/project/cvbankas/lt",
-      "entrance_sh_download": "download/code/php/project/cvbankas/lt/entrance.sh",
-      "entrance_sh_normalize": "normalize/code/php/project/cvbankas/lt/entrance.sh",
-      "dir_downloaded_posts": "download/downloads/cvbankas/lt/posts",
-      "dir_downloaded_logs": "download/downloads/cvbankas/lt/logs",
+      "unique_project_path": "code/php/project/Cvbankas/Lt",
+      "entrance_sh_download": "download/code/php/project/Cvbankas/Lt/entrance.sh",
+      "entrance_sh_normalize": "normalize/code/php/project/Cvbankas/Lt/entrance.sh",
+      "dir_downloaded_posts": "download/downloads/Cvbankas/Lt/Posts",
+      "dir_downloaded_logs": "download/downloads/Cvbankas/Lt/Logs",
       "file_downloaded_logs": "Y-m-d--H-i-s",
       "administrators": {
         "Paulius": {
