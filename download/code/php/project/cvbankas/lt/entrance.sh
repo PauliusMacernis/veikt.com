@@ -14,7 +14,7 @@ PHP_CONFIG_FILE_PRODUCTION_ENV="/home/antdelno/php_extensions/php.ini"
 # Run php with local php configuration if config file exists
 if [ -f $PHP_CONFIG_FILE_PRODUCTION_ENV ];
 then
-   $PHP_FILE_PRODUCTION_ENV -c PHP_CONFIG_FILE_PRODUCTION_ENV -f "$DIR/$INDEX_FILE_PHP"
+   "$PHP_FILE_PRODUCTION_ENV" -c "$PHP_CONFIG_FILE_PRODUCTION_ENV" -f "$DIR/$INDEX_FILE_PHP"
 else
    php -f "$DIR/$INDEX_FILE_PHP"
 fi
