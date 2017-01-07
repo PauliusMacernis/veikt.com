@@ -11,14 +11,16 @@ MAIN_DOWNLOAD="download/main.sh"
 MAIN_NORMALIZE="normalize/main.sh"
 MAIN_PUBLICIZE="publicize/main.sh"
 
-# Run all 
+# Chmod all important
 chmod 774 "$DIR/$MAIN_DOWNLOAD"
-"$DIR/$MAIN_DOWNLOAD"
 chmod 774 "$DIR/$MAIN_NORMALIZE"
-"$DIR/$MAIN_NORMALIZE"
-
 # Publicize is moved to inside of MAIN_NORMALIZE
 # chmod 774 "$DIR/$MAIN_PUBLICIZE"
+
+# Run all
+bash "$DIR/$MAIN_DOWNLOAD"
+bash "$DIR/$MAIN_NORMALIZE"
+# Publicize is moved to inside of MAIN_NORMALIZE
 # "$DIR/$MAIN_PUBLICIZE"
 
 

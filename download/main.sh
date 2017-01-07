@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
-# Run entrance.sh scripts of projects-on
 
+# Php
+PHP_FILE_PRODUCTION_ENV="/opt/php/php-5.5.0/bin/php"
+# Local php config file
+PHP_CONFIG_FILE_PRODUCTION_ENV="/home/antdelno/php_extensions/php.ini"
+
+# Run entrance.sh scripts of projects-on
 echo -e "\n DOWNLOAD: Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
 # Get dir of this script
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-# Get entrance.sh scripts of available projects
-ENTRANCE_SCRIPTS=$(php -r "
+ENTRANCE_SCRIPT_CODE="
     \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
     \$projectsOn = \$settings['projects-on'];
     \$entranceScripts = [];
@@ -25,9 +28,17 @@ ENTRANCE_SCRIPTS=$(php -r "
          \$entranceScripts[] = \$file;
      }
      echo implode(\"\\\n\", \$entranceScripts);
-    ");
+"
 
-echo -e "\n******************************";
+
+# Get entrance.sh scripts of available projects
+if [ -f $PHP_CONFIG_FILE_PRODUCTION_ENV ];
+then
+   ENTRANCE_SCRIPTS=$("$PHP_FILE_PRODUCTION_ENV" -c "$PHP_CONFIG_FILE_PRODUCTION_ENV" -r "$ENTRANCE_SCRIPT_CODE")
+else
+   ENTRANCE_SCRIPTS=$(php -r "$ENTRANCE_SCRIPT_CODE");
+fi
+
 
 # Run every entrance.sh script found
 echo -e $ENTRANCE_SCRIPTS |
