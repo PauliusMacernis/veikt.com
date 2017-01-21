@@ -31,32 +31,6 @@ For those who wish to contribute to any of steps mentioned - there is the Vagran
 Go here: [https://github.com/sugalvojau/veikt.dev](https://github.com/sugalvojau/veikt.dev)
 
 
-## veikt.com (for www developers)
+## More Info:
 
-There are two branches at the moment: master and symfony. Master is currently moved to support Laravel 5 PHP framework. Symfony is left in the separate branch for historical reasons, but if the branch would become active one day then anything may happen... At the moment I am interested in getting deeper into Laravel and so I turn master into Laravel.
- 
-**Some commands to remember for Symfony developers:**
-
- `php artisan`
- 
-**Some commands to remember for Symfony developers:**
-
-`php bin/console doctrine:database:drop --force`
-
-`php bin/console doctrine:database:create`
-
-`php bin/console doctrine:migration:diff`
-
-`php bin/console doctrine:migration:migrate`
-
-`php bin/console doctrine:fixtures:load`
-
-****
-
-If something goes wrong with executing shell scripts then check for line endings inside executable shell scripts! Must be LF. Some software may change line endings without you noticing this: git management tools, IDE, others.
-
-
-```
-Feel free to contact if any questions arise.
-``` 
-
+[Contact me](http://portfolio.vertyb.es/) if any difficulties arise.
