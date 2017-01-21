@@ -7,7 +7,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 INDEX_FILE_PHP="index.php"
 
 # Php
-PHP_FILE_PRODUCTION_ENV="/opt/php/php-5.5.13/bin/php"
+PHP_FILE_PRODUCTION_ENV="php"
 # Local php config file
 PHP_CONFIG_FILE_PRODUCTION_ENV="/home/antdelno/php_extensions/php.ini"
 
