@@ -27,7 +27,7 @@ For those who wish to contribute there is a dev box. This have to make you invol
 https://github.com/sugalvojau/veikt.dev
 ```
 
-**Some commands to remember (useful for step3 development):**
+**Some commands to remember (useful for step3 development in case you are using Symfony3 branch):**
 
 `bin/console doctrine:database:drop --force`
 
