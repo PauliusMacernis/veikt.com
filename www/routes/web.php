@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/about/mission', 'About\AboutController@mission');
+Route::get('/about/vision', 'About\AboutController@vision');
+
+Route::get('/job/index', 'Job\JobController@index');
+Route::get('/job/{job}', 'Job\JobController@show');
