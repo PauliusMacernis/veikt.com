@@ -25,12 +25,10 @@ However, the project consists of a lot more than just the website.
 
 
 
-# veikt.com (for all developers)
+## Are you the developer?
 
-```
-For those of you who wish to contribute to any of steps mentioned - there is the Vagrant-based development box. This have to make you involved in minutes:
-https://github.com/sugalvojau/veikt.dev
-```
+For those who wish to contribute to any of steps mentioned - there is the Vagrant-based development box.  
+Go here: [https://github.com/sugalvojau/veikt.dev](https://github.com/sugalvojau/veikt.dev)
 
 
 ## veikt.com (for www developers)
