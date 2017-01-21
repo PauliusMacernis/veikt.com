@@ -45,5 +45,5 @@ Feel free to contact if any questions arise.
 ```
 
 
-p.s. If something goes wrong with executing shell scripts then check for line endings inside executable shell scripts! Must be LF. Some software may change line endings without you noticing this: git management tools, IDE, others.
+p.s. If something goes wrong with executing shell scripts then check for line endings inside executable shell scripts! Must be LF. Some software may change line endings without you noticing this: git management tools, IDE, others. 
 
