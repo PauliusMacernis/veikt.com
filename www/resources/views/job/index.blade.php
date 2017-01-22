@@ -10,9 +10,20 @@
         There are jobs :)
     @endif
 
-
+    @if(!isset($counter))
+        {{ $counter = 0 }}
+    @endif
     @foreach($jobs as $job)
-        <li>{{ $job->file_url }}</li>
+        <li>
+            <ul>
+                <li>
+                    {{ ++$counter }}.
+                    <a href="{{ $job->file_url }}" target="_blank">{{ $job->file_url }}</a>
+                </li>
+                <li>{{ $job->file_project }} | {{ $job->file_datetime }}</li>
+                <li>{{ $job->content_static_without_tags }}</li>
+            </ul>
+        </li>
     @endforeach
 
 @stop

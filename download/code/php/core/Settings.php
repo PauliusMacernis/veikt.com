@@ -252,14 +252,20 @@ class Settings
     {
         $fileSettings = $this->getSettingsDirPath($projectDir)
             . 'settings'
-            . ($case ? ('.' . $case . '.private') : '')
+            . ($case ? ('.' . $case) : '')
+            . '{{VISIBILITY}}'
             . '.json';
 
         // Require and decode all settings
-        if (!is_file($fileSettings)) {
+        if (is_file(strtr($fileSettings, ['{{VISIBILITY}}' => '.private']))) {
+            return strtr($fileSettings, ['{{VISIBILITY}}' => '.private']);
+        } elseif (is_file(strtr($fileSettings, ['{{VISIBILITY}}' => '.public']))) {
+            return strtr($fileSettings, ['{{VISIBILITY}}' => '.public']);
+        } elseif (is_file(strtr($fileSettings, ['{{VISIBILITY}}' => '']))) {
+            return strtr($fileSettings, ['{{VISIBILITY}}' => '']);
+        } else {
             throw new ErrorHandler('Settings file is not found.');
         }
-        return $fileSettings;
     }
 
     /**

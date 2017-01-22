@@ -12,7 +12,7 @@ class JobController extends Controller
     public function index() {
         //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
         //$jobs = DB::table('job')->get();
-        $jobs = Job::all();
+        $jobs = Job::all()->where('is_published', 1);
 
         return view('job.index', compact('jobs'));
     }

@@ -68,7 +68,10 @@ class JobContentToDbWriter
             . 'dbname='
             . $settingsDatabase['connections']['mysql']['database'] . ';'
             . 'host='
-            . $settingsDatabase['connections']['mysql']['host'] . ';';
+            . $settingsDatabase['connections']['mysql']['host'] . ';'
+            . 'charset='
+            . $settingsDatabase['connections']['mysql']['charset']
+            . ';';
         $user = $settingsDatabase['connections']['mysql']['username'];
         $password = $settingsDatabase['connections']['mysql']['password'];
 
