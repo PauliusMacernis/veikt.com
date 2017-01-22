@@ -2,6 +2,51 @@
 
 @section('content')
 
-    <h1>{{ $job->file_content_static }}</h1>
+    <div class="col-md-6 col-md-offset-3">
+        <h1>Job</h1>
+        <ul class="list-group">
+            <li class="list-group-item">
+                {{ $job->file_project }}
+            </li>
+            <li class="list-group-item">
+                <a href="{{ $job->file_url }}" target="_blank">{{ $job->file_url }}</a>
+            </li>
+            <li class="list-group-item-success">
+                {!! nl2br($job->content_static_without_tags) !!}
+            </li>
+            <li class="list-group-item">
+                {{ $job->content_dynamic_without_tags }}
+            </li>
+            <li class="list-group-item">
+                Last system check: {{ $job->file_datetime }}
+            </li>
+        </ul>
 
+        <h2>Notes</h2>
+        @if(empty($job->notes))
+            <p>No notes</p>
+        @else
+            <ul class="list-group">
+                @foreach($job->notes as $note)
+                    <li class="list-group-item">
+                        {{ $note->updated_at }}:<br />
+                        {{ $note->body }}
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        <hr />
+        <h3>New Note</h3>
+        <form method="POST" action="/job/{{ $job->id }}/note">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <textarea name="body" class="form-control">
+
+                </textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+        </form>
+    </div>
 @stop

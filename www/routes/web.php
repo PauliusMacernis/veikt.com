@@ -21,3 +21,4 @@ Route::get('/about/vision', 'About\AboutController@vision');
 
 Route::get('/job/index', 'Job\JobController@index');
 Route::get('/job/{job}', 'Job\JobController@show');
+Route::post('/job/{job}/note', 'Note\NoteController@store');
