@@ -29,7 +29,12 @@
             <ul class="list-group">
                 @foreach($job->notes as $note)
                     <li class="list-group-item">
-                        {{ $note->updated_at }}:<br />
+                        <a class="pull-right" href="/note/{{ $note->id }}/edit">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+
+                        {{ $note->updated_at }}<br />
+                        by <a href="#">{{ $note->user->username }}</a><br /><br />
                         {{ $note->body }}
                     </li>
                 @endforeach

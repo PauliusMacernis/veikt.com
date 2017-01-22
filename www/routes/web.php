@@ -22,3 +22,6 @@ Route::get('/about/vision', 'About\AboutController@vision');
 Route::get('/job/index', 'Job\JobController@index');
 Route::get('/job/{job}', 'Job\JobController@show');
 Route::post('/job/{job}/note', 'Note\NoteController@store');
+
+Route::get('/note/{note}/edit', 'Note\NoteController@edit');
+Route::patch('/note/{note}', 'Note\NoteController@update');

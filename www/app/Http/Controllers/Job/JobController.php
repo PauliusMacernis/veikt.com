@@ -18,7 +18,9 @@ class JobController extends Controller
     }
 
     public function show(Job $job) {
-        //$job = Job::find($id);
+
+        $job->load('notes.user');
+
         return view('job.show', compact('job'));
     }
 }
