@@ -4,7 +4,7 @@
 
     <h1>All jobs</h1>
 
-    @if(!empty($jobs))
+    @if(!$jobs->isEmpty())
         There are jobs :)
     @else
         There are no jobs. ;(
@@ -14,7 +14,7 @@
         $counter = 0;
     ?>
 
-    @if(!empty($jobs))
+    @if(!$jobs->isEmpty())
     <ul class="list-group">
     @endif
     @foreach($jobs as $job)
@@ -29,7 +29,7 @@
             </ul>
         </li>
     @endforeach
-    @if(!empty($jobs))
+    @if(!$jobs->isEmpty())
     </ul>
     @endif
 @stop

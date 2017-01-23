@@ -23,8 +23,8 @@
         </ul>
 
         <h2>Notes</h2>
-        @if(empty($job->notes))
-            <p>No notes</p>
+        @if($job->notes->isEmpty())
+            <p>&nbsp;</p>
         @else
             <ul class="list-group">
                 @foreach($job->notes as $note)
@@ -45,9 +45,7 @@
         <form method="POST" action="/job/{{ $job->id }}/note">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <div class="form-group">
-                <textarea name="body" class="form-control">
-
-                </textarea>
+                <textarea name="body" class="form-control"></textarea>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Add</button>
