@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+id
 
 # Php
 PHP_FILE_PRODUCTION_ENV="php"

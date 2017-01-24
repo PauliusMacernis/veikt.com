@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+id
 
 echo -e "\n Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
