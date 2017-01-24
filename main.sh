@@ -10,6 +10,8 @@ echo -e "\n Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
 # Get dir of this script
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+echo -e "\n"
+echo $DIR
 
 # The php file this script should run
 MAIN_DOWNLOAD="download/main.sh"
