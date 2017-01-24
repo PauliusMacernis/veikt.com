@@ -4,6 +4,7 @@ date
 bash --version
 php -v
 git --version
+env
 
 echo -e "\n Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
