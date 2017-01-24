@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 id
+date
+bash --version
+php -v
+git --version
 
 echo -e "\n Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
