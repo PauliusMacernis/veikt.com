@@ -3,6 +3,7 @@ id
 date
 bash --version
 php -v
+php-cli -v
 git --version
 env
 
