@@ -2,7 +2,7 @@
 id
 
 # Php
-PHP_FILE_PRODUCTION_ENV="php"
+PHP_FILE_PRODUCTION_ENV="php-cli"
 # Local php config file
 PHP_CONFIG_FILE_PRODUCTION_ENV="/home/antdelno/php_extensions/php.ini"
 
