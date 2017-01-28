@@ -11,9 +11,14 @@ class NoteController extends Controller
 {
     public function store(Request $request, Job $job)
     {
-        $job->addNote(
-            new Note($request->all())
-        );
+
+        $this->validate($request, [
+            'body' => 'required'
+        ]);
+
+        $note = new Note($request->all());
+
+        $job->addNote($note, 1);
 
         return back();
 
