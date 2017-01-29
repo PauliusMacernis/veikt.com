@@ -64,8 +64,6 @@
                 Last system check: {{ $job->file_datetime }}
             </li>
         </ul>
-
-        {{ var_dump($errors) }}
-
+        
     </div>
 @stop
