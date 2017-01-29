@@ -13,8 +13,14 @@ class JobController extends Controller
     public function index(Request $request, $page=1, $perPage=100) {
         //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
 
+        $user = $request->user();
+
         $jobs = DB::table('job')->where('is_published', 1)->paginate($perPage);
-        $notes = $this->getPrivateNoteCounts($jobs, $request->user()->id);
+        if(!empty($user) && isset($user->id)) {
+            $notes = $this->getPrivateNoteCounts($jobs, $user->id);
+        } else {
+            $notes = null;
+        }
         $jobsInTotal = $jobs->total();
         $counterInitValue = (($jobs->currentPage() - 1) * $jobs->perPage());
         //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
