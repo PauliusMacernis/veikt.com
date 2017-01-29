@@ -26,7 +26,7 @@
                         </a>
 
                         {{ $note->updated_at }}<br />
-                        by <a href="#">{{ $note->user->username }}</a><br /><br />
+                        by <a href="#">{{ $note->user->name }}</a><br /><br />
                         {{ $note->body }}
                     </li>
                 @endforeach
@@ -54,8 +54,9 @@
             <li class="list-group-item">
                 <a href="{{ $job->file_url }}" target="_blank">{{ $job->file_url }}</a>
             </li>
-            <li class="list-group-item-success">
-                {!! nl2br($job->content_static_without_tags) !!}
+            <li class="list-group-item list-group-item-success">
+                {!! nl2br( mb_substr($job->content_static_without_tags, 0, 1000)) !!}
+                <br><a href="{{ $job->file_url }}" target="_blank">...</a>
             </li>
             <li class="list-group-item">
                 {{ $job->content_dynamic_without_tags }}
