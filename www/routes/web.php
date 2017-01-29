@@ -15,17 +15,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Auth
+Auth::routes();
 
+// Home
+Route::get('/home',           'HomeController@user')->middleware('auth');
+Route::get('/home/user',      'HomeController@user')->middleware('auth');
+Route::get('/home/admin',     'HomeController@admin')->middleware('admin');
+
+
+// About
 Route::get('/about/mission', 'About\AboutController@mission');
 Route::get('/about/vision', 'About\AboutController@vision');
 
+// Job
 Route::get('/job/index', 'Job\JobController@index');
 Route::get('/job/{job}', 'Job\JobController@show');
 Route::post('/job/{job}/note', 'Note\NoteController@store');
 
+// Note
 Route::get('/note/{note}/edit', 'Note\NoteController@edit');
 Route::patch('/note/{note}', 'Note\NoteController@update');
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+
+
+

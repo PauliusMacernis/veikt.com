@@ -66,13 +66,23 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    <a href="{{ url('/login') }}">Login</a>
-                    <a href="{{ url('/register') }}">Register</a>
-                </div>
+            <div class="top-right links">
+            @if(\Illuminate\Support\Facades\Auth::guest())
+                <a href="{{ url('/login') }}">Login</a>
+                <a href="{{ url('/register') }}">Register</a>
             @endif
+            @if(\Illuminate\Support\Facades\Auth::user())
+                <a href="{{ url('/logout') }}"
+                   onclick="event.preventDefault();
+                                                 document.getElementById('logout-form').submit();">
+                    Logout
+                </a>
 
+                <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                    {{ csrf_field() }}
+                </form>
+            @endif
+            </div>
             <div class="content">
                 <div class="title m-b-md">
                     Veikt!
@@ -84,5 +94,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- Scripts -->
+        <script src="/js/app.js"></script>
+
     </body>
 </html>
