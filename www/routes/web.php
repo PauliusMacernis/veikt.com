@@ -25,3 +25,7 @@ Route::post('/job/{job}/note', 'Note\NoteController@store');
 
 Route::get('/note/{note}/edit', 'Note\NoteController@edit');
 Route::patch('/note/{note}', 'Note\NoteController@update');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
