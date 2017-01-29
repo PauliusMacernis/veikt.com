@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 id
 
+# Production vs. local: if php.ini file exists then it is production
+PHP_CONFIG_FILE_PRODUCTION_ENV="/home/antdelno/php_extensions/php.ini"
+if [ -f $PHP_CONFIG_FILE_PRODUCTION_ENV ];
+then
+   PHP_NAME="php-cli"
+else
+   PHP_NAME="php"
+fi
+export PHP_NAME
+
+
 echo -e "\n NORMALIZE: Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
 
 # Run entrance.sh scripts of ./projects/{project_name} subdirectories
 
-UNIQUE_ID_ASSIGNED_FOR_A_QUEUE=$(php -r "echo uniqid('main_', true);")
+UNIQUE_ID_ASSIGNED_FOR_A_QUEUE=$("$PHP_NAME" -r "echo uniqid('main_', true);")
 # If UNIQUE_ID_ASSIGNED_FOR_A_QUEUE is empty then throw the error, log and do not continue. It is the serious error..
 if [ -z $UNIQUE_ID_ASSIGNED_FOR_A_QUEUE ];
     then
@@ -18,7 +29,7 @@ fi
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # - Get entrance.sh scripts of available projects
-DIRS_FOR_CONTENT=$(php -r "
+DIRS_FOR_CONTENT=$("$PHP_NAME" -r "
     \$separator = ':';
     \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
     \$projectsOn = \$settings['projects-on'];
@@ -53,15 +64,15 @@ DIRS_FOR_CONTENT=$(php -r "
      echo implode(\"\\\n\", \$dirsToSearchIn);
     ");
 
-MARKER_FILENAME_BEGIN=$(php -r "
+MARKER_FILENAME_BEGIN=$("$PHP_NAME" -r "
         \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
         echo \$settings['markers']['begin']['file-name'];
 ")
-MARKER_FILENAME_CONTENT=$(php -r "
+MARKER_FILENAME_CONTENT=$("$PHP_NAME" -r "
         \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
         echo \$settings['markers']['content']['file-name'];
 ")
-MARKER_FILENAME_END=$(php -r "
+MARKER_FILENAME_END=$("$PHP_NAME" -r "
         \$settings = json_decode(file_get_contents('$DIR' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'settings.json'), true);
         echo \$settings['markers']['end']['file-name'];
 ")
@@ -155,6 +166,8 @@ done
 unset MARKER_FILENAME_BEGIN
 unset MARKER_FILENAME_CONTENT
 unset MARKER_FILENAME_END
+
+unset PHP_NAME
 
 
 # Apply (PHP) action - Publicize
