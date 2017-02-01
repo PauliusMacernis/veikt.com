@@ -9,15 +9,15 @@ However, the project consists of a lot more than just the website.
  
  At the moment the project downloads info from: 
   - www.cvbankas.lt
-  - more is coming soon.
+  - more is coming anytime soon.
 
  2. **normalize** 
   
-  This code walks through files (results) of step1 and analyzes them semantically, unites between languages, translates, and does much more. After step2 is finished, we have files (results) of step1 put into different tables and columns of the project database (currently MySQL).
+  This code walks through files (results) of step1 and analyzes them semantically, unites between languages, translates, and does much more in order to understand existing situation and trends. After step2 is finished, we have files (results) of step1 put into different tables and columns of the project database (currently MySQL).
   
  3. **publicize** 
   
-  This code publish and unpublish jobs inside our system.
+  This code publish and unpublish "jobs" inside our system.
  
  4. **www** 
   
