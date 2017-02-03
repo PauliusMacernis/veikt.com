@@ -4,6 +4,8 @@
 
     <h1>All jobs</h1>
 
+    @include('job.search.form.main')
+
     @if(!$jobs->isEmpty())
         Jobs available: {{ $jobsInTotal }}
     @else

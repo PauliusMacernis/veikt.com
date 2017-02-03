@@ -55,4 +55,23 @@ class JobController extends Controller
 
         return view('job.show', compact('job'));
     }
+
+    public function find(Request $request, $page=1, $perPage=100) {
+        //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
+
+        $user = $request->user();
+
+        $jobs = DB::table('job')->where('is_published', 1)->where('content_static_without_tags', 'like', '%' . $request->input('content_static_without_tags') . '%')->paginate($perPage);
+        if(!empty($user) && isset($user->id)) {
+            $notes = $this->getPrivateNoteCounts($jobs, $user->id);
+        } else {
+            $notes = null;
+        }
+        $jobsInTotal = $jobs->total();
+        $counterInitValue = (($jobs->currentPage() - 1) * $jobs->perPage());
+        //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
+
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes'));
+    }
+
 }
