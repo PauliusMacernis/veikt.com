@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
-                <input type="word" name="content_static_without_tags" class="form-control" placeholder="Search for...">
+                <input type="word" name="content_static_without_tags" class="form-control" placeholder="Search for..." value="@if(isset($content_static_without_tags)){{ $content_static_without_tags }}@endif">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="submit">Go!</button>
                 </span>

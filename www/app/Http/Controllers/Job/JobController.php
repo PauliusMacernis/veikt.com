@@ -61,7 +61,8 @@ class JobController extends Controller
 
         $user = $request->user();
 
-        $jobs = DB::table('job')->where('is_published', 1)->where('content_static_without_tags', 'like', '%' . $request->input('content_static_without_tags') . '%')->paginate($perPage);
+        $content_static_without_tags = $request->input('content_static_without_tags', '');
+        $jobs = DB::table('job')->where('is_published', 1)->where('content_static_without_tags', 'like', '%' . $content_static_without_tags . '%')->paginate($perPage);
         if(!empty($user) && isset($user->id)) {
             $notes = $this->getPrivateNoteCounts($jobs, $user->id);
         } else {
@@ -71,7 +72,7 @@ class JobController extends Controller
         $counterInitValue = (($jobs->currentPage() - 1) * $jobs->perPage());
         //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes'));
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'content_static_without_tags'));
     }
 
 }
