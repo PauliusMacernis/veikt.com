@@ -4,8 +4,6 @@
 
     <div class="col-md-6 col-md-offset-3">
 
-        <h1>Job</h1>
-
         @if(count($errors))
         <ul>
             @foreach($errors->all() as $error)
@@ -14,9 +12,9 @@
         </ul>
         @endif
 
-        <h3>Notes</h3>
+        <h3>Personal Notes</h3>
         @if($job->notes->isEmpty())
-            <p>No notes so far. You can add notes for any of posts. Many job posting websites we collect data from, but one place for you to save your career related experience. Convenient.</p>
+            <p>You can add personal notes for any of posts. Many job posting websites we collect data from, but one place for you to save your career-related experience. Convenient.</p>
         @else
             <ul class="list-group">
                 @foreach($job->notes as $note)
@@ -34,19 +32,18 @@
         @endif
         <hr />
 
-        <h4 title="You can add notes for any of posts posted. Many job posting websites we collect data from, but one place for you to save your career related experience. Convenient.">New Note</h4>
         <form method="POST" action="/job/{{ $job->id }}/note">
             {{ csrf_field() }}
             <div class="form-group">
                 <textarea name="body" class="form-control">{{ old('body') }}</textarea>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Add</button>
+                <button type="submit" class="btn btn-primary">Add the Note</button>
             </div>
         </form>
         <hr />
 
-        <h1>Job</h1>
+        <h1>Opportunity</h1>
         <ul class="list-group">
             <li class="list-group-item">
                 {{ $job->file_project }}

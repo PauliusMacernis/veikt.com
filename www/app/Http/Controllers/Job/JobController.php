@@ -53,9 +53,23 @@ class JobController extends Controller
 
     }
 
-    public function show(Job $job) {
+    public function show(Request $request, $job) {
 
-        $job->load('notes.user');
+        $user = $request->user();
+
+        if($user && $user->exists()) {
+            $job = Job::with(['notes' => function($query) use ($user) {
+                $query->where('user_id', '=', $user->id);
+            }])->find($job);
+        } else {
+            $job = Job::with(['notes' => function($query) use ($user) {
+                $query->where('user_id', '=', NULL);
+            }])->find($job);
+        }
+
+        // @todo: Admin:
+        // $job->load('notes.user');
+        // ?
 
         return view('job.show', compact('job'));
     }

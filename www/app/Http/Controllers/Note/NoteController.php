@@ -12,6 +12,12 @@ class NoteController extends Controller
 {
     public function store(Request $request, Job $job)
     {
+        $user = $request->user();
+        if($user && $user->exists()) {
+            $userId = $user->id;
+        } else {
+            $userId = null;
+        }
 
         $this->validate($request, [
             'body' => 'required'
@@ -19,7 +25,7 @@ class NoteController extends Controller
 
         $note = new Note($request->all());
 
-        $job->addNote($note, 1);
+        $job->addNote($note, $userId);
 
         return back();
 
@@ -27,6 +33,12 @@ class NoteController extends Controller
 
     public function edit(Request $request, Note $note)
     {
+        $user = $request->user();
+        $noteUser = $note->user()->first();
+
+        if(!$user || !$user->exists() || $user->id != $noteUser->id) {
+            abort(404);
+        }
 
         return view('note.edit', compact('note'));
 
