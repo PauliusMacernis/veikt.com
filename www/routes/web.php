@@ -27,13 +27,14 @@ Route::get('/home/admin',                       'HomeController@admin')->middlew
 Route::get('/about/mission',                    'About\AboutController@mission');
 Route::get('/about/vision',                     'About\AboutController@vision');
 
+// Job search
+Route::get('/job/search',                       'Job\JobController@find');
+
 // Job
 Route::get('/job/index',                        'Job\JobController@index');
 Route::get('/job/{job}',                        'Job\JobController@show');
 Route::post('/job/{job}/note',                  'Note\NoteController@store');
 
-// Job search
-Route::post('/job/search',                      'Job\JobController@find');
 
 // Note
 Route::get('/note/{note}/edit',                 'Note\NoteController@edit');
