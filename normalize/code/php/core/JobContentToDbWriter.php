@@ -265,11 +265,13 @@ class JobContentToDbWriter
             throw new ErrorHandler("Update action is not available while no data presented for WHERE... part of the update query.");
         }
 
+        $dataAndSettingsWithoutIgnored = $this->getDataAndSettingsWithNotParticipatingExcluded($dataAndSettings, 'participate-db-update');
+
         // @todo: Update...
         list($columnNames, $columnValuesForEmbedding, $columnNamesForEmbedding)
-            = $this->getColumnNamesAndValuesAndNamesForEmbedding($dataAndSettings);
+            = $this->getColumnNamesAndValuesAndNamesForEmbedding($dataAndSettingsWithoutIgnored);
 
-        $anyItem = reset($dataAndSettings);
+        $anyItem = reset($dataAndSettingsWithoutIgnored);
         $idColumnName = $this->getIdColumnNameFromDataWithSettingsItem($anyItem);
 
         $idsToUpdate = $this->getIdsToUpdate($tableName, $existingItemsData, $idColumnName);
@@ -364,8 +366,11 @@ class JobContentToDbWriter
 
     protected function insertData($tableName, $dataAndSettings)
     {
+
+        $dataAndSettingsWithoutIgnored = $this->getDataAndSettingsWithNotParticipatingExcluded($dataAndSettings, 'participate-db-insert');
+
         list($columnNames, $columnValuesForEmbedding, $columnNamesForEmbedding)
-            = $this->getColumnNamesAndValuesAndNamesForEmbedding($dataAndSettings);
+            = $this->getColumnNamesAndValuesAndNamesForEmbedding($dataAndSettingsWithoutIgnored);
 
         $q = 'INSERT INTO'
             . ' `' . $tableName . '`'
@@ -383,6 +388,16 @@ class JobContentToDbWriter
     {
         $Settings = new Settings($this->entranceDir);
         return $Settings;
+    }
+
+    protected function getDataAndSettingsWithNotParticipatingExcluded($dataAndSettings, $keyInSettings = 'participate-db-update')
+    {
+        $dataAndSettings = array_filter($dataAndSettings, function($value) use ($keyInSettings) {
+           return isset($value['settings'][$keyInSettings]) && $value['settings'][$keyInSettings];
+        });
+
+        return $dataAndSettings;
+
     }
 
 }

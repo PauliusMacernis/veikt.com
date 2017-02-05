@@ -36,7 +36,7 @@ class UnpublishToDbWriter extends JobContentToDbWriter
                 WHERE
                   j.is_published = 1
                     AND 
-                  j.datetime_updated < SUBDATE(UTC_TIMESTAMP(), INTERVAL ' . (int)$ageTurningOldInHours . ' HOUR);
+                  j.datetime_imported < SUBDATE(UTC_TIMESTAMP(), INTERVAL ' . (int)$ageTurningOldInHours . ' HOUR);
         ';
 
         return $q;

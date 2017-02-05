@@ -59,7 +59,13 @@
                 {{ $job->content_dynamic_without_tags }}
             </li>
             <li class="list-group-item">
-                Last system check: {{ $job->file_datetime }}
+                Last remote data check:
+            </li>
+            <li class="list-group-item">
+                {{ $job->created_at }} - first data import<br>
+                {{ $job->file_datetime }} - last remote data check<br>
+                {{ $job->datetime_imported }} - last data import<br>
+                {{ $job->updated_at }} - last update<br>
             </li>
         </ul>
         

@@ -65,7 +65,9 @@
       "database-column": "file_browser_id",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_datetime":{
       "description":"Extracted by default. The content from the file named 'datetime'.",
@@ -74,7 +76,9 @@
       "database-column": "file_datetime",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_project":{
       "description":"Extracted by default. The content from the file named 'project'.",
@@ -83,7 +87,9 @@
       "database-column": "file_project",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "1"
+      "is-identity-component": "1",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_url":{
       "description":"Extracted by default. The content from the file named 'url'. This url is pointing to the particular job posting.",
@@ -92,7 +98,9 @@
       "database-column": "file_url",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_id":{
       "description":"Extracted by default. The content from the file named 'id'.",
@@ -101,7 +109,9 @@
       "database-column": "file_id",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "1"
+      "is-identity-component": "1",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_content_static":{
       "description":"Extracted by default as HTML. The content from the file named 'content_static'.",
@@ -110,7 +120,9 @@
       "database-column": "file_content_static",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "file_content_dynamic":{
       "description":"Extracted by default as HTML. The content from the file named 'content_dynamic'.",
@@ -119,7 +131,9 @@
       "database-column": "file_content_dynamic",
       "database-column-id": "id",
       "required":"0",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
 
 
@@ -130,24 +144,42 @@
       "database-column": "datetime_imported",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
-    "datetime_updated":{
-      "description":"Extracted as file_datetime value by default. file_datetime and datetime_updated holds the same value for now. However, looking for the future - it should be made possible to edit-extend part of the downloaded information and so file_datetime and datetime_updated will differ after/if edit-extend action would be performed.",
+    "created_at":{
+      "description":"Job information create date according to veikt.com project. Extracted by default, you do not need to take care of this.",
       "example-content":"2016-09-30 14:30:59",
       "database-table": "job",
-      "database-column": "datetime_updated",
+      "database-column": "created_at",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "0",
+      "participate-db-insert": "1"
     },
+    "updated_at":{
+      "description":"Job information update date according to veikt.com project. Extracted by default, you do not need to take care of this. Looking for the future - it should be made possible to edit-extend part of the downloaded information and so file_datetime and updated_at will differ after/if edit-extend action would be performed.",
+      "example-content":"2016-09-30 14:30:59",
+      "database-table": "job",
+      "database-column": "updated_at",
+      "database-column-id": "id",
+      "required":"1",
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
+    },
+
     "content_static_without_tags":{
       "description":"Extracted by default as HTML (stripped by strip_tags function of PHP). The content is the same as in content_static file, but without any HTML, XML, CSS or other tags mixed in. It is the plain text of job posting - for humans to read. Our search engine likes this text as well.",
       "database-table": "job",
       "database-column": "content_static_without_tags",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "content_dynamic_without_tags": {
       "description":"Extracted by default as HTML (stripped by strip_tags function of PHP). The content is the same as in content_dynamic file, but without any HTML, XML, CSS or other tags mixed in. It is the plain text of job posting - for humans to read.",
@@ -155,7 +187,9 @@
       "database-column": "content_dynamic_without_tags",
       "database-column-id": "id",
       "required":"0",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     },
     "is_published": {
       "description":"Extracted as 1 (true) by default.",
@@ -163,7 +197,9 @@
       "database-column": "is_published",
       "database-column-id": "id",
       "required":"1",
-      "is-identity-component": "0"
+      "is-identity-component": "0",
+      "participate-db-update": "1",
+      "participate-db-insert": "1"
     }
   },
   "projects-on": [

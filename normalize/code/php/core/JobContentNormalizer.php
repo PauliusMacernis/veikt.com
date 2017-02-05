@@ -85,6 +85,18 @@ class JobContentNormalizer
     }
 
 
+    final public function created_at($transformedContent)
+    {
+        return $this->datetime_imported($transformedContent);
+    }
+
+
+    final public function updated_at($transformedContent)
+    {
+        return $this->datetime_imported($transformedContent);
+    }
+
+
     public function content_static_without_tags($transformedContent)
     {
         /**
@@ -133,13 +145,6 @@ class JobContentNormalizer
     {
         // Always published by default
         return 1;
-    }
-
-
-    public function datetime_updated($transformedContent)
-    {
-        // Always the same as file_datetime by default
-        return $this->file_datetime($transformedContent);
     }
 
 
