@@ -44,9 +44,46 @@ class NoteController extends Controller
 
     }
 
+    public function turnOffListing(Request $request, Note $note)
+    {
+        $user = $request->user();
+        $noteUser = $note->user()->first();
+
+        if(!$user || !$user->exists() || $user->id != $noteUser->id) {
+            abort(404);
+        } else {
+            $note->update(['is_visible_when_listing_jobs' => 0]);
+        }
+
+        return back();
+
+    }
+
+    public function turnOnListing(Request $request, Note $note)
+    {
+        $user = $request->user();
+        $noteUser = $note->user()->first();
+
+        if(!$user || !$user->exists() || $user->id != $noteUser->id) {
+            abort(404);
+        } else {
+            $note->update(['is_visible_when_listing_jobs' => 1]);
+        }
+
+        return back();
+
+    }
+
     public function update(Request $request, Note $note, User $user)
     {
-        $note->update($request->all());
+        $data = $request->all();
+
+        // Checkbox unchecked
+        if(!isset($data['is_visible_when_listing_jobs'])) {
+            $data['is_visible_when_listing_jobs'] = 0;
+        }
+
+        $note->update($data);
 
         return back();
 

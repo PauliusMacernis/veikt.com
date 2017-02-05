@@ -13,34 +13,32 @@
         @endif
 
         <h3>Personal Notes</h3>
+
+        @include('note.form.create')
+        <hr />
+
         @if($job->notes->isEmpty())
-            <p>You can add personal notes for any of posts. Many job posting websites we collect data from, but one place for you to save your career-related experience. Convenient.</p>
+            <p>You can add personal notes for any of opportunities. Many websites we collect data from, but one place for you to save your career-related experience. Convenient.</p>
         @else
             <ul class="list-group">
                 @foreach($job->notes as $note)
-                    <li class="list-group-item">
+                    <li class="list-group-item @if($note->is_visible_when_listing_jobs) alert alert-warning @endif">
                         <a class="pull-right" href="/note/{{ $note->id }}/edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
 
+                        @if($note->is_visible_when_listing_jobs)
+                            <a class="glyphicon glyphicon-eye-open " title="Turn off when listing" href="/note/{{ $note->id }}/turnOffListing"></a>
+                        @else
+                            <a class="glyphicon glyphicon-eye-close" title="Turn on when listing" href="/note/{{ $note->id }}/turnOnListing"></a>
+                        @endif
                         {{ $note->updated_at }}<br />
-                        by <a href="#">{{ $note->user->name }}</a><br /><br />
+                        <!--by <a href="#">{{ $note->user->name }}</a><br /><br />-->
                         {{ $note->body }}
                     </li>
                 @endforeach
             </ul>
         @endif
-        <hr />
-
-        <form method="POST" action="/job/{{ $job->id }}/note">
-            {{ csrf_field() }}
-            <div class="form-group">
-                <textarea name="body" class="form-control">{{ old('body') }}</textarea>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Add the Note</button>
-            </div>
-        </form>
         <hr />
 
         <h1>Opportunity</h1>
@@ -57,9 +55,6 @@
             </li>
             <li class="list-group-item">
                 {{ $job->content_dynamic_without_tags }}
-            </li>
-            <li class="list-group-item">
-                Last remote data check:
             </li>
             <li class="list-group-item">
                 {{ $job->created_at }} - first data import<br>

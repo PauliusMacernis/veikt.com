@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    protected $fillable = ['body'];
+    protected $fillable = ['body', 'is_visible_when_listing_jobs'];
 
     public function job() {
         $this->belongsTo(Job::class);

@@ -38,4 +38,6 @@ Route::post('/job/{job}/note',                  'Note\NoteController@store');
 
 // Note
 Route::get('/note/{note}/edit',                 'Note\NoteController@edit');
+Route::get('/note/{note}/turnOffListing',       'Note\NoteController@turnOffListing');
+Route::get('/note/{note}/turnOnListing',        'Note\NoteController@turnOnListing');
 Route::patch('/note/{note}',                    'Note\NoteController@update');

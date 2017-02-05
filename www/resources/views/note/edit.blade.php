@@ -11,6 +11,9 @@
         <div class="form-group">
             <textarea name="body" class="form-control">{{ $note->body }}</textarea>
         </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="is_visible_when_listing_jobs" value="1" @if($note->is_visible_when_listing_jobs) checked @endif />Show it when I list Opportunities</label>
+        </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Update</button>
         </div>

@@ -24,7 +24,7 @@ class JobController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
         if(!empty($user) && isset($user->id)) {
-            $notes = $this->getPrivateNoteCounts($jobs, $user->id);
+            $notes = $this->getPrivateNoteInfo($jobs, $user->id);
         } else {
             $notes = null;
         }
@@ -38,21 +38,37 @@ class JobController extends Controller
         return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
     }
 
-    protected function getPrivateNoteCounts($jobs, $userId) {
+    protected function getPrivateNoteInfo($jobs, $userId) {
 
         $notesResult = array();
         foreach($jobs as $job) {
-            $notesResult[$job->id] = 0;
+            $notesResult[$job->id] = array('privateAllCount' => 0, 'privateListableData' => array());
         }
-        $notes = DB::table('notes')
+
+        // Count
+        $privateAllCount = DB::table('notes')
             ->select('job_id', DB::raw('count(*) as total'))
             ->whereIn('job_id', array_keys($notesResult))
             ->whereIn('user_id', [$userId])
             ->groupBy('job_id')
             ->get();
 
-        foreach($notes as $note) {
-            $notesResult[$note->job_id] = $note->total;
+        foreach($privateAllCount as $note) {
+            $notesResult[$note->job_id]['privateAllCount'] = $note->total;
+        }
+
+        // Data
+        // @todo: Merge Data with Count; and finally (maybe) merge to jobs as well..
+        $privateNotesListable = DB::table('notes')
+            ->select('job_id', 'id', 'body', 'created_at', 'updated_at')
+            ->where('is_visible_when_listing_jobs', 1)
+            ->whereIn('job_id', array_keys($notesResult))
+            ->whereIn('user_id', [$userId])
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        foreach($privateNotesListable as $note) {
+            $notesResult[$note->job_id]['privateListableData'][$note->id] = $note;
         }
 
         return $notesResult;
@@ -95,7 +111,7 @@ class JobController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
         if(!empty($user) && isset($user->id)) {
-            $notes = $this->getPrivateNoteCounts($jobs, $user->id);
+            $notes = $this->getPrivateNoteInfo($jobs, $user->id);
         } else {
             $notes = null;
         }

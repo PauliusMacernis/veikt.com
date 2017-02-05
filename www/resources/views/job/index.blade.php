@@ -27,12 +27,19 @@
 
         <li class="list-group-item" title="Last system check: {{ $job->file_datetime }}">
 
-            @if($notes[$job->id] > 0)
-                <span class="badge" title="Notes"><a class="badge" href="/job/{{ $job->id }}">{{ $notes[$job->id] }}</a></span>
+            @if($notes[$job->id]['privateAllCount'] > 0)
+                <span class="badge" title="Notes"><a class="badge" href="/job/{{ $job->id }}">{{ $notes[$job->id]['privateAllCount'] }}</a></span>
             @endif
 
-            <a href="/job/{{ $job->id }}"><span class="glyphicon glyphicon-globe"></span> {{ ++$counter }}. ...</a>{!! $transformedJobInfo[$job->id] !!}<a href="/job/{{ $job->id }}">...</a><br>
+            <a href="/job/{{ $job->id }}">{{ ++$counter }}. ...{!! $transformedJobInfo[$job->id] !!}...</a><br>
             <a href="{{ $job->file_url }}" target="_blank"><span class="glyphicon glyphicon-link"></span></a> <small>{{ $job->file_url }}</small>
+
+            @if(!empty($notes[$job->id]['privateListableData']))
+                <br><br>
+                @foreach($notes[$job->id]['privateListableData'] as $noteInfo)
+                    <div class="alert alert-warning" role="alert"><a class="glyphicon glyphicon-eye-open" title="Turn off when listing" href="/note/{{ $noteInfo->id }}/turnOffListing"></a> {{ $noteInfo->created_at }}<br>{{ $noteInfo->body }}</div>
+                @endforeach
+            @endif
         </li>
     @endforeach
     @if(!$jobs->isEmpty())
