@@ -7,6 +7,6 @@
         <label><input type="checkbox" name="is_visible_when_listing_jobs" value="1" @if(old('is_visible_when_listing_jobs')) checked @endif />Show it when I list Opportunities</label>
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Add the Note</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </div>
 </form>

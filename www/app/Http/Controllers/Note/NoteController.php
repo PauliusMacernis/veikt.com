@@ -88,4 +88,22 @@ class NoteController extends Controller
         return back();
 
     }
+
+    public function delete(Request $request, Note $note, User $user)
+    {
+        $jobId = $note->job_id;
+
+        $user = $request->user();
+        $noteUser = $note->user()->first();
+
+        if(!$user || !$user->exists() || $user->id != $noteUser->id) {
+            abort(404);
+        } else {
+            $note->delete();
+        }
+
+        return redirect('/job/' . $jobId);
+        //return view('job.edit', compact('note'));
+
+    }
 }

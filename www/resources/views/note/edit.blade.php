@@ -17,6 +17,9 @@
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Update</button>
         </div>
+        <div class="form-group">
+            <a href="/note/{{ $note->id }}/delete">Delete forever</a>
+        </div>
     </form>
 
 @stop
