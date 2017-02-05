@@ -30,8 +30,13 @@ class Job extends CoreJob
         $uniqueBrowserId
     )
     {
+        $crawler = $Content->filter('#jobad_cont');
 
-        $value = trim($Content->filter('#jobad_cont')->html());
+        if(!$crawler->count()) {
+            $value = '';
+        } else {
+            $value = trim($crawler->html());
+        }
 
         $this->$fileAndPropertyName = $value;
 
@@ -56,7 +61,13 @@ class Job extends CoreJob
     )
     {
 
-        $value = trim($Content->filter('#job_ad_statistics')->html());
+        $crawler = $Content->filter('#job_ad_statistics');
+
+        if(!$crawler->count()) {
+            $value = '';
+        } else {
+            $value = trim($crawler->html());
+        }
 
         $this->$fileAndPropertyName = $value;
 

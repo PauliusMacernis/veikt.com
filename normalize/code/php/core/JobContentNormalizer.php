@@ -53,13 +53,28 @@ class JobContentNormalizer
 
     public function file_content_static($transformedContent)
     {
+        /**
+         * @var \Symfony\Component\DomCrawler\Crawler $transformedContent["content_dynamic"]
+         */
+        if(!$transformedContent['content_static']->count()) {
+            return '';
+        }
+
         return $transformedContent['content_static']->html();
     }
 
 
     public function file_content_dynamic($transformedContent)
     {
+        /**
+         * @var \Symfony\Component\DomCrawler\Crawler $transformedContent["content_dynamic"]
+         */
+        if(!$transformedContent['content_dynamic']->count()) {
+            return '';
+        }
+
         return $transformedContent['content_dynamic']->html();
+
     }
 
 
@@ -72,6 +87,13 @@ class JobContentNormalizer
 
     public function content_static_without_tags($transformedContent)
     {
+        /**
+         * @var \Symfony\Component\DomCrawler\Crawler $transformedContent["content_dynamic"]
+         */
+        if(!$transformedContent['content_static']->count()) {
+            return '';
+        }
+
         $translationDictionary = [
             "\r\n" => "\n",
         ];
@@ -87,6 +109,13 @@ class JobContentNormalizer
 
     public function content_dynamic_without_tags($transformedContent)
     {
+        /**
+         * @var \Symfony\Component\DomCrawler\Crawler $transformedContent["content_dynamic"]
+         */
+        if(!$transformedContent['content_dynamic']->count()) {
+            return '';
+        }
+
         $translationDictionary = [
             "\r\n" => "\n",
         ];
