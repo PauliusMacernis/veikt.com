@@ -16,7 +16,13 @@ class JobController extends Controller
 
         $user = $request->user();
 
-        $jobs = DB::table('job')->where('is_published', 1)->paginate($perPage);
+        $jobs = DB::table('job')
+            ->where('is_published', 1)
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('datetime_imported', 'desc')
+            ->orderBy('file_datetime', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
         if(!empty($user) && isset($user->id)) {
             $notes = $this->getPrivateNoteCounts($jobs, $user->id);
         } else {
@@ -80,7 +86,14 @@ class JobController extends Controller
         $user = $request->user();
 
         $searchInput = $request->input('searchInput', '');
-        $jobs = DB::table('job')->where('is_published', 1)->where('content_static_without_tags', 'like', '%' . $searchInput . '%')->paginate($perPage);
+        $jobs = DB::table('job')
+            ->where('is_published', 1)
+            ->where('content_static_without_tags', 'like', '%' . $searchInput . '%')
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('datetime_imported', 'desc')
+            ->orderBy('file_datetime', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
         if(!empty($user) && isset($user->id)) {
             $notes = $this->getPrivateNoteCounts($jobs, $user->id);
         } else {
