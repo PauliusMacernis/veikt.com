@@ -25,13 +25,13 @@
     @endif
     @foreach($jobs as $job)
 
-        <li class="list-group-item" title="Last system check: {{ $job->file_datetime }}">
+        <li class="list-group-item" title="Last data import: {{ $job->file_datetime }}">
 
             @if($notes[$job->id]['privateAllCount'] > 0)
                 <span class="badge" title="Notes"><a class="badge" href="/job/{{ $job->id }}">{{ $notes[$job->id]['privateAllCount'] }}</a></span>
             @endif
 
-            <a href="/job/{{ $job->id }}">{{ ++$counter }}. ...{!! $transformedJobInfo[$job->id] !!}...</a><br>
+            <a href="/job/{{ $job->id }}" class="doNotUnderline">{{ ++$counter }}. ...{!! $transformedJobInfo[$job->id] !!}...</a><br>
             <a href="{{ $job->file_url }}" target="_blank"><span class="glyphicon glyphicon-link"></span></a> <small>{{ $job->file_url }}</small>
 
             @if(!empty($notes[$job->id]['privateListableData']))
