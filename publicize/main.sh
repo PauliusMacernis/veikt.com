@@ -3,6 +3,8 @@ id
 
 echo -e "\n PUBLICIZE: Started: $(date +%Y-%m-%d:%H:%M:%S)"
 
+# TODO: Ignore publicizing the downloaded and normalized queue that failed to download or normalize...?
+
 # Get dir of this script
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 

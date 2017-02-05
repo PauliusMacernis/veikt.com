@@ -123,6 +123,16 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
             continue
         fi
 
+
+        # Removing the START marker has been moved up to the beginning of reading each result line (directory found)
+        #    This way some kind of security appear - if something would go wrong at reading (removing what is red) then second run all previous set would be ignored
+        #    Create new START file from END file if needed to test on, to develop on, etc. START and END files with exact content are required to proceed further with the normalization
+        # Remove $MARKER_FILENAME_BEGIN file
+        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN" ] ; then
+            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN"
+        fi
+
+
         # Read each result line (directory found)
         while IFS='' read -r PROJECT_DIR_TO_NORMALIZE || [[ -n "$PROJECT_DIR_TO_NORMALIZE" ]]; do
             if [ -z "$PROJECT_DIR_TO_NORMALIZE" ];
@@ -136,11 +146,6 @@ while IFS= read -r ENTRANCE_SH_FILE__POSTS_DIR__DELIMITED; do
             bash "$ENTRANCE_SH_FILE" "$PROJECT_DIR_TO_NORMALIZE" "$UNIQUE_ID_ASSIGNED_FOR_A_QUEUE"
 
         done < "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_CONTENT"
-
-        # Remove $MARKER_FILENAME_BEGIN file
-        if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 3 ] ; then
-            rm "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_BEGIN"
-        fi
 
         # Remove $MARKER_FILENAME_END file
         if [ -f "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE"/"$MARKER_FILENAME_END" ] && [ $(ls "$PROJECT_DIRS_TO_NORMALIZE_WITH_LIST_FILE" -1 | wc -l) == 2 ] ; then
