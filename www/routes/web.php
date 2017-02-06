@@ -29,9 +29,11 @@ Route::get('/about/vision',                     'About\AboutController@vision');
 
 // Job search
 Route::get('/job/search',                       'Job\JobController@find');
+Route::get('/job/search/map',                   'Job\JobController@findOnMap');
 
 // Job
 Route::get('/job/index',                        'Job\JobController@index');
+Route::get('/job/index/map',                    'Job\JobController@map');
 Route::get('/job/{job}',                        'Job\JobController@show');
 Route::post('/job/{job}/note',                  'Note\NoteController@store');
 

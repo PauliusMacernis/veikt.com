@@ -1,4 +1,4 @@
-<form method="GET" action="/job/search">
+<form method="GET" action="{{ $formAction }}">
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">

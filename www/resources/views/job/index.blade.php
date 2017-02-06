@@ -4,7 +4,7 @@
 
     <h1>Opportunities available <span class="label label-default">{{ $jobsInTotal }}</span></h1>
 
-    @include('job.search.form.main')
+    @include('job.search.form.main', ['formAction' => '/job/search'])
 
     <!--
     @if(!$jobs->isEmpty())

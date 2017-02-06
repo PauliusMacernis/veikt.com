@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Veikt!</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -21,8 +21,10 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name', 'HOME') }}
                 </a>
+                <a class="navbar-brand glyphicon glyphicon-th-list" title="List view" href="/job/index"></a>
+                <a class="navbar-brand glyphicon glyphicon-map-marker" title="Map view" href="/job/index/map"></a>
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
@@ -68,5 +70,6 @@
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
+    @yield('javascript')
 </body>
 </html>

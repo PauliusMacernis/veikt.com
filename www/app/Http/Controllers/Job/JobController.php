@@ -38,6 +38,37 @@ class JobController extends Controller
         return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
     }
 
+    public function map(Request $request, $page=1, $perPage=100) {
+        //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
+
+        $user = $request->user();
+
+        $jobs = DB::table('job')
+            ->where('is_published', 1)
+            //->orderBy('updated_at', 'desc')
+            //->orderBy('datetime_imported', 'desc')
+            //->orderBy('file_datetime', 'desc')
+            //->orderBy('created_at', 'desc')
+            //->paginate($perPage)
+            ->get()
+        ;
+
+        if(!empty($user) && isset($user->id)) {
+            $notes = $this->getPrivateNoteInfo($jobs, $user->id);
+        } else {
+            $notes = null;
+        }
+        $jobsInTotal = count($jobs);
+        //$counterInitValue = (($jobs->currentPage() - 1) * $jobs->perPage());
+        $counterInitValue = null;
+        //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
+
+        $searchInput = null;
+        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+
+        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+    }
+
     protected function getPrivateNoteInfo($jobs, $userId) {
 
         $notesResult = array();
@@ -123,6 +154,36 @@ class JobController extends Controller
         $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
         return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+    }
+
+    public function findOnMap(Request $request, $page=1, $perPage=100) {
+        //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
+
+        $user = $request->user();
+
+        $searchInput = $request->input('searchInput', '');
+        $jobs = DB::table('job')
+            ->where('is_published', 1)
+            ->where('content_static_without_tags', 'like', '%' . $searchInput . '%')
+            //->orderBy('updated_at', 'desc')
+            //->orderBy('datetime_imported', 'desc')
+            //->orderBy('file_datetime', 'desc')
+            //->orderBy('created_at', 'desc')
+            //->paginate($perPage)
+            ->get()
+        ;
+        if(!empty($user) && isset($user->id)) {
+            $notes = $this->getPrivateNoteInfo($jobs, $user->id);
+        } else {
+            $notes = null;
+        }
+        $jobsInTotal = count($jobs);
+        $counterInitValue = null;
+        //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
+        
+        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+
+        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
     }
 
     /**
