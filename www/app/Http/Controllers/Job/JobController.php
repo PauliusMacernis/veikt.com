@@ -35,7 +35,7 @@ class JobController extends Controller
         $searchInput = null;
         $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo', 'user'));
     }
 
     public function map(Request $request, $page=1, $perPage=100) {
@@ -109,8 +109,9 @@ class JobController extends Controller
     public function show(Request $request, $job) {
 
         $user = $request->user();
+        $isUserLoggedIn = $user && $user->exists();
 
-        if($user && $user->exists()) {
+        if($isUserLoggedIn) {
             $job = Job::with(['notes' => function($query) use ($user) {
                 $query->where('user_id', '=', $user->id);
             }])->find($job);
@@ -124,7 +125,7 @@ class JobController extends Controller
         // $job->load('notes.user');
         // ?
 
-        return view('job.show', compact('job'));
+        return view('job.show', compact('job', 'isUserLoggedIn', 'user'));
     }
 
     public function find(Request $request, $page=1, $perPage=100) {
@@ -230,6 +231,38 @@ class JobController extends Controller
         }
 
         return $extraInfoOnJobs;
+
+    }
+
+
+    public function edit(Request $request, Job $job)
+    {
+        /**
+         * @var User
+         */
+        $user = $request->user();
+        //$job->
+
+        if(!$user || !$user->isAdministrator()) {
+            abort(404);
+        }
+
+        return view('job.edit', compact('job'));
+
+    }
+
+    public function update(Request $request, Job $job, User $user)
+    {
+        $data = $request->all();
+
+        // Checkbox unchecked
+        //if(!isset($data['is_visible_when_listing_jobs'])) {
+        //    $data['is_visible_when_listing_jobs'] = 0;
+        //}
+
+        $job->update($data);
+
+        return redirect('/job/' . $job->id);
 
     }
 

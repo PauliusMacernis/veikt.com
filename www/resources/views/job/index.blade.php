@@ -27,7 +27,12 @@
 
         <li class="list-group-item" title="Last data import: {{ $job->file_datetime }}">
 
-            @if($notes[$job->id]['privateAllCount'] > 0)
+        @if(isset($user) && ($user->isAdministrator()))
+            <a href="/job/{{ $job->id }}/edit"><span class="glyphicon glyphicon-edit"></span></a>
+        @endif
+
+
+        @if($notes[$job->id]['privateAllCount'] > 0)
                 <span class="badge" title="Notes"><a class="badge" href="/job/{{ $job->id }}">{{ $notes[$job->id]['privateAllCount'] }}</a></span>
             @endif
 
@@ -40,7 +45,10 @@
                     <div class="alert alert-warning" role="alert"><a class="glyphicon glyphicon-eye-open" title="Turn off when listing" href="/note/{{ $noteInfo->id }}/turnOffListing"></a> {{ $noteInfo->created_at }}<br>{{ $noteInfo->body }}</div>
                 @endforeach
             @endif
+
+
         </li>
+
     @endforeach
     @if(!$jobs->isEmpty())
     </ul>

@@ -85,7 +85,7 @@ class NoteController extends Controller
 
         $note->update($data);
 
-        return back();
+        return redirect('/job/' . $note->job_id . '#note-' . $note->id);
 
     }
 

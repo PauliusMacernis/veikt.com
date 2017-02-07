@@ -26,4 +26,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function isAdministrator()
+    {
+        if($this->exists() && $this->email == 'admin@veikt.com') {
+            return true;
+        }
+
+        return false;
+    }
+
+
 }

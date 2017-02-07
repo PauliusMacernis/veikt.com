@@ -34,13 +34,15 @@ Route::get('/job/search/map',                   'Job\JobController@findOnMap');
 // Job
 Route::get('/job/index',                        'Job\JobController@index');
 Route::get('/job/index/map',                    'Job\JobController@map');
+Route::get('/job/{job}/edit',                   'Job\JobController@edit')->middleware('admin');
+Route::patch('/job/{job}',                      'Job\JobController@update')->middleware('admin');
 Route::get('/job/{job}',                        'Job\JobController@show');
 Route::post('/job/{job}/note',                  'Note\NoteController@store');
 
 
 // Note
-Route::get('/note/{note}/edit',                 'Note\NoteController@edit');
-Route::get('/note/{note}/turnOffListing',       'Note\NoteController@turnOffListing');
-Route::get('/note/{note}/turnOnListing',        'Note\NoteController@turnOnListing');
-Route::get('/note/{note}/delete',               'Note\NoteController@delete');
-Route::patch('/note/{note}',                    'Note\NoteController@update');
+Route::get('/note/{note}/edit',                 'Note\NoteController@edit')->middleware('auth');
+Route::get('/note/{note}/turnOffListing',       'Note\NoteController@turnOffListing')->middleware('auth');
+Route::get('/note/{note}/turnOnListing',        'Note\NoteController@turnOnListing')->middleware('auth');
+Route::get('/note/{note}/delete',               'Note\NoteController@delete')->middleware('auth');
+Route::patch('/note/{note}',                    'Note\NoteController@update')->middleware('auth');

@@ -8,6 +8,8 @@ class Job extends Model
 {
     protected $table = 'job';
 
+    protected $fillable = ['is_published'];
+
     public function addNote(Note $note, $userId)
     {
         $note->user_id = $userId;

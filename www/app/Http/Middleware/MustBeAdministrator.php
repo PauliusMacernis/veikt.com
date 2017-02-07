@@ -18,7 +18,7 @@ class MustBeAdministrator
 
         $user = $request->user();
 
-        if($user && $user->email == 'admin@veikt.com') {
+        if($user && $user->isAdministrator()) {
             return $next($request);
         }
 

@@ -12,17 +12,22 @@
         </ul>
         @endif
 
-        <h3>Personal Notes</h3>
 
-        @include('note.form.create')
+        <h3>Personal Notes</h3>
+        @if($isUserLoggedIn)
+            @include('note.form.create')
+        @else
+            <p>Available for registered users only.</p>
+        @endif
+
         <hr />
 
         @if($job->notes->isEmpty())
-            <p>You can add personal notes for any of opportunities. Many websites we collect data from, but one place for you to save your career-related experience. Convenient.</p>
+            <p>We collect opportunities from many sources, you - create your private notes on top. Tracking own career-related experience is much easier.</p>
         @else
             <ul class="list-group">
                 @foreach($job->notes as $note)
-                    <li class="list-group-item @if($note->is_visible_when_listing_jobs) alert alert-warning @endif">
+                    <li id="note-{{ $note->id }}" class="list-group-item @if($note->is_visible_when_listing_jobs) alert alert-warning @endif">
                         <a class="pull-right" href="/note/{{ $note->id }}/edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
@@ -63,6 +68,11 @@
                 {{ $job->updated_at }} - last update<br>
             </li>
         </ul>
-        
+
+        @if(isset($user) && ($user->isAdministrator()))
+            <a href="/job/{{ $job->id }}/edit"><span class="glyphicon glyphicon-edit"></span> Edit the Opportunity</a>
+        @endif
+
+
     </div>
 @stop
