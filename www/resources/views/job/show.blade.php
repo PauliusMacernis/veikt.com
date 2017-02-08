@@ -52,6 +52,9 @@
                 {{ $job->file_project }}
             </li>
             <li class="list-group-item">
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center={!! $job->latitude !!},{!! $job->longitude !!}&zoom=12&size=500x300&maptype=roadmap&markers=color:red%7+label:C%7C{!! $job->latitude !!},{!! $job->longitude !!}&key={{ env('GOOGLE_MAPS_JAVASCRIPT_API_KEY', 'GOOGLE_MAPS_JAVASCRIPT_API_KEY_is_not_set') }}"
+            </li>
+            <li class="list-group-item">
                 <a href="{{ $job->file_url }}" target="_blank">{{ $job->file_url }}</a>
             </li>
             <li class="list-group-item list-group-item-success">

@@ -8,7 +8,7 @@ class Job extends Model
 {
     protected $table = 'job';
 
-    protected $fillable = ['is_published'];
+    protected $fillable = ['is_published', 'latitude', 'longitude'];
 
     public function addNote(Note $note, $userId)
     {
