@@ -36,7 +36,7 @@
                 <span class="badge" title="Notes"><a class="badge" href="/job/{{ $job->id }}">{{ $notes[$job->id]['privateAllCount'] }}</a></span>
             @endif
 
-            <a href="/job/{{ $job->id }}" class="doNotUnderline">{{ ++$counter }}. ...{!! $transformedJobInfo[$job->id] !!}...</a><br>
+            <a href="/job/{{ $job->id }}" class="doNotUnderline">{{ ++$counter }}. ...{!! $markedJobInfo[$job->id] !!}...</a><br>
             <a href="{{ $job->file_url }}" target="_blank"><span class="glyphicon glyphicon-link"></span></a> <small>{{ $job->file_url }}</small>
 
             @if(!empty($notes[$job->id]['privateListableData']))

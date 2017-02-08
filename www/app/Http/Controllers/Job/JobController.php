@@ -33,9 +33,9 @@ class JobController extends Controller
         //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
 
         $searchInput = null;
-        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+        $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo', 'user'));
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'user'));
     }
 
     public function map(Request $request, $page=1, $perPage=100) {
@@ -43,6 +43,9 @@ class JobController extends Controller
 
         $user = $request->user();
 
+        /**
+         * @var \Illuminate\Support\Collection $jobs
+         */
         $jobs = DB::table('job')
             ->where('is_published', 1)
             //->orderBy('updated_at', 'desc')
@@ -51,22 +54,67 @@ class JobController extends Controller
             //->orderBy('created_at', 'desc')
             //->paginate($perPage)
             ->get()
+            ->keyBy('id')
         ;
+
 
         if(!empty($user) && isset($user->id)) {
             $notes = $this->getPrivateNoteInfo($jobs, $user->id);
         } else {
             $notes = null;
         }
-        $jobsInTotal = count($jobs);
-        //$counterInitValue = (($jobs->currentPage() - 1) * $jobs->perPage());
+        $jobsInTotal = $jobs->count();
+
+        $markedJobInfo = $this->transformJobsInfo($jobs, ($searchInput = null));
+
+        $jobs = $jobs->map(function($job) use ($notes, $markedJobInfo, $searchInput, $user) {
+            $job->notes                 = $notes[$job->id];
+            $job->mapInfoWindow         = $this->formatMapInfoWindow($user, $job, $notes, $markedJobInfo, '');
+            $job->markedJobInfo    = $this->markJobInfo($searchInput, $job);
+            return $job;
+        });
+
         $counterInitValue = null;
-        //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
 
-        $searchInput = null;
-        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+        $mapInfo = json_encode(array_map(function($job) {
+            return [
+                'lat' => rand(-85, +85),        // Latitude
+                'lng' => rand(-180, 180),       // Longitude
+                'iwc' => $job->mapInfoWindow,   // HTML for marker's info window on Google Maps
+                'mt'  => md5(uniqid())          // Marker title (text)
+            ];
+        }, $jobs->toArray(), []));
 
-        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'mapInfo'));
+    }
+
+    protected function formatMapInfoWindow($user, $job, $notes, $markedJobInfo, $counter) {
+
+        $infoWindow = '';
+
+        if(isset($user) && ($user->isAdministrator())) {
+            $infoWindow .= '<a href="/job/' . $job->id . '/edit"><span class="glyphicon glyphicon-edit"></span></a>';
+        }
+
+
+        if($notes[$job->id]['privateAllCount'] > 0) {
+            $infoWindow .= '<span class="badge" title="Notes"><a class="badge" href="/job/' . $job->id . '">' . $notes[$job->id]['privateAllCount'] . '</a></span>';
+        }
+
+        $infoWindow .= '
+            <a href="/job/' . $job->id . '" class="doNotUnderline">' . ++$counter . '...' . $markedJobInfo[$job->id] . '...</a><br>
+            <a href="' . $job->file_url . '" target="_blank"><span class="glyphicon glyphicon-link"></span></a> <small>' . $job->file_url . '</small>
+        ';
+
+        if(!empty($notes[$job->id]['privateListableData'])) {
+            $infoWindow .= '<br><br>';
+            foreach($notes[$job->id]['privateListableData'] as $noteInfo) {
+                $infoWindow .= '<div class="alert alert-warning" role="alert"><a class="glyphicon glyphicon-eye-open" title="Turn off when listing" href="/note/' . $noteInfo->id . '/turnOffListing"></a> ' . $noteInfo->created_at . '<br>' . $noteInfo->body . '</div>';
+            }
+        }
+
+        return $infoWindow;
+
     }
 
     protected function getPrivateNoteInfo($jobs, $userId) {
@@ -152,9 +200,9 @@ class JobController extends Controller
         //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
 
         //dd($jobs);
-        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+        $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo'));
     }
 
     public function findOnMap(Request $request, $page=1, $perPage=100) {
@@ -182,9 +230,9 @@ class JobController extends Controller
         $counterInitValue = null;
         //$jobs = Job::all()->where('is_published', 1)->forPage($page, $perPage);
         
-        $transformedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
+        $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'transformedJobInfo'));
+        return view('job.map', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo'));
     }
 
     /**
@@ -195,39 +243,8 @@ class JobController extends Controller
 
         $extraInfoOnJobs = array();
 
-        $markBegin  = '<mark>';
-        $markEnd    = '</mark>';
-        $stringLengthAllowed = 250;
-        $rollbackLength = 20;
-
         foreach ($jobs as $job) {
-
-            if(!isset($searchInput)) {
-                $extraInfoOnJobs[$job->id] = mb_substr($job->content_static_without_tags, 0, $stringLengthAllowed);
-                continue;
-            }
-
-            $contentStaticWithoutTagsModified = '';
-            $contentStaticWithoutTags = preg_replace(
-                "/(\t|\n|\v|\f|\r| |\xC2\x85|\xc2\xa0|\xe1\xa0\x8e|\xe2\x80[\x80-\x8D]|\xe2\x80\xa8|\xe2\x80\xa9|\xe2\x80\xaF|\xe2\x81\x9f|\xe2\x81\xa0|\xe3\x80\x80|\xef\xbb\xbf)+/",
-                " ",
-                ($job->content_static_without_tags)
-            );
-
-            // Transform
-            $contentStaticWithoutTags_Marked = preg_replace("/\p{L}*?".preg_quote($searchInput)."\p{L}*/ui", $markBegin . "$0" . $markEnd, $contentStaticWithoutTags);
-
-            // Find first mark position
-            $firstMarkPositionFound = mb_stripos($contentStaticWithoutTags_Marked, $markBegin);
-
-            $cutFrom = $firstMarkPositionFound - $rollbackLength;
-            $maxLengthAvailable = mb_strlen($contentStaticWithoutTags_Marked);
-            if($cutFrom < 0) {
-                $cutFrom = 0;
-            } elseif($firstMarkPositionFound + $stringLengthAllowed > $maxLengthAvailable) {
-                $cutFrom = $maxLengthAvailable - $stringLengthAllowed;
-            }
-            $extraInfoOnJobs[$job->id] = mb_substr($contentStaticWithoutTags_Marked, $cutFrom, $stringLengthAllowed);
+            $extraInfoOnJobs[$job->id] = $this->markJobInfo($searchInput, $job);
         }
 
         return $extraInfoOnJobs;
@@ -263,6 +280,54 @@ class JobController extends Controller
         $job->update($data);
 
         return redirect('/job/' . $job->id);
+
+    }
+
+    /**
+     * @param $searchInput
+     * @param $job
+     * @param $markBegin
+     * @param $markEnd
+     * @param $rollbackLength
+     * @param $stringLengthAllowed
+     * @param $extraInfoOnJobs
+     * @return mixed
+     */
+    protected function markJobInfo($searchInput, $job)
+    {
+
+        $markBegin  = '<mark>';
+        $markEnd    = '</mark>';
+        $stringLengthAllowed = 250;
+        $rollbackLength = 20;
+
+
+        if(!isset($searchInput)) {
+            return mb_substr($job->content_static_without_tags, 0, $stringLengthAllowed);
+        }
+
+        $contentStaticWithoutTagsModified = '';
+        $contentStaticWithoutTags = preg_replace(
+            "/(\t|\n|\v|\f|\r| |\xC2\x85|\xc2\xa0|\xe1\xa0\x8e|\xe2\x80[\x80-\x8D]|\xe2\x80\xa8|\xe2\x80\xa9|\xe2\x80\xaF|\xe2\x81\x9f|\xe2\x81\xa0|\xe3\x80\x80|\xef\xbb\xbf)+/",
+            " ",
+            ($job->content_static_without_tags)
+        );
+
+        // Transform
+        $contentStaticWithoutTags_Marked = preg_replace("/\p{L}*?" . preg_quote($searchInput) . "\p{L}*/ui", $markBegin . "$0" . $markEnd, $contentStaticWithoutTags);
+
+        // Find first mark position
+        $firstMarkPositionFound = mb_stripos($contentStaticWithoutTags_Marked, $markBegin);
+
+        $cutFrom = $firstMarkPositionFound - $rollbackLength;
+        $maxLengthAvailable = mb_strlen($contentStaticWithoutTags_Marked);
+        if ($cutFrom < 0) {
+            $cutFrom = 0;
+        } elseif ($firstMarkPositionFound + $stringLengthAllowed > $maxLengthAvailable) {
+            $cutFrom = $maxLengthAvailable - $stringLengthAllowed;
+        }
+
+        return mb_substr($contentStaticWithoutTags_Marked, $cutFrom, $stringLengthAllowed);
 
     }
 
