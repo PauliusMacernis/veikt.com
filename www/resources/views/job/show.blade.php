@@ -51,9 +51,19 @@
             <li class="list-group-item">
                 {{ $job->file_project }}
             </li>
-            <li class="list-group-item">
-                <img src="https://maps.googleapis.com/maps/api/staticmap?center={!! $job->latitude !!},{!! $job->longitude !!}&zoom=12&size=500x300&maptype=roadmap&markers=color:red%7+label:C%7C{!! $job->latitude !!},{!! $job->longitude !!}&key={{ env('GOOGLE_MAPS_JAVASCRIPT_API_KEY', 'GOOGLE_MAPS_JAVASCRIPT_API_KEY_is_not_set') }}"
-            </li>
+            @if(!empty($job->latitude) && !empty($job->longitude))
+                <li class="list-group-item">
+                    <div id="googleMap" style="height: 300px;">
+                    <!--img src="https://maps.googleapis.com/maps/api/staticmap?center={!! $job->latitude !!},{!! $job->longitude !!}&zoom=12&size=500x300&maptype=roadmap&markers=color:red%7+label:C%7C{!! $job->latitude !!},{!! $job->longitude !!}&key={{ env('GOOGLE_MAPS_JAVASCRIPT_API_KEY', 'GOOGLE_MAPS_JAVASCRIPT_API_KEY_is_not_set') }}" -->
+                    </div>
+                    Directions:
+                        <a href="https://www.google.com/maps/dir/'{!! (float)$job->latitude !!},{!! (float)$job->longitude !!}'//{!! '@' . (float)$job->latitude !!},{!! (float)$job->longitude !!},16z" target="_blank">from work</a>
+                      , <a href="https://www.google.com/maps/dir//'{!! (float)$job->latitude !!},{!! (float)$job->longitude !!}'/{!! '@' . (float)$job->latitude !!},{!! (float)$job->longitude !!},16z" target="_blank">to work</a>
+                      , <a onclick="alert('Sorry, not developed yet. Should be available soon.')">from home to work</a>
+                      , <a onclick="alert('Sorry, not developed yet. Should be available soon.')">from work to home</a>
+
+                </li>
+            @endif
             <li class="list-group-item">
                 <a href="{{ $job->file_url }}" target="_blank">{{ $job->file_url }}</a>
             </li>
@@ -78,4 +88,35 @@
 
 
     </div>
+@stop
+
+@section('javascript')
+
+    <script>
+        function initMap() {
+
+            var myLatlng = new google.maps.LatLng({!! (float)$job->latitude !!}, {!! (float)$job->longitude !!});
+            var mapOptions = {
+                zoom: 11,
+                center: myLatlng
+            }
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+
+            // Place a draggable marker on the map
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                draggable:false,
+                title:"Drag me!"
+            });
+
+        }
+
+        var jobInfo = [{lat: {{ $job->latitude }}, lng: {{ $job->longitude }}, iwc: 'fff', mt: 'cdcdc'}];
+
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_JAVASCRIPT_API_KEY', 'GOOGLE_MAPS_JAVASCRIPT_API_KEY_is_not_set') }}&callback=initMap">
+    </script>
+
 @stop
