@@ -11,5 +11,5 @@
     </div><!-- /.row -->
 </form>
 @if(isset($searchInput) && !empty($searchInput))
-    <span>Interested in: "<em>{{ $searchInput }}</em>"</span>
+    <span>Interested in: <em>{{ $searchInput }}</em></span>
 @endif
