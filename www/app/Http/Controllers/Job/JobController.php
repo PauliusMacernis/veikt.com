@@ -179,12 +179,22 @@ class JobController extends Controller
     public function find(Request $request, $page=1, $perPage=100) {
         //$jobs = ['firstjob', 'secondjob', 'thirdjob', 'etc.'];
 
+        $separator = ' ';
+        $searchInput = $request->input('searchInput', '');
+        $searchInputAsArray = explode($separator, $searchInput);
+
         $user = $request->user();
 
-        $searchInput = $request->input('searchInput', '');
         $jobs = DB::table('job')
             ->where('is_published', 1)
-            ->where('content_static_without_tags', 'like', '%' . $searchInput . '%')
+            ->where(function($query) use($searchInputAsArray) {
+                if(!$searchInputAsArray) {
+                    return;
+                }
+                foreach($searchInputAsArray as $searchInputWord) {
+                    $query->where('content_static_without_tags', 'like', '%' . $searchInputWord . '%');
+                }
+            })
             ->orderBy('updated_at', 'desc')
             ->orderBy('datetime_imported', 'desc')
             ->orderBy('file_datetime', 'desc')

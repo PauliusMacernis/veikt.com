@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1>Opportunities available <span class="label label-default">{{ $jobsInTotal }}</span></h1>
+    <h1 class="medium">Opportunities available <span class="label label-default">{{ $jobsInTotal }}</span></h1>
 
     @include('job.search.form.main', ['formAction' => '/job/search'])
 

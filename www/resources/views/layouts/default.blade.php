@@ -23,8 +23,8 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'HOME') }}
                 </a>
-                <a class="navbar-brand glyphicon glyphicon-th-list" title="List view" href="/job/index"></a>
-                <a class="navbar-brand glyphicon glyphicon-map-marker" title="Map view" href="/job/index/map"></a>
+                <a class="navbar-brand glyphicon glyphicon-list-alt" title="List view" href="/job/index">List</a>
+                <a class="navbar-brand glyphicon glyphicon-map-marker" title="Map view" href="/job/index/map">Map</a>
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
