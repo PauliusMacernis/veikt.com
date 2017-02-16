@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Job;
 
 use App\Http\Controllers\Controller;
+use App\Models\ExpressionHit;
+use App\Models\ExpressionHitsHistory;
 use App\Models\Job;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -184,6 +187,16 @@ class JobController extends Controller
         $searchInputAsArray = explode($separator, $searchInput);
 
         $user = $request->user();
+
+        $expressionHit = ExpressionHit::firstOrCreate(['expression' => $searchInput]);
+        $expressionHit->hits += 1;
+        $expressionHit->last_hit = Carbon::now();
+        $expressionHit->save();
+
+        ExpressionHitsHistory::create([
+            'user_id' => (isset($user->id) ? $user->id : null),
+            'expression' => $searchInput
+        ]);
 
         $jobs = DB::table('job')
             ->where('is_published', 1)
