@@ -4,6 +4,7 @@
 
     @include('job.search.form.main', ['formAction' => '/job/search/map'])
 
+    <p>This Map is under construction. Come back later.</p>
     <hr>
 
     <div class="container-fluid">

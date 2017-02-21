@@ -19,6 +19,9 @@ class JobController extends Controller
 
         $user = $request->user();
 
+        // @todo: make table name comming from model..
+        $jobIdsWithoutPagination = (array)DB::select('SELECT id FROM job WHERE is_published="1"');
+
         $jobs = DB::table('job')
             ->where('is_published', 1)
             ->orderBy('updated_at', 'desc')
@@ -38,7 +41,9 @@ class JobController extends Controller
         $searchInput = null;
         $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'user'));
+        $expressions = $this->getExpressions($jobIdsWithoutPagination);
+
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'user', 'expressions'));
     }
 
     public function map(Request $request, $page=1, $perPage=100) {
@@ -184,7 +189,13 @@ class JobController extends Controller
 
         $separator = ' ';
         $searchInput = $request->input('searchInput', '');
-        $searchInputAsArray = explode($separator, $searchInput);
+
+        if($searchInput[0] == '"' && $searchInput[strlen($searchInput) - 1] == '"') {
+            $searchInputTrimmed = trim($searchInput, "\x22"); // Trimming "
+            $searchInputAsArray = array($searchInputTrimmed);
+        } else {
+            $searchInputAsArray = explode($separator, $searchInput);
+        }
 
         $user = $request->user();
 
@@ -197,6 +208,19 @@ class JobController extends Controller
             'user_id' => (isset($user->id) ? $user->id : null),
             'expression' => $searchInput
         ]);
+
+        // @todo: make table name comming from model..
+        $jobIdsWithoutPagination = DB::table('job')
+            ->select('id')
+            ->where('is_published', 1)
+            ->where(function($query) use($searchInputAsArray) {
+                if(!$searchInputAsArray) {
+                    return;
+                }
+                foreach($searchInputAsArray as $searchInputWord) {
+                    $query->where('content_static_without_tags', 'like', '%' . $searchInputWord . '%');
+                }
+            })->get()->toArray();
 
         $jobs = DB::table('job')
             ->where('is_published', 1)
@@ -225,7 +249,9 @@ class JobController extends Controller
         //dd($jobs);
         $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo'));
+        $expressions = $this->getExpressions($jobIdsWithoutPagination);
+
+        return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'expressions'));
     }
 
     public function findOnMap(Request $request, $page=1, $perPage=100) {
@@ -351,6 +377,39 @@ class JobController extends Controller
         }
 
         return mb_substr($contentStaticWithoutTags_Marked, $cutFrom, $stringLengthAllowed);
+
+    }
+
+    protected function getExpressions(array $jobIdsWithoutPagination, $limit = null)
+    {
+        if(empty($jobIdsWithoutPagination)) {
+            return array();
+        }
+
+        // @todo: Can this loop be avoided??
+        array_walk($jobIdsWithoutPagination, function(&$value) {
+            $value = (int)$value->id;
+        });
+
+        $sqlLimit = isset($limit) ? (" LIMIT " . (int)$limit) : "";
+
+        $q = "SELECT 
+                *
+                FROM (
+                    SELECT
+                            je.expression_id, SUM(je.expressions_found) as total
+                        FROM job_expressions as je	
+                        
+                        WHERE je.job_id IN(" . implode(",", $jobIdsWithoutPagination) . ")
+                        
+                        GROUP BY je.expression_id
+                        
+                        ORDER BY total DESC
+                        
+                        " . $sqlLimit . "
+                ) as expinfo
+                LEFT JOIN expression_hits as e ON (expinfo.expression_id = e.id)";
+        return DB::select($q);
 
     }
 

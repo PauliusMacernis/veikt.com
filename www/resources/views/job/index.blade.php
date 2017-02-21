@@ -62,4 +62,10 @@
     )->links()
     !!}
 
+    @include('expressions.main', [
+        'expressions' => $expressions,
+        'searchInput' => $searchInput
+    ])
+
+
 @stop
