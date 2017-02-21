@@ -100,10 +100,17 @@ class ExpressionHitsUpdateAmountsinJobs extends Command
     protected function countExpressionsInText($jobTextToSearchIn, $expressions)
     {
         foreach($expressions as $key => &$expression) {
+
+            if((string)$expression->expression === "") {
+                unset($expressions[$key]);
+                continue;
+            }
+
             $count = mb_substr_count($jobTextToSearchIn, (string)$expression->expression);
             if(!$count) {
                 // @TODO: There should not be any zeros in here!
                 unset($expressions[$key]);
+                continue;
             } else {
                 $expression->count = $count;
             }
