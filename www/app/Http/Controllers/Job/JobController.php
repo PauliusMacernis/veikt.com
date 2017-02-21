@@ -249,7 +249,7 @@ class JobController extends Controller
         //dd($jobs);
         $markedJobInfo = $this->transformJobsInfo($jobs, $searchInput);
 
-        $expressions = $this->getExpressions($jobIdsWithoutPagination);
+        $expressions = $this->getExpressions($jobIdsWithoutPagination, 5000);
 
         return view('job.index', compact('jobs', 'jobsInTotal', 'counterInitValue', 'notes', 'searchInput', 'markedJobInfo', 'expressions'));
     }
