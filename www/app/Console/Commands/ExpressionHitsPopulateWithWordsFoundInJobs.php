@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\ExpressionHit;
-use App\Models\Job;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
@@ -26,6 +25,15 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
     protected $readByAmount = 1000;
     protected $expressionDelimiters;
 
+    protected $mainSeparator;
+    protected $simpleSeparatorsLowercased;
+    protected $surroundingPairsOfSeparatorsLowercased;
+    protected $regexForSurroundingPairsOfSeparatorsLowercased;
+    protected $lowercasedSimpleAndSurroundedSeparatorsWithoutRegex;
+    protected $expressionWhiteList;
+    protected $expressionBlackList;
+    protected $maxExpressionSizeAllowedByVulnerableSqlQuery;
+
 
     /**
      * Create a new command instance.
@@ -34,24 +42,16 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
      */
     public function __construct()
     {
+        $this->setMainSeparator();
+        $this->setExpressionWhiteList();
+        $this->setExpressionBlackList();
+        $this->setSimpleSeparatorsLowercased();
+        $this->setSurroundingPairsOfSeparatorsLowercased();
+        $this->setRegexForSurroundingPairsOfSeparatorsLowercased();
+        $this->setLowercasedSimpleAndSurroundedSeparatorsWithoutRegex();
+        $this->setMaxExpressionSizeAllowedByVulnerableSqlQuery('expression_hits.expression');
+
         parent::__construct();
-    }
-
-    protected function getExpressionBlackList()
-    {
-        return array(
-
-        );
-    }
-
-    /**
-     * @return string
-     */
-    protected function getExpressionWhiteList()
-    {
-        return array(
-            'testings'
-        );
     }
 
     /**
@@ -64,7 +64,7 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
         $isPublishedValue = true;
 
         $firstActiveJob = (int)\DB::table('job')->select(['id'])->where('is_published', $isPublishedValue)->limit(1)->orderBy('id', 'ASC')->first()->id;
-        $lastActiveJob  = (int)\DB::table('job')->select(['id'])->where('is_published', $isPublishedValue)->limit(1)->orderBy('id', 'DESC')->first()->id;
+        $lastActiveJob = (int)\DB::table('job')->select(['id'])->where('is_published', $isPublishedValue)->limit(1)->orderBy('id', 'DESC')->first()->id;
 
         // Just in case something extraordinary happening at the same time we are running this command...
         $lastActiveJob = ($lastActiveJob >= $firstActiveJob) ? $lastActiveJob : $firstActiveJob;
@@ -85,7 +85,7 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
             // For all these reasons, we check if we started to get empty lines. If so, that's the end of analysing.
             // Of course, some lines may be added while we analise too. But we do not care about those, because
             //    new added lines will be analysed with the next run. It is fine for now.
-            if($activeJobs->count() < 1) {
+            if ($activeJobs->count() < 1) {
                 break;
             }
 
@@ -97,22 +97,21 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
     /**
      * @param Collection $activeJobs
      */
-    protected function saveExpressionsFoundInCollection(Collection $activeJobs)
+    protected function saveExpressionsFoundInCollection(Collection $jobs)
     {
-        foreach ($activeJobs as $job) {
+        foreach ($jobs as $job) {
             $this->saveExpressionsFoundInJob($job);
         }
     }
 
     protected function saveExpressionsFoundInJob($job)
     {
-
         $expressions = $this->extractExpressionsFromLowercasedString(mb_strtolower($job->content_static_without_tags));
 
         // @TODO: Must not be foreach... Must save all at once..
-        foreach($expressions as $expression) {
+        foreach ($expressions as $expression) {
             $expressionHit = ExpressionHit::firstOrCreate(['expression' => $expression]);
-            if(isset($expressionHit->id)) {
+            if (isset($expressionHit->id)) {
                 continue;
             }
             $expressionHit->save();
@@ -126,13 +125,15 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
      */
     protected function extractExpressionsFromLowercasedString($string)
     {
+        //$string = $this->getStringForTesting();
+
         $expressions = array();
         $expressions['single'] = $this->extractSeparatedByLowercasedSeparators($string);
         $expressions['multi'] = $this->extractSurroundedByPairOfLowercasedSeparators($string); // example: "(" and ")", "[" and "]", etc.
 
         $expressions = array_merge($expressions['single'], $expressions['multi']);
 
-        $expressions = $this->trimExpressions($expressions);
+        //$expressions = $this->trimExpressions($expressions);
         $expressions = $this->removeLongExpressions($expressions, $this->getMaxExpressionSizeAllowedByVulnerableSqlQuery('expression_hits.expression'));
         $expressions = $this->removeBlackListedByUser($expressions); // words, abbreviations, terms, etc. listed by user (data from DB)
 
@@ -141,13 +142,160 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
 
     protected function extractSeparatedByLowercasedSeparators($string)
     {
-        $separators = $this->getLowercasedSimpleAndSurroundedSeparatorsWithRegex();
+        $separators = $this->getLowercasedSimpleAndSurroundedSeparatorsWithoutRegex();
 
-        $regex = "/(([" . implode("])|([", $separators) . "]))+/iu";
+        return explode($separators[0], str_replace($separators, $separators[0], $string));
 
-        $results = preg_split($regex, $string, 0, PREG_SPLIT_NO_EMPTY);
+    }
 
-        return (array)$results;
+    /**
+     * @return array
+     */
+    protected function getLowercasedSimpleAndSurroundedSeparatorsWithoutRegex()
+    {
+        return $this->lowercasedSimpleAndSurroundedSeparatorsWithoutRegex;
+    }
+
+    protected function setLowercasedSimpleAndSurroundedSeparatorsWithoutRegex()
+    {
+        $separators = $this->getSimpleSeparatorsLowercased();
+
+        $surroundedSeparators = $this->getSurroundingPairsOfSeparatorsLowercased();
+        $surroundedSeparatorsBeginnings = array_keys($surroundedSeparators);
+        $surroundedSeparatorsEndings = array_values($surroundedSeparators);
+
+        $this->lowercasedSimpleAndSurroundedSeparatorsWithoutRegex
+            = array_unique(array_merge($separators, $surroundedSeparatorsBeginnings, $surroundedSeparatorsEndings));
+    }
+
+    protected function extractSurroundedByPairOfLowercasedSeparators($string)
+    {
+        $regex = $this->getRegexForSurroundingPairsOfSeparatorsLowercased();
+
+        $results = array();
+        preg_match_all($regex, $string, $results);
+
+        return isset($results[4]) ? (array)$results[4] : array();
+
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRegexForSurroundingPairsOfSeparatorsLowercased()
+    {
+        return $this->regexForSurroundingPairsOfSeparatorsLowercased;
+    }
+
+    /**
+     * @return string
+     */
+    protected function setRegexForSurroundingPairsOfSeparatorsLowercased()
+    {
+        $separators = $this->getSurroundingPairsOfSeparatorsLowercased();
+
+        $regexArray = array_map(function ($key, $value) {
+            return "" . preg_quote($key) . "([^" . preg_quote($value) . "]+)" . preg_quote($value) . "";
+
+        }, array_keys($separators), $separators);
+        $regex = "/(" . implode(")|(", $regexArray) . ")/iu";
+
+        $this->regexForSurroundingPairsOfSeparatorsLowercased = $regex;
+
+    }
+
+    protected function removeLongExpressions(array $expressions, $maxExpressionSizeAllowed)
+    {
+
+        // @TODO: If the user is entering quite long string to search (jobs/opportunities search)
+        // field then do something with the long input as it will result to error when writing
+        // the query as keyword to db column with small varchar size allowed..
+
+        if (!isset($maxExpressionSizeAllowed)) {
+            return $expressions; // No limit set
+        }
+
+        foreach ($expressions as $expressionKey => $expression) {
+            if (mb_strlen($expression) > $maxExpressionSizeAllowed) {
+                unset($expressions[$expressionKey]);
+            }
+        }
+
+        return $expressions;
+
+    }
+
+    protected function getMaxExpressionSizeAllowedByVulnerableSqlQuery($tableDotColumnString)
+    {
+        if (
+            !isset($this->maxExpressionSizeAllowedByVulnerableSqlQuery)
+            || !is_array($this->maxExpressionSizeAllowedByVulnerableSqlQuery)
+            || !key_exists($tableDotColumnString, (array)$this->maxExpressionSizeAllowedByVulnerableSqlQuery)
+        ) {
+            $this->setMaxExpressionSizeAllowedByVulnerableSqlQuery($tableDotColumnString);
+        }
+
+        return $this->maxExpressionSizeAllowedByVulnerableSqlQuery[$tableDotColumnString];
+
+    }
+
+    protected function setMaxExpressionSizeAllowedByVulnerableSqlQuery($tableDotColumnString)
+    {
+        $tableAndColumnArray = explode('.', $tableDotColumnString);
+        if (count($tableAndColumnArray) < 2) {
+            throw new \Exception("Table and column name string separated by dot was not found.");
+        }
+
+        $table = $tableAndColumnArray[0];
+        $column = $tableAndColumnArray[1];
+
+        $tableDesc = \DB::select('DESCRIBE ' . $table);
+
+        $columnLowercased = mb_strtolower($column);
+        foreach ($tableDesc as $columnFromDec) {
+            if (mb_strtolower($columnFromDec->Field) !== $columnLowercased) {
+                continue;
+            }
+
+            preg_match('/\((.*?)\)/', $columnFromDec->Type, $match);
+
+            $this->maxExpressionSizeAllowedByVulnerableSqlQuery[$tableDotColumnString] = isset($match[1]) ? $match[1] : null;
+            return;
+
+        }
+
+        $this->maxExpressionSizeAllowedByVulnerableSqlQuery[$tableDotColumnString] = null;
+        return;
+    }
+
+    protected function removeBlackListedByUser(array $expressions)
+    {
+        //return array_diff($this->getExpressionBlackList(), $expressions); // commended, because does not support unicode
+
+        $blackList = $this->getExpressionBlackList();
+
+        foreach ($expressions as $expressionsKey => $expression) {
+            foreach ($blackList as $badItem) {
+                if (mb_strtolower($expression) === mb_strtolower($badItem)) {
+                    unset($expressions[$expressionsKey]);
+                }
+            }
+        }
+
+        return $expressions;
+
+    }
+
+    protected function getExpressionBlackList()
+    {
+        return $this->expressionBlackList;
+    }
+
+    protected function setExpressionBlackList()
+    {
+        $this->expressionBlackList = array(
+            "", // The same as "empty expression is not allowed, because it is not expression..."
+        );
     }
 
     /**
@@ -167,15 +315,40 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
 
     protected function getSimpleSeparatorsLowercased()
     {
-        return array(
-            ",",
+        return $this->simpleSeparatorsLowercased;
+    }
+
+    protected function setSimpleSeparatorsLowercased()
+    {
+        $this->simpleSeparatorsLowercased = array(
+            $this->getMainSeparator(),
             ".",
-            "-",
-            "?",
-            "»",
+            ".",
+            "\n", // linefeed (LF or 0x0A (10) in ASCII)
+            "\r", // carriage return (CR or 0x0D (13) in ASCII)
+            "\t", // horizontal tab (HT or 0x09 (9) in ASCII)
+            "\v", // vertical tab (VT or 0x0B (11) in ASCII)
+            "\e", // escape (ESC or 0x1B (27) in ASCII)
+            "\f", // form feed (FF or 0x0C (12) in ASCII)
+            "`",
+            "~",
+            "!",
+            "@",
+            "^",
+            "*",
+            "|",
+            "\\",
             ":",
             ";",
-            "\""
+            "'",
+            "\"",
+            ",",
+            "/",
+            " - ",
+            " – ", // U+2013
+            "?",
+            "»",
+            "«",
         );
     }
 
@@ -188,52 +361,37 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
 
     protected function getSurroundingPairsOfSeparatorsLowercased()
     {
-        return array(
-            "[" => "]",
-            "(" => ")",
-            "{" => "}"
-        );
+        return $this->surroundingPairsOfSeparatorsLowercased;
     }
 
-    protected function extractSurroundedByPairOfLowercasedSeparators($string)
+    protected function setSurroundingPairsOfSeparatorsLowercased()
     {
-        $separators = $this->getSurroundingPairsOfSeparatorsLowercased();
-
-        $regexArray = array_map(function ($key, $value) {
-            return "" . preg_quote($key) . "([^" . preg_quote($value) . "]+)" . preg_quote($value) . "";
-
-        }, array_keys($separators), $separators);
-        $regex = "/(" . implode(")|(", $regexArray) . ")/iu";
-
-        $results = array();
-        preg_match_all($regex, $string, $results);
-
-        return isset($results[4]) ? (array)$results[4] : array();
-
+        $this->surroundingPairsOfSeparatorsLowercased = array(
+            "[" => "]",
+            "(" => ")",
+            "{" => "}",
+            "<" => ">",
+            "„" => "“", // U+201E and U+201C
+            "“" => "”", // U+... and U+...
+        );
     }
 
     protected function trimExpressions(array $expressions)
     {
-
-//        $expressionsAnyByte     = $this->getSimpleAndSurroundedSeparatorsWithoutRegex();
-//        $expressionsSingleByte  = $this->removeArrayItemsIfNotAsciiChar($expressionsAnyByte);
-//
-//        $expressionsSingleByteHexed = array_map(function($expressionSingleByte) {
-//            return '\\x' . bin2hex($expressionSingleByte);
-//        }, $expressionsSingleByte);
-
-
         $expressionsSingleByteHexed = []; // @TODO: Should trim separators also (?)
         $trimTheseChars = " \t\n\r\0\x0B" . implode("", $expressionsSingleByteHexed);
         $whiteListedExpressions = $this->getExpressionWhiteList();
 
         array_walk($expressions, function (&$value) use ($trimTheseChars, $whiteListedExpressions) {
+
+            // Do not trim whitelisted
             foreach ($whiteListedExpressions as $whiteListedExpression) {
                 if (mb_strtolower($whiteListedExpression) === mb_strtolower($value)) {
                     return;
                 }
             }
 
+            // Trim everything else
             $value = trim($value, $trimTheseChars);
 
         });
@@ -242,22 +400,45 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
 
     }
 
-    protected function removeBlackListedByUser(array $expressions)
+    /**
+     * @return string
+     */
+    protected function getExpressionWhiteList()
     {
-        //return array_diff($this->getExpressionBlackList(), $expressions); // commended, because does not support unicode
+        return $this->expressionWhiteList;
+    }
 
-        $blackList = $this->getExpressionBlackList();
-
-        foreach ($expressions as $expressionsKey => $expression) {
-            foreach ($blackList as $badItem) {
-                if (mb_strtolower($expression) === mb_strtolower($badItem)) {
-                    unset($expressions[$expressionsKey]);
-                }
-            }
-        }
-
-        return $expressions;
-
+    protected function setExpressionWhiteList()
+    {
+        $this->expressionWhiteList = array(
+            ' A# ', // https://en.wikipedia.org/wiki/A_Sharp_(.NET)
+            ' A+ ', // https://en.wikipedia.org/wiki/A%2B_(programming_language)
+            ' B ', // https://en.wikipedia.org/wiki/B_(programming_language)
+            ' C ', // https://en.wikipedia.org/wiki/C_(programming_language)
+            ' C-- ', // https://en.wikipedia.org/wiki/C--
+            ' C++ ', // https://en.wikipedia.org/wiki/C%2B%2B
+            ' C# ', // https://en.wikipedia.org/wiki/C_Sharp_(programming_language)
+            ' D ', // https://en.wikipedia.org/wiki/D_(programming_language)
+            ' E ', // https://en.wikipedia.org/wiki/E_(programming_language)
+            ' E# ', // Programming language too
+            ' F ', // https://en.wikipedia.org/wiki/F_(programming_language)
+            ' F# ', // https://en.wikipedia.org/wiki/F_Sharp_(programming_language)
+            ' F* ', // https://en.wikipedia.org/wiki/F*_(programming_language)
+            ' G ', // https://en.wikipedia.org/wiki/G_(programming_language)
+            ' J ', // https://en.wikipedia.org/wiki/J_(programming_language)
+            ' J# ', // https://en.wikipedia.org/wiki/J_Sharp
+            ' J++ ', // https://en.wikipedia.org/wiki/Visual_J%2B%2B
+            ' K ', // https://en.wikipedia.org/wiki/K_(programming_language)
+            ' L ', // https://en.wikipedia.org/wiki/L_(programming_language)
+            ' L# ', // https://en.wikipedia.org/wiki/L_Sharp
+            ' M2001 ', // https://en.wikipedia.org/wiki/M2001
+            ' M4 ', // https://en.wikipedia.org/wiki/M4_(computer_language)
+            ' M# ', // https://en.wikipedia.org/wiki/M_Sharp_(programming_language)
+            ' o:XML ', // https://en.wikipedia.org/wiki/O:XML
+            ' P′′ ', // https://en.wikipedia.org/wiki/P%E2%80%B2%E2%80%B2
+            ' P# ', // https://en.wikipedia.org/wiki/P_Sharp
+            // ...
+        );
     }
 
     protected function getSimpleAndSurroundedSeparatorsWithoutRegex()
@@ -288,53 +469,65 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
         return !mb_check_encoding($string, 'ASCII') && mb_check_encoding($string, 'UTF-8');
     }
 
-    protected function getMaxExpressionSizeAllowedByVulnerableSqlQuery($tableDotColumnString)
+    protected function getMainSeparator()
     {
-        $tableAndColumnArray = explode('.', $tableDotColumnString);
-        if(count($tableAndColumnArray) < 2) {
-            throw new \Exception("Table and column name string separated by dot was not found.");
-        }
-
-        $table = $tableAndColumnArray[0];
-        $column = $tableAndColumnArray[1];
-
-        $tableDesc = \DB::select('DESCRIBE ' . $table);
-
-        $columnLowercased = mb_strtolower($column);
-        foreach($tableDesc as $columnFromDec) {
-            if(mb_strtolower($columnFromDec->Field) !== $columnLowercased) {
-                continue;
-            }
-
-            preg_match('/\((.*?)\)/', $columnFromDec->Type, $match);
-
-            return isset($match[1]) ? $match[1] : null;
-
-        }
-
-        return null;
-
+        return $this->mainSeparator;
     }
 
-    protected function removeLongExpressions(array $expressions, $maxExpressionSizeAllowed)
+    protected function setMainSeparator()
     {
+        $this->mainSeparator = " ";
+    }
 
-        // @TODO: If the user is entering quite long string to search (jobs/opportunities search)
-        // field then do something with the long input as it will result to error when writing
-        // the query as keyword to db column with small varchar size allowed..
+    /**
+     * @return string
+     */
+    protected function getStringForTesting()
+    {
+        $string = "Pardavėja (-as) - konsultantė (-as) (PC Europa, 1 etatas)
 
-        if(!isset($maxExpressionSizeAllowed)) {
-            return $expressions; // No limit set
-        }
-
-        foreach($expressions as $expressionKey => $expression) {
-            if(mb_strlen($expression) > $maxExpressionSizeAllowed) {
-                unset($expressions[$expressionKey]);
-            }
-        }
-
-        return $expressions;
-
+ Skelbimas galioja iki: 2017.02.16
+ Darbo vieta
+ Vilnius
+ Darbo pobūdis
+ - Klientų konsultavimas apie grožį ir kosmetiką;
+- Darbas kasos aparatu;
+- Prekių išdėstymas bei jų priežiūra;
+- Tvarkos palaikymas prekybos salėje.
+ Reikalavimai
+ - Mes tikimės, kad Tave nuolat lydi šypsena;
+- Domėjimasis grožio ir kosmetikos priemonėmis;
+- Panašaus darbo patirtis arba noras jos įgyti;
+- Asmeninės savybės - komunikabilumas, darbštumas, sąžiningumas, atsakingumas.
+ Mes jums siūlome
+ - Įdomų darbą jauname ir draugiškame kolektyve;
+- Galimybę pirmam (-ai) sužinoti naujausias grožio srities tendencijas;
+- Įdomius ir turiningus mokymus;
+- Galimybę lanksčiai derinti darbo grafiką;
+- Realias karjeros perspektyvas.
+Papildoma informacija:
+- Informuosime tik atrinktus kandidatus.
+ Siųsti savo CV
+ 
+ « Grįžti į skelbimų sąrašą
+ 
+ 
+ 
+ *** ŠIS SKELBIMAS NEATITINKA TIKROVĖS ***
+ 
+ 
+ 
+ 
+ UAB \"Drogas 123\"
+ \"Drogas\" – didžiausias kosmetikos ir buities prekių mažmeninės prekybos parduotuvių tinklas Baltijos šalyse ir vienintelis prekių segmento „health &amp; beauty\" (sveikata ir grožis) atstovas regione. Šiuo metu Lietuvoje ir Latvijoje veikia 141 tinklo parduotuvė, iš kurių 53 – Lietuvoje. Nuo 2004 metų birželio „Drogas\" priklauso mažmeninės prekybos ir gamybos grupei „A.S. Watson Group\", kuri yra Honkongo kompanijos „CK Hutchison Holdings Limited\" dalis.
+ Visi UAB \"Drogas\" darbo skelbimai
+ 
+ 
+ 
+ Kokie žmonės Jus sieja su šia įmone?
+ Prisijunkite soc. profiliu ir sužinokite!
+ Jungtis C/C++, C#, Object-C, su Facebook »";
+        return $string;
     }
 
 
