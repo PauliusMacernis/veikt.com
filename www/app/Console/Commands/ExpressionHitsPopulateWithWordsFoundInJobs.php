@@ -61,21 +61,37 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
      */
     public function handle()
     {
-
         $isPublishedValue = true;
-        $countActiveJobs = Job::where('is_published', $isPublishedValue)->count();
 
-        //\DB::enableQueryLog();
-        for ($i = 0; $i <= $countActiveJobs; $i += $this->readByAmount) {
+        $firstActiveJob = (int)\DB::table('job')->select(['id'])->where('is_published', $isPublishedValue)->limit(1)->orderBy('id', 'ASC')->first()->id;
+        $lastActiveJob  = (int)\DB::table('job')->select(['id'])->where('is_published', $isPublishedValue)->limit(1)->orderBy('id', 'DESC')->first()->id;
+
+        // Just in case something extraordinary happening at the same time we are running this command...
+        $lastActiveJob = ($lastActiveJob >= $firstActiveJob) ? $lastActiveJob : $firstActiveJob;
+        $maxOffsetInTheory = $lastActiveJob - $firstActiveJob;
+
+        for ($offset = 0; $offset < $maxOffsetInTheory; $offset += $this->readByAmount) {
             /**
              * @var \Illuminate\Support\Collection $activeJobs
              */
-            $activeJobs = \DB::table('job')->select(['id', 'content_static_without_tags', 'is_published'])->where('is_published', $isPublishedValue)->offset($i)->limit($this->readByAmount)->get();
+            $activeJobs = \DB::table('job')->select(['id', 'content_static_without_tags', 'is_published'])->where('is_published', $isPublishedValue)->offset($offset)->limit($this->readByAmount)->orderBy('id', 'ASC')->get();
+
+            // Real max offset may be reached before $maxOffsetInTheory is reached
+            //, because:
+            // 1) the process of fetching and analysing lines may take very long
+            //    and so first, last or any other record may become unpublicized while the process is running.
+            // 2) we may have lots of non-usable IDs between $firstActiveJob and $lastActiveJob
+            //
+            // For all these reasons, we check if we started to get empty lines. If so, that's the end of analysing.
+            // Of course, some lines may be added while we analise too. But we do not care about those, because
+            //    new added lines will be analysed with the next run. It is fine for now.
+            if($activeJobs->count() < 1) {
+                break;
+            }
 
             $this->saveExpressionsFoundInCollection($activeJobs);
+
         }
-
-
     }
 
     /**
@@ -93,7 +109,7 @@ class ExpressionHitsPopulateWithWordsFoundInJobs extends Command
 
         $expressions = $this->extractExpressionsFromLowercasedString(mb_strtolower($job->content_static_without_tags));
 
-        // @TODO: Muct not be foreach... Must save all at once..
+        // @TODO: Must not be foreach... Must save all at once..
         foreach($expressions as $expression) {
             $expressionHit = ExpressionHit::firstOrCreate(['expression' => $expression]);
             if(isset($expressionHit->id)) {
