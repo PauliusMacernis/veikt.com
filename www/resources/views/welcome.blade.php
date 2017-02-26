@@ -85,7 +85,7 @@
             </div>
             <div class="content">
                 <div class="title m-b-md">
-                    Veikt!
+                    Veikt &#10024;
                 </div>
 
                 <div class="links">
