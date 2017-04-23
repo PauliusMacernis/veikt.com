@@ -2,9 +2,9 @@
 
 @section('content')
 
-    <h1 class="medium">Opportunities available <span class="label label-default">{{ $jobsInTotal }}</span></h1>
-
     @include('job.search.form.main', ['formAction' => '/job/search'])
+
+    <h1 class="small">Opportunities available: <span class="label label-default">{{ $jobsInTotal }}</span></h1>
 
     <!--
     @if(!$jobs->isEmpty())

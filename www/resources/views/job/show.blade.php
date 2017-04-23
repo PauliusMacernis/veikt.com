@@ -2,8 +2,6 @@
 
 @section('content')
 
-    <div class="col-md-6 col-md-offset-3">
-
         @if(count($errors))
         <ul>
             @foreach($errors->all() as $error)
@@ -86,8 +84,6 @@
             <a href="/job/{{ $job->id }}/edit"><span class="glyphicon glyphicon-edit"></span> Edit the Opportunity</a>
         @endif
 
-
-    </div>
 @stop
 
 @section('javascript')

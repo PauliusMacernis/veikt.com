@@ -9,7 +9,7 @@
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-header">
 
                 <!-- Collapsed Hamburger -->
@@ -23,9 +23,9 @@
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'HOME') }}
+                    : Lets search for the best job ever! We list opportunities only.
                 </a>
-                <a class="navbar-brand glyphicon glyphicon-list-alt" title="List view" href="/job/index">List</a>
-                <a class="navbar-brand glyphicon glyphicon-map-marker" title="Map view" href="/job/index/map">Map</a>
+
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
@@ -36,6 +36,9 @@
 
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
+                    <a class="navbar-brand glyphicon glyphicon-list-alt pull-right" title="List view" href="/job/index"></a>
+                    <a class="navbar-brand glyphicon glyphicon-map-marker pull-right" title="Map view" href="/job/index/map"></a>
+
                     <!-- Authentication Links -->
                     @if (Auth::guest())
                         <li><a href="{{ url('/login') }}">Login</a></li>
@@ -65,7 +68,7 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container-fluid">
         @yield('content')
     </div>
 
