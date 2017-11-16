@@ -9,6 +9,8 @@
 namespace DownloadCore;
 
 
+use Symfony\Component\DomCrawler\Crawler;
+
 class Job
 {
 
@@ -221,6 +223,42 @@ class Job
 
         // Empty value by default
         $this->$fileAndPropertyName = '';
+
+    }
+
+    /**
+     * Removes part of the content ($Crawler) matching css selector ($cssSelector)
+     *
+     * @param Crawler $Crawler
+     * @param $cssSelector
+     * @return Crawler
+     */
+    protected function _removeContentDynamic(\Symfony\Component\DomCrawler\Crawler $Crawler, $cssSelector)
+    {
+        $Crawler->filter($cssSelector)->each(function (Crawler $Crawler) {
+            foreach ($Crawler as $node) {
+                $node->parentNode->removeChild($node);
+            }
+        });
+
+        return $Crawler;
+    }
+
+    /**
+     * Removes inner part of the content ($Crawler) matching css selector ($cssSelector)
+     *
+     * @param \Symfony\Component\DomCrawler\Crawler $Content
+     * @param $cssSelector
+     * @return false|string
+     */
+    private function _removeInnerContentDynamic(\Symfony\Component\DomCrawler\Crawler $Content, $cssSelector)
+    {
+        $ContentFull = $Content->html();
+
+        $ContentToRemove = $Content->filter($cssSelector);
+        $ContentToRemove = $ContentToRemove->html();
+
+        return mb_ereg_replace(preg_quote($ContentToRemove), '', $ContentFull);
 
     }
 
