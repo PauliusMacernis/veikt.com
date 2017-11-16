@@ -207,7 +207,7 @@
       "project_name": "cvbankas.lt",
       "since_datetime_utc0": "2016-10-15 03:45:00",
       "language": "php",
-      "url": "http://www.cvbankas.lt/",
+      "url": "https://www.cvbankas.lt/",
       "unique_project_path": "code/php/project/Cvbankas/Lt",
       "entrance_sh_download": "download/code/php/project/Cvbankas/Lt/entrance.sh",
       "entrance_sh_normalize": "normalize/code/php/project/Cvbankas/Lt/entrance.sh",
