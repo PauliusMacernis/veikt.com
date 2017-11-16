@@ -15,7 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class Browser extends CoreBrowser
 {
 
-    const HOMEPAGE_URL = 'http://www.cvbankas.lt/?page=1';
+    const HOMEPAGE_URL = 'https://www.cvbankas.lt/?page=1';
 
 
     /**
