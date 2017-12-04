@@ -9,8 +9,8 @@ class BrowserClientSettings extends GuzzleClient
 {
     // http://php.net/manual/en/function.curl-setopt.php
     const CURL_SETTINGS = array(
-        CURLOPT_TIMEOUT => 60,         // 900 = 15 min
-        CURLOPT_CONNECTTIMEOUT => 60,  // 900 = 15 min
+        CURLOPT_TIMEOUT => 120,         // 900 = 15 min
+        CURLOPT_CONNECTTIMEOUT => 120,  // 900 = 15 min
     );
 
 //    protected $randomProxyIp;
