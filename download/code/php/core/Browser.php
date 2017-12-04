@@ -1,16 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paulius
- * Date: 2016-10-08
- * Time: 21:33
- */
 
 namespace DownloadCore;
 
+use DownloadCore\BrowserClient\Fabric\BrowserClient;
+use DownloadCore\Logger\Fabric\Connection;
+use DownloadCore\Repeatable\ContentValidator;
+use DownloadCore\Repeatable\Repeatable;
 use DownloadProject\Cvbankas\Lt\Classes\Job;
-use Goutte\Client as GoutteClient;
-use GuzzleHttp\Client as GuzzleClient;
+
 
 /**
  * @TODO: Rename to "Worker" or something close to that?
@@ -22,17 +19,12 @@ use GuzzleHttp\Client as GuzzleClient;
  */
 class Browser
 {
+    use Repeatable;
+    use ContentValidator;
 
     const HOMEPAGE_URL = null;
-    const RETRY_TIMES = 10;
-    const RETRY_TIMES_MIN_DELAY_IN_SECONDS = 3;
-    const RETRY_TIMES_MAX_DELAY_IN_SECONDS = 10;
-    const START_MIN_DELAY_IN_SECONDS = 1; // When starting this->doRepeatableAction method
-    const START_MAX_DELAY_IN_SECONDS = 5; // When starting this->doRepeatableAction method
 
-    // http://php.net/manual/en/function.curl-setopt.php
-    const CURLOPT_TIMEOUT = 900;        // 15 min
-    const CURLOPT_CONNECTTIMEOUT = 900; // 15 min
+
     // CURLOPT_LOW_SPEED_LIMIT = 1
     // CURLOPT_LOW_SPEED_TIME = 3600
     // CURLOPT_TIMEOUT = 3600
@@ -40,14 +32,20 @@ class Browser
 
     protected $id;                  // Unique id of the Browser object.
     protected $projectSettings;
-    protected $baseDir;
+    protected $dirRoot;             // httpdocs
+    protected $dirProject;          // project code root
     protected $settings;
     protected $jobProperties;
     protected $blackListCharsForPageNumbers = array('-', '/', '|', ' ', "\n", "\r", '.');
     protected $jobsCounter;
     protected $robotsTxtContent;    // https://en.wikipedia.org/wiki/Robots_exclusion_standard
+    protected $proxySettingsGlobalAndProject;   // All settings that can be applied
 
-    public function __construct($baseDir, $settings, $projectSettings, $careAboutRobotsDotTxt = true)
+    protected $clientSuccessful;    // a client for the browser that is proven to be successful (proxy IP, port, etc.)
+
+    //protected $proxySettingsApplied;            // All settings that were actually applied
+
+    public function __construct($dirRoot, $dirProject, $settings, $projectSettings, $proxySettingsGlobalAndProject, $careAboutRobotsDotTxt = true)
     {
 
         // UNIQUE AUDITOR ID
@@ -61,11 +59,17 @@ class Browser
         // PROJECT SETTINGS
         $this->projectSettings = $projectSettings;
 
-        // BASE DIR
-        $this->baseDir = $baseDir;
+        // BASE DIRS (httpdocs, project code root)
+        $this->dirRoot = $dirRoot;
+        $this->dirProject = $dirProject;
 
         // SETTINGS
         $this->settings = $settings;
+
+        // PROXY SETTINGS (merged global and project-specific according to global and project settings)
+        $this->proxySettingsGlobalAndProject = $proxySettingsGlobalAndProject;
+
+        //$this->setClientRandom();
 
         // REQUIRED PROPERTIES/FILES
         $this->jobProperties = $this->getJobProperties();
@@ -82,6 +86,15 @@ class Browser
 
     }
 
+    /**
+     * Get client with settings set for the browser to start working on behalf of
+     * @return \DownloadCore\BrowserClient\BrowserClient
+     */
+//    protected function setClientRandom()
+//    {
+//        $this->clientRandom = BrowserClient::create($this->proxySettingsGlobalAndProject);
+//    }
+
     protected function getJobProperties()
     {
 
@@ -95,7 +108,6 @@ class Browser
 
     protected function getRobotsTxtContent()
     {
-
         if (isset($this->robotsTxtContent)) {
             return $this->robotsTxtContent;
         }
@@ -137,76 +149,6 @@ class Browser
 
     }
 
-    /**
-     * Calls $this->$methodName($argN) method.
-     * Repeats the call
-     *  for $this::RETRY_TIMES times
-     *  if $this->$methodName returns NULL or FALSE
-     * Every later call sleeps for a random amount of seconds between
-     *  $this::RETRY_TIMES_MIN_DELAY_IN_SECONDS
-     *  and
-     *  $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS
-     *
-     * @todo: This one definitely requires the test to be written
-     *
-     * @param string $methodName Name of method in $this class
-     * @return mixed|null               Returned value of $this->$methodName method
-     *
-     */
-    protected function doRepeatableAction($methodName)
-    {
-
-        if (!method_exists($this, $methodName)) {
-            return null;
-        }
-
-        // Wait before starting
-        sleep(rand($this::START_MIN_DELAY_IN_SECONDS, $this::START_MAX_DELAY_IN_SECONDS));
-
-        $retryTimes = $this::RETRY_TIMES;
-        if ((int)$retryTimes < 0) { // be secured!
-            return null;
-        }
-
-        // Get arguments passed
-        $args = func_get_args();
-        // Skip $methodName
-        array_shift($args);
-
-        // Do action
-        while ($retryTimes) {
-
-            if ($this::RETRY_TIMES != $retryTimes) { // Not the first time?
-                //var_dump('Sleeping for ' . $this::RETRY_TIMES_MIN_DELAY_IN_SECONDS . ', ' . $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS);
-                sleep(rand($this::RETRY_TIMES_MIN_DELAY_IN_SECONDS, $this::RETRY_TIMES_MAX_DELAY_IN_SECONDS)); // Wait
-            }
-
-            //var_dump('CALLING "' . $methodName . '"". Try #' . ($this::RETRY_TIMES - $retryTimes +1));
-            $result = call_user_func_array(array($this, $methodName), $args);
-
-            //var_dump('Result: ');
-            //var_dump($result);
-
-            // If result is strictly NULL or FALSE then it means "NO SUCCESS"
-            if (isset($result) && ($result !== false)) {
-                return $result;
-            }
-
-            $retryTimes--;
-        }
-
-        // Result may be FALSE or NULL
-        // If result is FALSE...
-        if (isset($result)) {
-            return $result;
-        }
-
-        // If result is NULL or
-        // if any surprises because of always possible bugs in a code...
-        return null;
-
-    }
-
     public function markQueueBegin()
     {
         $this->createQueueMarkerFile($this->settings['markers']['begin']['file-name']);
@@ -231,16 +173,11 @@ class Browser
      */
     public function getDownloadsDirectoryPathJobs()
     {
-        $dir = $this->baseDir
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
+        $dir = $this->dirRoot
             . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_posts']
             . DIRECTORY_SEPARATOR . $this->browserUtcDateTimeBegin->format('Y-m-d')
             . '--' . $this->getId();
+
         return $dir;
     }
 
@@ -293,7 +230,7 @@ class Browser
         $jobs = array();
 
         foreach ($List as $url) {
-            $Content = $this->doRepeatableAction('getContentOfUrl', $url);
+            $Content = $this->doRepeatableAction('getContentOfUrl', $url, ['testResultOfGetContentOfUrl']);
             $jobs[$url] = $this->extractJob(
                 $Content,
                 $url
@@ -432,7 +369,7 @@ class Browser
     {
 
         $nextPageUrl = $this->getNextPageUrlOfListOfJobLinks();
-        $this->listContent = $this->doRepeatableAction('getContentOfUrl', $nextPageUrl);
+        $this->listContent = $this->doRepeatableAction('getContentOfUrl', $nextPageUrl, ['testResultOfGetContentOfUrl']);
         return (array)$this->extractJobLinks();
 
     }
@@ -451,41 +388,111 @@ class Browser
      * Returns content of URL
      *
      * @param string $url Any valid URL
+     * @param array $callbacksToTestResultOn
+     * @param bool $listenRobotsDotTxt
      * @param string $actionType "GET", "POST", any other...
      * @return null|\Symfony\Component\DomCrawler\Crawler
+     * @throws ErrorHandler
      */
-    protected function getContentOfUrl($url, $actionType = 'GET', $listenRobotsDotTxt = true)
+    protected function getContentOfUrl($url, $callbacksToTestResultOn = [], $listenRobotsDotTxt = true, $actionType = 'GET', $useClientSuccessful = true)
     {
-
+        //$url = 'https://www.whatismyip.net/';
+        //var_dump($url);
         if (!$url) {
             return null;
         }
 
         // Check if url is allowed
-        if ($listenRobotsDotTxt && $this->robotsTxtContent) {
-            $parser = new \RobotsTxtParser($this->robotsTxtContent);
-            // $parser->setUserAgent('VeiktDotComBot'); // ???
-            if ($parser->isDisallowed($url)) {
-                return null;
-            }
-        }
-
-        $goutteClient = new GoutteClient();
-        $guzzleClient = new GuzzleClient(array(
-            'curl' => array(
-                CURLOPT_TIMEOUT => $this::CURLOPT_TIMEOUT,
-                CURLOPT_CONNECTTIMEOUT => $this::CURLOPT_CONNECTTIMEOUT,
-            ),
-        ));
-        $goutteClient->setClient($guzzleClient);
-        $result = $goutteClient->request($actionType, $url);
-
-        if (!$result) {
+        if ($listenRobotsDotTxt && !$this->urlIsAllowedByRobotsDotTxt($url)) {
+            //var_dump('URL ' . $url . ' is not allowed by robots.txt');
             return null;
         }
 
+        if ($useClientSuccessful && isset($this->clientSuccessful)) {
+            $client = $this->getClientSuccessful();
+            //var_dump('Client new success: ' . print_r($client->getClient()->getConfig(), true));
+        } else {
+            $client = $this->getClientRandom();
+            //var_dump('Client new random: ' . print_r($client->getClient()->getConfig(), true));
+        }
+
+        $this->setRepeatableBagClientConfig($client->getClient()->getConfig());
+
+        try {
+            $result = $client->request($actionType, $url);
+            //var_dump('Good connection.');
+        } catch (\Exception $e) {
+            //var_dump('Bad connection.');
+            $this->logBadConnection($e);
+            return null;
+        }
+
+        $response = $client->getResponse();
+        if ($response->getStatus() >= 400) {
+            //var_dump('Bad status: ' . $response->getStatus());
+            return null;
+        }
+
+        if (!$result) {
+            //var_dump('No result...');
+            return null;
+        }
+
+        foreach ($callbacksToTestResultOn as $callbackToTestOn) {
+            $resultFromCallback = $this->$callbackToTestOn($result);
+            if (false === $resultFromCallback) {
+                //var_dump('Failed to validate result..');
+                return null; // treat it as no success when downloading
+            }
+        }
+
+        $this->clientSuccessful = $client;
+
         return $result;
 
+    }
+
+    /**
+     * @param string $url
+     * @return bool
+     * @throws ErrorHandler
+     */
+    protected function urlIsAllowedByRobotsDotTxt($url)
+    {
+        if (!isset($this->robotsTxtContent)) {
+            throw new ErrorHandler("robotsTxtContent is not set when expected to be set.");
+        }
+        $parser = new \RobotsTxtParser($this->robotsTxtContent);
+        // $parser->setUserAgent('VeiktDotComBot'); // ???
+        if ($parser->isDisallowed($url)) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * @return \DownloadCore\BrowserClient\BrowserClient
+     */
+    public function getClientSuccessful()
+    {
+        return $this->clientSuccessful;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClientRandom()
+    {
+        //$this->setClientRandom();
+        return BrowserClient::create($this->proxySettingsGlobalAndProject);
+    }
+
+    public function logBadConnection(\Exception $e)
+    {
+        $logger = Connection::create('proxy', $this->dirRoot, $this->dirProject, 'robots');
+        $logger->addInfo($e->getMessage());
     }
 
     /**
@@ -495,20 +502,36 @@ class Browser
      * @param $url              For example: "http://www.example.org/robots.txt
      * @return null|string
      */
-    protected function getContentOfRemoteRobotsTxt($url)
+    protected function getContentOfRemoteRobotsTxt($url, $useClientSuccessful = true)
     {
-
         if (!$url) {
             return null;
         }
 
-        $result = file_get_contents($url);
+        if ($useClientSuccessful && isset($this->clientSuccessful)) {
+            $client = $this->getClientSuccessful();
+        } else {
+            $client = $this->getClientRandom();
+        }
 
-        if (!$result) {
+        try {
+            $client->request('GET', $url);
+        } catch (\Exception $e) {     // \GuzzleHttp\Exception\ConnectException
+            $this->logBadConnection($e);
             return null;
         }
 
-        return $result;
+        /**
+         * @var $response \Symfony\Component\BrowserKit\Response
+         */
+        $response = $client->getResponse();
+        if ($response->getStatus() >= 400) {
+            return null;
+        }
+
+        $this->clientSuccessful = $client;
+
+        return $response->getContent();
 
     }
 

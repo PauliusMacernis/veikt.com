@@ -41,7 +41,7 @@ class ErrorHandler extends \Exception
     /**
      * @return mixed
      */
-    protected function getTo($toKey = 'to-error')
+    protected function getTo($toKey = 'to-on-error')
     {
         $Settings = new Settings();
         $MailSettings = $Settings->getMail();

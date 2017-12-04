@@ -7,8 +7,8 @@
             "from":{
                 "FROM Example": "from@example.com"
             },
-            "to":{
-                "TO Exampl": "to@example.com"
+            "to-on-error":{
+                "toonerror@example.com": "Example Dot Com"
             },
             "encryption": "tls",
             "username": "myusername",

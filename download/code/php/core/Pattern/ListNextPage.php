@@ -16,9 +16,9 @@ namespace DownloadCore\Pattern;
 class ListNextPage extends Core
 {
 
-    public function __construct($indexDir)
+    public function __construct($dirRoot, $dirProject)
     {
-        parent::__construct($indexDir);
+        parent::__construct($dirRoot, $dirProject);
     }
 
 

@@ -26,7 +26,7 @@ class Browser extends CoreBrowser
 
     public function getFirstListOfJobLinks()
     {
-        $this->listContent = $this->doRepeatableAction('getContentOfUrl', self::HOMEPAGE_URL);
+        $this->listContent = $this->doRepeatableAction('getContentOfUrl', self::HOMEPAGE_URL, ['testResultOfGetContentOfUrl']);
         return (array)$this->extractJobLinks();
     }
 

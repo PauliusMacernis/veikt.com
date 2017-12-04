@@ -14,14 +14,15 @@
         <h3>Personal Notes</h3>
         @if($isUserLoggedIn)
             @include('note.form.create')
+            <hr />
         @else
-            <p>Available for registered users only.</p>
+            <p>Available for registered users only [registration is free].</p>
         @endif
 
-        <hr />
+
 
         @if($job->notes->isEmpty())
-            <p>We collect opportunities from many sources, you - create your private notes on top. Tracking own career-related experience is much easier.</p>
+            <p>We collect opportunities from many sources, you may create your own private notes on top. Tracking own career-related experience is much easier now.</p>
         @else
             <ul class="list-group">
                 @foreach($job->notes as $note)

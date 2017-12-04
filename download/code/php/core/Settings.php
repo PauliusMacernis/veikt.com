@@ -29,16 +29,26 @@ class Settings
 
     /**
      * @var array All settings related to database from settings.database.private.json
-     * or settings.database.public.json if the previous does not exist
+     * or settings.database{.public}.json if the previous does not exist
      */
     protected $database;
 
     /**
      * @var array All settings related to mail from settings.mail.private.json
-     * or settings.mail.public.json if the previous does not exist
+     * or settings.mail{.public}.json if the previous does not exist
      */
     protected $mail;
 
+    /**
+     * @var array All settings related to a proxy from settings.proxy.private.json
+     * or settings.proxy{.public}.json if the previous does not exist
+     */
+    protected $proxy;
+
+    /**
+     * @var array List of proxies: $this->proxy + $this->project->proxy
+     */
+    protected $proxyGlobalAndProject;
     /**
      * @var string Directory where entrance.sh resides
      */
@@ -54,7 +64,44 @@ class Settings
         $this->setAll();
         $this->setDatabase();
         $this->setMail();
+        $this->setProxy();
         $this->setProject();
+
+        // Global + project
+        $this->setProxyGlobalAndProject();
+    }
+
+    /**
+     * @return array
+     */
+    public function getProxyGlobalAndProject()
+    {
+        return $this->proxyGlobalAndProject;
+    }
+
+    public function setProxyGlobalAndProject()
+    {
+        // Global
+        if (
+            isset($this->project['proxies_include_global']) && $this->project['proxies_include_global']
+            && isset($this->proxy) && is_array($this->proxy)
+        ) {
+            $globalProxiesList = $this->proxy;
+        } else {
+            $globalProxiesList = [];
+        }
+
+        // Project
+        if (isset($this->project)
+            && isset($this->project['proxies']) && is_array($this->project['proxies'])) {
+            $privateProxiesList = $this->project['proxies'];
+        } else {
+            $privateProxiesList = [];
+        }
+
+        // Set Global + Project
+        $this->proxyGlobalAndProject = array_merge(array_values($globalProxiesList), array_values($privateProxiesList));
+
     }
 
     public function getProject()
@@ -133,6 +180,16 @@ class Settings
     protected function setMail()
     {
         $this->mail = $this->getSettingsFileContent('mail');
+    }
+
+    public function getProxy()
+    {
+        return $this->proxy;
+    }
+
+    protected function setProxy()
+    {
+        $this->proxy = $this->getSettingsFileContent('proxy');
     }
 
     /**

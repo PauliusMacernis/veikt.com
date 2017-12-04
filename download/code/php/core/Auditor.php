@@ -8,28 +8,47 @@
 
 namespace DownloadCore;
 
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use DownloadCore\Logger\Fabric\Integrity;
+use DownloadCore\Logger\Fabric\Project;
+use DownloadCore\Logger\Interfaces\Logger;
 
 
 class Auditor
 {
-
+    /**
+     * @var Logger $loggerSuccessDownload
+     */
     protected $loggerSuccessDownload;
+    /**
+     * @var Logger $loggerFailureDownload
+     */
     protected $loggerFailureDownload;
+    /**
+     * @var Logger $loggerSuccessSave
+     */
     protected $loggerSuccessSave;
+    /**
+     * @var Logger $loggerFailureSave
+     */
     protected $loggerFailureSave;
+    /**
+     * @var Logger $loggerFailureProxy
+     */
+    protected $loggerFailureProxy;
+    /**
+     * @var Logger $loggerDataIntegrity
+     */
     protected $loggerDataIntegrity;
     protected $settings;                // All settings (global + related to the project)
     protected $projectSettings;         // Settings related to the project
     protected $requiredPropertiesFile;      // Required files to create as the output (=properties of Job class)
     protected $requiredPropertiesData;      // Required data to create as the output (=properties of Job class)
-    protected $indexDir;                // Project's root directory
+    protected $dirRoot;                 // Root directory (httpdocs)
+    protected $dirProject;                // Project's root directory
     protected $datetime;                // Datetime value (UTC) of object initiation
     protected $downloadsDirectoryPathJobs; // The place where job adds are being downloaded to
 
-    public function __construct($indexDir, array $settings, array $projectSettings, $downloadsDirectoryPathJobs)
+    public function __construct($dirRoot, $dirProject, array $settings, array $projectSettings, $downloadsDirectoryPathJobs)
     {
         // Datetime
         $this->datetime = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -38,8 +57,9 @@ class Auditor
         $this->settings = $settings;
         $this->projectSettings = $projectSettings;
 
-        // Project's root directory
-        $this->indexDir = $indexDir;
+        // httpdocs dir & project's code root directory
+        $this->dirRoot = $dirRoot;
+        $this->dirProject = $dirProject;
 
         // REQUIRED PROPERTIES/FILES
         $this->requiredPropertiesFile = $this->getRequiredPropertiesFile();
@@ -50,6 +70,7 @@ class Auditor
         $this->setLogger('FailureDownload');
         $this->setLogger('SuccessSave');
         $this->setLogger('FailureSave');
+        $this->setLogger('FailureProxy');
 
         $this->downloadsDirectoryPathJobs = $downloadsDirectoryPathJobs;
         $this->setLoggerDataIntegrity();
@@ -93,46 +114,23 @@ class Auditor
 
     protected function setLogger($name = 'Success')
     {
-        // LOGGER.SUCCESS
         // create a log channel
-        $this->{"logger" . $name} = new Logger($name);
-
-        // Get path to log file
-        $pathToLog = $this->getPathToLogFile($name);
-
-        $this->{"logger" . $name}->pushHandler(new StreamHandler($pathToLog, Logger::INFO));
-    }
-
-    protected function getPathToLogFile($name = 'Success', $new = false)
-    {
-        $pathToLog =
-            $this->indexDir
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . '..'
-            . DIRECTORY_SEPARATOR . $this->projectSettings['dir_downloaded_logs']
-            . DIRECTORY_SEPARATOR . $this->datetime->format($this->projectSettings['file_downloaded_logs'])
-            . '-' . $name . '.log';
-
-        return $pathToLog;
+        $this->{"logger" . $name} = Project::create(
+            $name,
+            $this->dirRoot,
+            $this->projectSettings['dir_downloaded_logs'],
+            $this->datetime->format($this->projectSettings['file_downloaded_logs'])
+        );
     }
 
     private function setLoggerDataIntegrity($name = 'DataIntegrity')
     {
-        // LOGGER.SUCCESS
-        // create a log channel
-        $this->{'logger' . $name} = new Logger($name);
-
-        // Get path to log file
-        $pathToLog = $this->getPathToDataIntegrityLogFile();
-
-        $streamHandler = new StreamHandler($pathToLog, Logger::INFO);
-        $streamHandler->setFormatter(new LineFormatter('%message%' . "\n"));
-
-        $this->{"logger" . $name}->pushHandler($streamHandler);
+        $this->{"logger" . $name} = Integrity::create(
+            $name,
+            $this->dirRoot,
+            $this->dirProject,
+            $this->getPathToDataIntegrityLogFile()
+        );
     }
 
     protected function getPathToDataIntegrityLogFile()
@@ -315,9 +313,9 @@ class Auditor
     protected function getFailureDownloadContent()
     {
         $failureDownload = '';
-        if (is_file($this->getPathToLogFile('FailureDownload'))) {
+        if (is_file($this->loggerFailureDownload->getPathToLogFile())) {
             $failureDownload = file_get_contents(
-                $this->getPathToLogFile('FailureDownload')
+                $this->loggerFailureDownload->getPathToLogFile()
             );
         }
         return (string)$failureDownload;
@@ -329,8 +327,8 @@ class Auditor
     protected function getFailureSaveContent()
     {
         $failureSave = '';
-        if (is_file($this->getPathToLogFile('FailureSave'))) {
-            $failureSave = file_get_contents($this->getPathToLogFile('FailureSave'));
+        if (is_file($this->loggerFailureSave->getPathToLogFile())) {
+            $failureSave = file_get_contents($this->loggerFailureSave->getPathToLogFile());
         }
         return (string)$failureSave;
     }

@@ -17,27 +17,38 @@ use DownloadProject\Cvbankas\Lt\Classes\Browser;
 class Core
 {
 
+    protected $dirRoot;
+    protected $dirProject;
+
     protected $settingsAll;
     protected $settingsProject;
+    protected $settingsProxyGlobalAndProject;
     protected $Browser;
     protected $Auditor;
 
 
-    public function __construct($indexDir)
+    public function __construct($dirRoot, $dirProject)
     {
+        $this->dirRoot = $dirRoot;
+        $this->dirProject = $dirProject;
+
         // Get settings: All & Project specific
-        $settings = new Settings($indexDir);
+        $settings = new Settings($this->dirProject);
         $this->settingsAll = $settings->getAll();
         $this->settingsProject = $settings->getProject();
+        $this->settingsProxyGlobalAndProject = $settings->getProxyGlobalAndProject();
 
         // Initiate main objects for dealing with the content
-        $this->Browser = new Browser(
-            $indexDir,
+        $this->Browser = new Browser( // @todo: pass dir & settings as two objects instead of many string-like params?
+            $this->dirRoot,
+            $this->dirProject,
             $this->settingsAll,
-            $this->settingsProject
+            $this->settingsProject,
+            $this->settingsProxyGlobalAndProject
         );
         $this->Auditor = new Auditor(
-            $indexDir,
+            $this->dirRoot,
+            $this->dirProject,
             $this->settingsAll,
             $this->settingsProject,
             $this->Browser->getDownloadsDirectoryPathJobs()

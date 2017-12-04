@@ -23,7 +23,7 @@
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'HOME') }}
-                    : Lets search for the best job ever! We list opportunities only.
+                    : Open Source Jobs Aggregator
                 </a>
 
             </div>
